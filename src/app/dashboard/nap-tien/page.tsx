@@ -2,67 +2,57 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { CreditCard, QrCode, Copy, CheckCircle2, RefreshCw, AlertTriangle, ArrowRight, Wallet, XCircle, Timer } from 'lucide-react';
+import { X, CheckCircle2, Clock, Copy, Loader2, AlertTriangle, ArrowRight, Wallet, RefreshCw } from 'lucide-react';
 
 const DEPOSIT_AMOUNTS = [50000, 100000, 200000, 500000, 1000000, 2000000];
-const COUNTDOWN_SECONDS = 250;
-const CHECK_INTERVAL_MS = 3000;
+const CHECK_INTERVAL_MS = 5000; // 5s like shop-mmo
+const MAX_CHECKS = 120; // 120 checks = 10 minutes
+
+const BANK_INFO = {
+    bankId: 'MB',
+    bankName: 'MB Bank',
+    accountNo: '0393959643',
+    accountName: 'NGUYEN TAI DAT',
+    logo: 'https://cdn.haitrieu.com/wp-content/uploads/2022/02/Logo-MB-Bank-MBB.png',
+};
 
 export default function DepositPage() {
     const { user, updateUser } = useAuth();
-    const [amount, setAmount] = useState(0);
-    const [customAmount, setCustomAmount] = useState('');
-    const [step, setStep] = useState<'select' | 'transfer' | 'success' | 'expired'>('select');
-    const [depositCode, setDepositCode] = useState('');
-    const [checking, setChecking] = useState(false);
-    const [checkResult, setCheckResult] = useState<any>(null);
+    const [amount, setAmount] = useState('');
+    const [invoiceData, setInvoiceData] = useState<any>(null);
+    const [invoiceStatus, setInvoiceStatus] = useState<'PENDING' | 'PAID' | 'CANCELLED'>('PENDING');
+    const [isChecking, setIsChecking] = useState(false);
+    const [checkMessage, setCheckMessage] = useState('');
+    const [isCancelling, setIsCancelling] = useState(false);
     const [copied, setCopied] = useState('');
-    const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    const countdownRef = useRef<NodeJS.Timeout | null>(null);
-    const checkingRef = useRef(false);
-    const stepRef = useRef(step);
-    const [bankInfo, setBankInfo] = useState({ bank: 'MB Bank', accountNo: '0393959643', accountName: 'NGUYEN TAI DAT' });
+    const checkCountRef = useRef(0);
+    const statusRef = useRef<string>('PENDING');
 
-    // Keep refs in sync
-    useEffect(() => { stepRef.current = step; }, [step]);
+    useEffect(() => { statusRef.current = invoiceStatus; }, [invoiceStatus]);
 
-    // Load bank info from admin settings
+    // Load bank settings
     useEffect(() => {
         fetch('/api/v1/admin/settings')
             .then(r => r.json())
             .then(d => {
                 if (d.success && d.data?.settings) {
                     const s = d.data.settings;
-                    setBankInfo({
-                        bank: s.bankName || 'MB Bank',
-                        accountNo: s.bankAccount || '0393959643',
-                        accountName: s.bankOwner || 'NGUYEN TAI DAT',
-                    });
+                    if (s.bankAccount) BANK_INFO.accountNo = s.bankAccount;
+                    if (s.bankOwner) BANK_INFO.accountName = s.bankOwner;
                 }
             })
             .catch(() => {});
     }, []);
 
-    // Generate unique deposit code
-    useEffect(() => {
-        const code = 'CTN' + Date.now().toString(36).toUpperCase().slice(-6);
-        setDepositCode(code);
-    }, []);
-
-    const selectedAmount = customAmount ? parseInt(customAmount) : amount;
-
-    // Store selected amount in ref so interval can access it
-    const selectedAmountRef = useRef(selectedAmount);
-    useEffect(() => { selectedAmountRef.current = selectedAmount; }, [selectedAmount]);
-
-    const depositCodeRef = useRef(depositCode);
-    useEffect(() => { depositCodeRef.current = depositCode; }, [depositCode]);
-
-    const handleProceed = () => {
-        if (selectedAmount < 10000) return;
-        setStep('transfer');
-        setCountdown(COUNTDOWN_SECONDS);
+    const getQRCodeUrl = () => {
+        if (!invoiceData) return '';
+        const params = new URLSearchParams({
+            amount: invoiceData.amount.toString(),
+            addInfo: invoiceData.content,
+            accountName: BANK_INFO.accountName,
+        });
+        return `https://img.vietqr.io/image/${BANK_INFO.bankId}-${BANK_INFO.accountNo}-compact.png?${params.toString()}`;
     };
 
     const copyToClipboard = (text: string, field: string) => {
@@ -71,132 +61,115 @@ export default function DepositPage() {
         setTimeout(() => setCopied(''), 2000);
     };
 
-    const stopAllTimers = () => {
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-        }
-        if (countdownRef.current) {
-            clearInterval(countdownRef.current);
-            countdownRef.current = null;
-        }
+    // Create invoice
+    const handleCreateInvoice = () => {
+        if (!amount || parseInt(amount) < 10000) return;
+
+        const invoiceCode = `INV${Date.now()}`;
+        const invoiceContent = `NAPTIEN ${invoiceCode}`;
+
+        setInvoiceData({
+            code: invoiceCode,
+            amount: parseInt(amount),
+            content: invoiceContent,
+        });
+        setInvoiceStatus('PENDING');
+        setCheckMessage('');
+        checkCountRef.current = 0;
     };
 
-    // The actual check function — uses refs to avoid stale closures
-    const doCheck = async () => {
-        if (checkingRef.current) return;
-        if (stepRef.current !== 'transfer') return;
-
-        checkingRef.current = true;
-        setChecking(true);
-
-        try {
-            // Use the simple public endpoint — no auth needed
-            const res = await fetch('/api/payment/mbbank/check', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    depositCode: depositCodeRef.current,
-                    amount: selectedAmountRef.current,
-                }),
-            });
-
-            const data = await res.json();
-            console.log('[Deposit Check]', data);
-            setCheckResult(data);
-
-            if (data.status === 'found') {
-                // Payment found! Stop timers and go to success
-                stopAllTimers();
-                if (user) {
-                    updateUser({ walletBalance: (user.walletBalance || 0) + selectedAmountRef.current });
-                }
-
-                // Also try to credit wallet in DB (best effort with auth)
-                try {
-                    const token = localStorage.getItem('token') || '';
-                    await fetch('/api/v1/wallet/deposits/check', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({
-                            depositCode: depositCodeRef.current,
-                            amount: selectedAmountRef.current,
-                        }),
-                    });
-                } catch {
-                    // Best effort — client-side balance already updated
-                }
-
-                setStep('success');
-            }
-        } catch (err) {
-            console.error('[Deposit Check Error]', err);
-            setCheckResult({ status: 'error', message: 'Lỗi kết nối. Hệ thống sẽ thử lại.' });
-        }
-
-        checkingRef.current = false;
-        setChecking(false);
-    };
-
-    // Start auto-check and countdown when entering transfer step
+    // Auto-check when invoice is created — EXACT shop-mmo logic
     useEffect(() => {
-        if (step === 'transfer') {
-            // First check immediately
-            doCheck();
-
-            // Start interval
-            intervalRef.current = setInterval(doCheck, CHECK_INTERVAL_MS);
-
-            // Start countdown
-            countdownRef.current = setInterval(() => {
-                setCountdown(prev => {
-                    if (prev <= 1) {
-                        stopAllTimers();
-                        setStep('expired');
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
+        if (!invoiceData || invoiceStatus === 'PAID' || invoiceStatus === 'CANCELLED') {
+            if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+            return;
         }
 
-        return () => { stopAllTimers(); };
-    }, [step]);
+        const checkStatus = async () => {
+            if (statusRef.current === 'PAID' || statusRef.current === 'CANCELLED') return;
+
+            checkCountRef.current++;
+            setIsChecking(true);
+            setCheckMessage(`Chưa phát hiện thanh toán... (${checkCountRef.current}/${MAX_CHECKS})`);
+
+            try {
+                console.log(`[Deposit] Đang check MB Bank: amount=${invoiceData.amount}, content="${invoiceData.content}"`);
+                const res = await fetch('/api/payment/mbbank/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: invoiceData.content,
+                        amount: invoiceData.amount,
+                        depositCode: invoiceData.content,
+                    }),
+                    cache: 'no-store',
+                });
+                const data = await res.json();
+                console.log(`[Deposit] MB Bank check response:`, data);
+
+                if ((data.success && data.paid) || data.status === 'found') {
+                    // PAYMENT FOUND!
+                    setIsChecking(false);
+                    setCheckMessage('✅ Đã phát hiện thanh toán!');
+                    setInvoiceStatus('PAID');
+                    statusRef.current = 'PAID';
+
+                    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+
+                    // Update local balance
+                    if (user) {
+                        updateUser({ walletBalance: (user.walletBalance || 0) + invoiceData.amount });
+                    }
+
+                    // Try crediting wallet in DB too
+                    try {
+                        const token = localStorage.getItem('token') || '';
+                        await fetch('/api/v1/wallet/deposits/check', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                            body: JSON.stringify({ depositCode: invoiceData.content, amount: invoiceData.amount }),
+                        });
+                    } catch {}
+
+                    return;
+                }
+            } catch (error) {
+                console.error('[Deposit] Error checking status:', error);
+                setCheckMessage('❌ Lỗi khi kiểm tra. Đang thử lại...');
+            }
+
+            setIsChecking(false);
+
+            // Stop after max checks
+            if (checkCountRef.current >= MAX_CHECKS) {
+                setCheckMessage('⏱️ Đã kiểm tra 10 phút. Vui lòng liên hệ hỗ trợ nếu đã chuyển khoản.');
+                if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+            }
+        };
+
+        // Check immediately
+        checkStatus();
+        // Then every 5s
+        intervalRef.current = setInterval(checkStatus, CHECK_INTERVAL_MS);
+
+        return () => { if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; } };
+    }, [invoiceData, invoiceStatus]);
 
     const handleCancel = () => {
-        stopAllTimers();
-        setStep('select');
-        setAmount(0);
-        setCustomAmount('');
-        setCheckResult(null);
-        setCountdown(COUNTDOWN_SECONDS);
-        const code = 'CTN' + Date.now().toString(36).toUpperCase().slice(-6);
-        setDepositCode(code);
+        setIsCancelling(true);
+        if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+        setInvoiceStatus('CANCELLED');
+        statusRef.current = 'CANCELLED';
+        setIsChecking(false);
+        setCheckMessage('');
+        setTimeout(() => {
+            setInvoiceData(null);
+            setInvoiceStatus('PENDING');
+            statusRef.current = 'PENDING';
+            setAmount('');
+            setIsCancelling(false);
+        }, 500);
     };
-
-    const handleRetry = () => {
-        setStep('select');
-        setAmount(0);
-        setCustomAmount('');
-        setCheckResult(null);
-        setCountdown(COUNTDOWN_SECONDS);
-        const code = 'CTN' + Date.now().toString(36).toUpperCase().slice(-6);
-        setDepositCode(code);
-    };
-
-    const formatTime = (seconds: number) => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    };
-
-    const countdownPercent = (countdown / COUNTDOWN_SECONDS) * 100;
-    const isUrgent = countdown <= 60;
-
-    const qrUrl = `https://img.vietqr.io/image/MBBank-${bankInfo.accountNo}-compact2.jpg?amount=${selectedAmount}&addInfo=${depositCode}&accountName=${encodeURIComponent(bankInfo.accountName)}`;
 
     return (
         <div className="space-y-6">
@@ -208,9 +181,7 @@ export default function DepositPage() {
             {/* Current Balance */}
             <div className="card !p-4 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-brand-primary/20 flex items-center justify-center">
-                        <Wallet className="w-5 h-5 text-brand-primary" />
-                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-brand-primary/20 flex items-center justify-center"><Wallet className="w-5 h-5 text-brand-primary" /></div>
                     <div>
                         <div className="text-xs text-brand-text-muted">Số dư ví hiện tại</div>
                         <div className="text-xl font-bold text-brand-primary">{(user?.walletBalance || 0).toLocaleString('vi-VN')}đ</div>
@@ -218,160 +189,183 @@ export default function DepositPage() {
                 </div>
             </div>
 
-            {/* Step 1: Select Amount */}
-            {step === 'select' && (
+            {/* SELECT AMOUNT — When no invoice */}
+            {!invoiceData && (
                 <div className="card space-y-5">
-                    <h2 className="text-sm font-semibold text-brand-text-primary flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-brand-primary" /> Chọn số tiền nạp
-                    </h2>
+                    <h2 className="text-sm font-semibold text-brand-text-primary flex items-center gap-2">💳 Chọn số tiền nạp</h2>
                     <div className="grid grid-cols-3 gap-3">
                         {DEPOSIT_AMOUNTS.map(a => (
-                            <button key={a} onClick={() => { setAmount(a); setCustomAmount(''); }}
-                                className={`py-3 rounded-xl text-sm font-semibold transition-all ${amount === a && !customAmount ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-surface-2 text-brand-text-secondary hover:border-brand-primary border border-transparent'}`}>
+                            <button key={a} onClick={() => setAmount(a.toString())}
+                                className={`py-3 rounded-xl text-sm font-semibold transition-all ${parseInt(amount) === a ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-surface-2 text-brand-text-secondary hover:border-brand-primary border border-transparent'}`}>
                                 {a.toLocaleString('vi-VN')}đ
                             </button>
                         ))}
                     </div>
                     <div>
                         <label className="text-xs text-brand-text-muted mb-1 block">Hoặc nhập số tiền tùy chỉnh:</label>
-                        <input type="number" value={customAmount} onChange={e => { setCustomAmount(e.target.value); setAmount(0); }}
+                        <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
                             placeholder="VD: 300000" className="input-field w-full text-sm" min={10000} />
                     </div>
-                    <button onClick={handleProceed} disabled={selectedAmount < 10000}
+                    <button onClick={handleCreateInvoice} disabled={!amount || parseInt(amount) < 10000}
                         className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50">
-                        Tiếp tục <ArrowRight className="w-4 h-4" />
+                        Tạo hóa đơn nạp tiền <ArrowRight className="w-4 h-4" />
                     </button>
                 </div>
             )}
 
-            {/* Step 2: Transfer — with countdown timer */}
-            {step === 'transfer' && (
-                <div className="space-y-4">
-                    {/* Countdown Timer Bar */}
-                    <div className={`card !p-4 border-2 ${isUrgent ? 'border-brand-danger/50 bg-brand-danger/5' : 'border-brand-primary/30 bg-brand-primary/5'}`}>
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <Timer className={`w-5 h-5 ${isUrgent ? 'text-brand-danger animate-pulse' : 'text-brand-primary'}`} />
-                                <span className={`text-sm font-semibold ${isUrgent ? 'text-brand-danger' : 'text-brand-text-primary'}`}>
-                                    Thời gian chờ thanh toán
-                                </span>
+            {/* INVOICE — Shop-mmo layout: Dark left + White right */}
+            {invoiceData && (
+                <div>
+                    {/* Top actions */}
+                    <div className="flex items-center justify-between mb-4">
+                        <button onClick={handleCancel} className="text-sm text-brand-text-muted hover:text-brand-primary flex items-center gap-1">
+                            ← Tạo hóa đơn khác
+                        </button>
+                        {invoiceStatus === 'PENDING' && (
+                            <button onClick={handleCancel} disabled={isCancelling}
+                                className="text-sm text-red-500 hover:text-red-600 flex items-center gap-1">
+                                <X className="w-3.5 h-3.5" /> Hủy hóa đơn
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-200 min-h-[500px]">
+                        {/* LEFT: Dark panel with bank info */}
+                        <div className="w-full md:w-2/5 bg-[#1a1a1a] text-white p-8 flex flex-col justify-between relative">
+                            <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="relative z-10 space-y-6">
+                                {/* Header */}
+                                <div className="border border-cyan-500/30 bg-cyan-900/10 p-4 rounded text-center">
+                                    <h2 className="text-lg font-bold text-cyan-400 uppercase tracking-wider">CHỢ TÀI NGUYÊN</h2>
+                                    <p className="text-[10px] text-gray-400 tracking-[0.3em] uppercase mt-1">HÓA ĐƠN NẠP TIỀN</p>
+                                </div>
+
+                                {/* Bank info */}
+                                <div className="space-y-5 text-sm">
+                                    <div>
+                                        <p className="text-gray-500 text-xs mb-1 uppercase font-bold">🏦 NGÂN HÀNG</p>
+                                        <div className="flex items-center gap-3">
+                                            <img src={BANK_INFO.logo} className="h-8 w-8 rounded-full bg-white p-0.5" alt="MB" />
+                                            <p className="font-bold text-xl text-white">MB Bank</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-gray-500 text-xs mb-1 uppercase font-bold flex items-center gap-2">
+                                            💳 SỐ TÀI KHOẢN
+                                            <button onClick={() => copyToClipboard(BANK_INFO.accountNo, 'stk')} className="text-cyan-500 hover:text-white transition">
+                                                <Copy className="w-3.5 h-3.5" />
+                                            </button>
+                                        </p>
+                                        <p className="font-mono font-bold text-green-400 text-2xl tracking-wider">{BANK_INFO.accountNo}</p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-gray-500 text-xs mb-1 uppercase font-bold">👤 CHỦ TÀI KHOẢN</p>
+                                        <p className="font-bold text-lg uppercase">{BANK_INFO.accountName}</p>
+                                    </div>
+
+                                    <div className="border-t border-gray-700 pt-4">
+                                        <p className="text-gray-500 text-xs mb-1 uppercase font-bold">💰 SỐ TIỀN NẠP</p>
+                                        <p className="font-bold text-3xl text-cyan-400">{invoiceData.amount.toLocaleString()} <span className="text-sm text-gray-400">VNĐ</span></p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-gray-500 text-xs mb-2 uppercase font-bold flex items-center gap-2">
+                                            📝 NỘI DUNG CHUYỂN KHOẢN (BẮT BUỘC)
+                                            <button onClick={() => copyToClipboard(invoiceData.content, 'content')} className="text-cyan-500 hover:text-white transition">
+                                                <Copy className="w-3.5 h-3.5" />
+                                            </button>
+                                        </p>
+                                        <div className="bg-yellow-900/20 text-yellow-400 border border-yellow-600/30 p-3 rounded font-mono font-bold text-center text-lg tracking-wide border-dashed break-all">
+                                            {invoiceData.content}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className={`text-2xl font-bold font-mono ${isUrgent ? 'text-brand-danger' : 'text-brand-primary'}`}>
-                                {formatTime(countdown)}
+
+                            {/* Payment Status */}
+                            <div className="pt-6 mt-4 border-t border-gray-800 flex flex-col items-center justify-center gap-2">
+                                {invoiceStatus === 'PAID' ? (
+                                    <div className="flex items-center gap-2 text-green-400 font-bold animate-pulse text-lg bg-green-900/20 px-4 py-2 rounded-full border border-green-500/30 w-full justify-center">
+                                        <CheckCircle2 className="w-6 h-6" /> NẠP TIỀN THÀNH CÔNG
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex items-center gap-2 text-orange-400 text-xs font-bold bg-orange-900/10 px-4 py-2 rounded-full border border-orange-500/20 w-full justify-center">
+                                            {isChecking ? (
+                                                <><Loader2 className="w-4 h-4 animate-spin" /> Đang kiểm tra thanh toán...</>
+                                            ) : (
+                                                <><Clock className="w-4 h-4" /> Đang chờ thanh toán...</>
+                                            )}
+                                        </div>
+                                        {checkMessage && (
+                                            <p className="text-xs text-gray-400 text-center">{checkMessage}</p>
+                                        )}
+                                        <button onClick={handleCancel} disabled={isCancelling}
+                                            className="mt-2 w-full px-4 py-2 bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-500/30 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2">
+                                            <X className="w-4 h-4" /> Hủy thanh toán
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
-                        <div className="w-full bg-brand-surface-3 rounded-full h-2 overflow-hidden">
-                            <div
-                                className={`h-full rounded-full transition-all duration-1000 ${isUrgent ? 'bg-brand-danger' : 'bg-brand-primary'}`}
-                                style={{ width: `${countdownPercent}%` }}
-                            />
-                        </div>
-                        <div className="flex items-center gap-2 mt-2 text-xs">
-                            {checking ? (
-                                <span className="text-brand-primary flex items-center gap-1">
-                                    <RefreshCw className="w-3 h-3 animate-spin" /> Đang kiểm tra giao dịch...
-                                </span>
+
+                        {/* RIGHT: White panel with QR */}
+                        <div className="w-full md:w-3/5 bg-white p-8 flex flex-col items-center justify-center">
+                            {invoiceStatus === 'PAID' ? (
+                                <div className="text-center space-y-4">
+                                    <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                                        <CheckCircle2 className="w-10 h-10 text-green-500" />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-green-600">Nạp tiền thành công!</h3>
+                                    <p className="text-gray-500">Số tiền <strong className="text-green-600">{invoiceData.amount.toLocaleString()}đ</strong> đã được cộng vào ví</p>
+                                    <div className="flex gap-3 mt-4">
+                                        <button onClick={handleCancel} className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold text-gray-700">Nạp thêm</button>
+                                        <button onClick={() => window.location.href = '/dashboard'} className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-semibold">Về Dashboard</button>
+                                    </div>
+                                </div>
                             ) : (
-                                <span className="text-brand-text-muted">Tự động kiểm tra mỗi 3 giây</span>
+                                <>
+                                    <div className="text-center mb-6">
+                                        <h3 className="text-2xl font-black text-blue-600 mb-2 uppercase tracking-tight">QUÉT MÃ QR</h3>
+                                        <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
+                                            <span className="flex items-center gap-1">📱 App Ngân hàng</span>
+                                            <span>·</span>
+                                            <span className="flex items-center gap-1">📷 Camera hỗ trợ QR</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gray-50 rounded-2xl p-6 inline-block border-2 border-gray-200">
+                                        <img
+                                            src={getQRCodeUrl()}
+                                            alt="QR Code"
+                                            className="w-64 h-64 mx-auto"
+                                        />
+                                    </div>
+
+                                    <div className="mt-6 flex items-center gap-4 opacity-80">
+                                        <span className="font-bold text-gray-500 text-sm">napas247</span>
+                                        <span className="text-gray-300">|</span>
+                                        <div className="flex items-center gap-2">
+                                            <img src={BANK_INFO.logo} className="h-6 w-6 rounded bg-white" alt="MB" />
+                                            <span className="font-bold text-gray-700">MB</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 bg-orange-50 border border-orange-200 rounded-xl p-3 max-w-sm">
+                                        <div className="flex items-start gap-2">
+                                            <AlertTriangle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                                            <p className="text-xs text-orange-700">
+                                                <strong>Quan trọng:</strong> Nhập đúng nội dung chuyển khoản <strong className="text-blue-600">{invoiceData.content}</strong> để hệ thống tự động xác nhận.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </>
                             )}
                         </div>
                     </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {/* Bank Info */}
-                        <div className="card space-y-4">
-                            <h2 className="text-sm font-semibold text-brand-text-primary">Thông tin chuyển khoản</h2>
-                            {[
-                                { label: 'Ngân hàng', value: bankInfo.bank },
-                                { label: 'Số tài khoản', value: bankInfo.accountNo, copyable: true },
-                                { label: 'Chủ tài khoản', value: bankInfo.accountName },
-                                { label: 'Số tiền', value: selectedAmount.toLocaleString('vi-VN') + 'đ', copyable: true, copyValue: selectedAmount.toString() },
-                                { label: 'Nội dung CK', value: depositCode, copyable: true, highlight: true },
-                            ].map(item => (
-                                <div key={item.label} className="flex items-center justify-between bg-brand-surface-2 rounded-xl p-3">
-                                    <div>
-                                        <div className="text-[10px] text-brand-text-muted uppercase tracking-wider">{item.label}</div>
-                                        <div className={`text-sm font-semibold ${item.highlight ? 'text-brand-primary' : 'text-brand-text-primary'}`}>{item.value}</div>
-                                    </div>
-                                    {item.copyable && (
-                                        <button onClick={() => copyToClipboard(item.copyValue || item.value, item.label)}
-                                            className="p-2 rounded-lg hover:bg-brand-surface-3 transition-colors">
-                                            {copied === item.label ? <CheckCircle2 className="w-4 h-4 text-brand-success" /> : <Copy className="w-4 h-4 text-brand-text-muted" />}
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-
-                            <div className="bg-brand-warning/10 border border-brand-warning/30 rounded-xl p-3 flex items-start gap-2">
-                                <AlertTriangle className="w-4 h-4 text-brand-warning shrink-0 mt-0.5" />
-                                <div className="text-xs text-brand-text-secondary">
-                                    <span className="font-semibold text-brand-warning">Quan trọng:</span> Nhập đúng nội dung chuyển khoản <span className="font-bold text-brand-primary">{depositCode}</span> để hệ thống tự động xác nhận.
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* QR Code */}
-                        <div className="card text-center space-y-4">
-                            <h2 className="text-sm font-semibold text-brand-text-primary flex items-center justify-center gap-2">
-                                <QrCode className="w-4 h-4 text-brand-primary" /> Quét mã QR
-                            </h2>
-                            <div className="bg-white rounded-xl p-4 inline-block mx-auto">
-                                <img src={qrUrl} alt="QR Code" className="w-56 h-56 mx-auto" />
-                            </div>
-                            <p className="text-xs text-brand-text-muted">Mở app ngân hàng → Quét QR → Xác nhận chuyển</p>
-
-                            <button onClick={handleCancel}
-                                className="btn-secondary w-full text-sm flex items-center justify-center gap-2">
-                                <XCircle className="w-4 h-4" /> Hủy giao dịch
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Step 3: Success */}
-            {step === 'success' && (
-                <div className="card text-center space-y-4 max-w-md mx-auto">
-                    <div className="w-16 h-16 rounded-full bg-brand-success/15 flex items-center justify-center mx-auto">
-                        <CheckCircle2 className="w-8 h-8 text-brand-success" />
-                    </div>
-                    <h2 className="text-xl font-bold text-brand-text-primary">Nạp tiền thành công!</h2>
-                    <div className="bg-brand-success/10 rounded-xl p-4">
-                        <div className="text-sm text-brand-text-muted mb-1">Số tiền đã cộng</div>
-                        <div className="text-2xl font-bold text-brand-success">+{selectedAmount.toLocaleString('vi-VN')}đ</div>
-                    </div>
-                    {checkResult?.transaction && (
-                        <div className="bg-brand-surface-2 rounded-xl p-3 text-left text-xs space-y-1">
-                            <div className="text-brand-text-muted">Mã GD: <span className="text-brand-text-primary font-medium">{checkResult.transaction.transaction_id}</span></div>
-                            <div className="text-brand-text-muted">Thời gian: <span className="text-brand-text-primary font-medium">{checkResult.transaction.transaction_date}</span></div>
-                        </div>
-                    )}
-                    <div className="flex gap-3">
-                        <button onClick={handleRetry} className="btn-secondary flex-1 text-sm">Nạp thêm</button>
-                        <button onClick={() => window.location.href = '/dashboard/vi'} className="btn-primary flex-1 text-sm">Xem ví</button>
-                    </div>
-                </div>
-            )}
-
-            {/* Step 4: Expired */}
-            {step === 'expired' && (
-                <div className="card text-center space-y-4 max-w-md mx-auto">
-                    <div className="w-16 h-16 rounded-full bg-brand-danger/15 flex items-center justify-center mx-auto">
-                        <XCircle className="w-8 h-8 text-brand-danger" />
-                    </div>
-                    <h2 className="text-xl font-bold text-brand-text-primary">Hết thời gian thanh toán</h2>
-                    <p className="text-sm text-brand-text-muted">
-                        Hóa đơn đã tự động hủy do không nhận được thanh toán trong {Math.floor(COUNTDOWN_SECONDS / 60)} phút {COUNTDOWN_SECONDS % 60} giây.
-                    </p>
-                    <div className="bg-brand-warning/10 border border-brand-warning/30 rounded-xl p-3 flex items-start gap-2">
-                        <AlertTriangle className="w-4 h-4 text-brand-warning shrink-0 mt-0.5" />
-                        <div className="text-xs text-brand-text-secondary">
-                            Nếu bạn đã chuyển tiền nhưng chưa được ghi nhận, vui lòng liên hệ hỗ trợ kèm theo ảnh chụp màn hình giao dịch.
-                        </div>
-                    </div>
-                    <button onClick={handleRetry} className="btn-primary w-full text-sm flex items-center justify-center gap-2">
-                        <RefreshCw className="w-4 h-4" /> Tạo hóa đơn mới
-                    </button>
                 </div>
             )}
         </div>

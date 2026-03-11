@@ -1,155 +1,265 @@
 /**
- * MB Bank Service — Ported from Credit-Flow Manager (working implementation)
- * Uses apicanhan.com API to check bank transactions
+ * MB Bank Service — EXACT COPY from Shop MMO Tiện Ích (working implementation)
+ * Uses TWO methods:
+ * 1. Primary: Direct MB Bank session/cookie API (online.mbbank.com.vn)
+ * 2. Fallback: apicanhan.com API
  */
 
-interface MBTransaction {
-    transaction_id: string;
-    amount: number;
-    description: string;
-    transaction_date: string;
-    type: string;
+interface MBBankConfig {
+  username: string;
+  password: string;
+  accountNo: string;
+  apicanhanKey?: string;
+  sessionId?: string;
+  token?: string;
+  cookie?: string;
+  deviceid?: string;
 }
 
-export class MBBankService {
-    private apiUrl: string;
-    private apiKey: string;
-    private username: string;
-    private password: string;
-    private accountNo: string;
+interface MBBankTransaction {
+  transactionID: string;
+  amount: string;
+  description: string;
+  transactionDate: string;
+  type: 'IN' | 'OUT';
+}
 
-    constructor() {
-        this.apiUrl = process.env.MBBANK_API_URL || 'https://apicanhan.com/api/mbbankv3';
-        this.apiKey = process.env.MBBANK_API_KEY || '';
-        this.username = process.env.MBBANK_USERNAME || '';
-        this.password = process.env.MBBANK_PASSWORD || '';
-        this.accountNo = process.env.MBBANK_ACCOUNT || '';
-    }
+// Config từ environment variables
+const getMBBankConfig = (): MBBankConfig => {
+  const username = process.env.MBBANK_USERNAME;
+  const password = process.env.MBBANK_PASSWORD;
+  const accountNo = process.env.MBBANK_ACCOUNT;
+  // Support BOTH env var names
+  const apicanhanKey = process.env.APICANHAN_KEY || process.env.MBBANK_API_KEY;
 
-    async getTransactions(limit = 20): Promise<MBTransaction[] | null> {
-        if (!this.apiKey || !this.accountNo) {
-            console.log('[MBBank] Missing API key or account number');
-            return null;
+  if (!username || !password || !accountNo) {
+    console.error('[MB Bank] Missing required environment variables: MBBANK_USERNAME, MBBANK_PASSWORD, MBBANK_ACCOUNT');
+    throw new Error('Missing required MB Bank configuration. Please set environment variables.');
+  }
+
+  if (!apicanhanKey) {
+    console.warn('[MB Bank] APICANHAN_KEY not set - fallback API will not work');
+  }
+
+  return {
+    username,
+    password,
+    accountNo,
+    apicanhanKey: apicanhanKey || '',
+    sessionId: process.env.MBBANK_SESSION_ID || '',
+    token: process.env.MBBANK_TOKEN || '',
+    cookie: process.env.MBBANK_COOKIE || '',
+    deviceid: process.env.MBBANK_DEVICEID || '',
+  };
+};
+
+/**
+ * Lấy danh sách giao dịch từ MB Bank website
+ * Sử dụng cookie/session có sẵn, fallback sang apicanhan
+ */
+export async function fetchMBBankTransactionsFromWeb(): Promise<MBBankTransaction[]> {
+  const config = getMBBankConfig();
+
+  try {
+    // Ưu tiên sử dụng cookie/session trực tiếp
+    if (config.cookie && config.sessionId) {
+      console.log('[MB Bank Web] Sử dụng cookie/session để truy cập MB Bank website...');
+      try {
+        const transactions = await fetchTransactionsWithSession(config);
+        if (transactions && transactions.length > 0) {
+          return transactions;
         }
+      } catch (sessionError) {
+        console.warn('[MB Bank Web] Lỗi khi dùng session, fallback về API:', sessionError);
+      }
+    }
 
-        try {
-            const params = new URLSearchParams({
-                key: this.apiKey,
-                username: this.username || this.accountNo,
-                password: this.password || '',
-                accountNo: this.accountNo,
-            });
+    // Fallback: Sử dụng API apicanhan
+    console.log('[MB Bank Web] Sử dụng API apicanhan.com như fallback...');
+    return await fetchTransactionsViaAPI(config);
+  } catch (error) {
+    console.error('[MB Bank Web] Lỗi khi lấy giao dịch:', error);
+    try {
+      return await fetchTransactionsViaAPI(config);
+    } catch (fallbackError) {
+      console.error('[MB Bank Web] Lỗi cả fallback:', fallbackError);
+      throw new Error('Không thể lấy giao dịch từ MB Bank');
+    }
+  }
+}
 
-            const url = `${this.apiUrl}?${params.toString()}`;
-            console.log(`[MBBank] Fetching: ${this.apiUrl}?key=***&username=${this.username}&accountNo=${this.accountNo}`);
+/**
+ * Lấy giao dịch sử dụng cookie/session từ MB Bank website
+ */
+async function fetchTransactionsWithSession(config: MBBankConfig): Promise<MBBankTransaction[]> {
+  try {
+    const endpoints = [
+      'https://online.mbbank.com.vn/api/retail/transaction-account/so-tien-giao-dich',
+      'https://online.mbbank.com.vn/api/retail/transaction-account/get',
+      'https://online.mbbank.com.vn/api/retail/transaction/list',
+    ];
 
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 30000);
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Origin': 'https://online.mbbank.com.vn',
+      'Referer': 'https://online.mbbank.com.vn/',
+    };
 
-            const response = await fetch(url, {
-                signal: controller.signal,
-            });
-            clearTimeout(timeout);
+    if (config.cookie) headers['Cookie'] = config.cookie;
+    if (config.sessionId) { headers['X-Session-Id'] = config.sessionId; headers['sessionId'] = config.sessionId; }
+    if (config.token) { headers['Authorization'] = `Bearer ${config.token}`; headers['token'] = config.token; }
+    if (config.deviceid) { headers['deviceIdCommon'] = config.deviceid; headers['device-id'] = config.deviceid; }
 
-            if (!response.ok) {
-                console.log(`[MBBank] API error: HTTP ${response.status}`);
-                return null;
-            }
+    for (const url of endpoints) {
+      try {
+        console.log(`[MB Bank Web] Thử endpoint: ${url}`);
 
-            const data = await response.json();
-            console.log(`[MBBank] API status: ${data.status}, message: ${data.message || 'none'}`);
+        const requestBody = {
+          accountNo: config.accountNo,
+          fromDate: getDateDaysAgo(30),
+          toDate: getCurrentDate(),
+          historyNumber: '',
+          historyType: 'DATE_RANGE',
+          refNo: '',
+          sessionId: config.sessionId,
+          deviceIdCommon: config.deviceid,
+        };
 
-            if (data.status !== 'success') {
-                console.log(`[MBBank] API returned error: ${data.message || 'Unknown'}`);
-                return null;
-            }
+        const response = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(requestBody),
+        });
 
-            const txList = data.transactions || [];
-            if (!Array.isArray(txList)) {
-                console.log('[MBBank] transactions is not an array');
-                return null;
-            }
+        if (!response.ok) { console.warn(`[MB Bank Web] Endpoint ${url} trả về status ${response.status}`); continue; }
 
-            console.log(`[MBBank] Got ${txList.length} transactions from API`);
+        const data = await response.json();
+        let transactions: any[] = [];
+        if (data && data.data && Array.isArray(data.data)) transactions = data.data;
+        else if (data && Array.isArray(data)) transactions = data;
+        else if (data && data.transactions && Array.isArray(data.transactions)) transactions = data.transactions;
+        else if (data && data.result && Array.isArray(data.result)) transactions = data.result;
 
-            // Return ALL transactions (not just IN), map with fallback fields like Credit-Flow
-            return txList.slice(0, limit).map((t: any) => ({
-                transaction_id: String(t.transactionNumber || t.refNo || t.transactionID || t.id || ''),
-                amount: Number(t.creditAmount || t.amount || 0),
-                description: (t.description || t.addDescription || '').toUpperCase(),
-                transaction_date: t.transactionDate || '',
-                type: t.type || (Number(t.creditAmount || 0) > 0 ? 'IN' : 'OUT'),
-            }));
-        } catch (error: any) {
-            if (error.name === 'AbortError') {
-                console.log('[MBBank] API request timeout (30s)');
-            } else {
-                console.log(`[MBBank] API request error: ${error.message}`);
-            }
-            return null;
+        if (transactions.length > 0) {
+          console.log(`[MB Bank Web] ✅ Lấy được ${transactions.length} giao dịch từ endpoint: ${url}`);
+          return transactions.map((tx: any) => ({
+            transactionID: tx.refNo || tx.transactionId || tx.id || '',
+            amount: Math.abs(parseInt(tx.amount?.toString() || '0')).toString(),
+            description: tx.description || tx.content || tx.remark || '',
+            transactionDate: formatTransactionDate(tx.transactionDate || tx.date || tx.createdAt),
+            type: (tx.amount >= 0 || tx.type === 'IN' || tx.direction === 'IN') ? 'IN' : 'OUT',
+          }));
         }
+      } catch (endpointError) {
+        console.warn(`[MB Bank Web] Lỗi với endpoint ${url}:`, endpointError);
+        continue;
+      }
     }
 
-    private normalize(s: string): string {
-        return s.toUpperCase().replace(/\s/g, '').replace(/_/g, '');
+    throw new Error('Không thể lấy giao dịch từ bất kỳ endpoint nào');
+  } catch (error) {
+    console.error('[MB Bank Web] Lỗi khi fetch với session:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fallback: Lấy giao dịch qua API apicanhan.com
+ */
+async function fetchTransactionsViaAPI(config: MBBankConfig): Promise<MBBankTransaction[]> {
+  try {
+    const params = new URLSearchParams({
+      key: config.apicanhanKey || '',
+      username: config.username,
+      password: config.password,
+      accountNo: config.accountNo,
+    });
+
+    const url = `https://apicanhan.com/api/mbbankv3?${params.toString()}`;
+    console.log(`[MB Bank Web] Đang gọi API apicanhan: key=***${(config.apicanhanKey || '').slice(-6)}, user=${config.username}, account=${config.accountNo}`);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'accept': 'application/json' },
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const data = await response.json();
+
+    if (data.status === 'success' && data.transactions) {
+      console.log(`[MB Bank Web] ✅ Lấy được ${data.transactions.length} giao dịch từ API`);
+      return data.transactions;
+    } else {
+      console.error(`[MB Bank Web] ❌ API trả về lỗi:`, data);
+      throw new Error(data.message || 'Lỗi từ MB Bank API');
     }
+  } catch (error) {
+    console.error(`[MB Bank Web] ❌ Lỗi khi gọi API:`, error);
+    throw error;
+  }
+}
 
-    async checkDeposit(content: string, amount: number): Promise<MBTransaction | null> {
-        const transactions = await this.getTransactions();
-        if (!transactions) return null;
+function getCurrentDate(): string {
+  const now = new Date();
+  return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+}
 
-        const contentNormalized = this.normalize(content);
-        console.log(`[MBBank] Checking for: code="${contentNormalized}", amount=${amount}`);
-        console.log(`[MBBank] Total transactions to search: ${transactions.length}`);
+function getDateDaysAgo(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+}
 
-        for (const tx of transactions) {
-            // Skip zero/negative amounts
-            if (tx.amount <= 0) continue;
-
-            const txDescNormalized = this.normalize(tx.description);
-
-            // Log each transaction for debugging
-            console.log(`[MBBank]   TX: amount=${tx.amount}, desc="${tx.description.substring(0, 60)}"`);
-
-            // Check if description contains deposit code
-            const codeMatch = txDescNormalized.includes(contentNormalized);
-            // Check if amount matches (with tolerance)
-            const amountMatch = Math.abs(Math.round(tx.amount) - amount) < 100; // 100đ tolerance
-
-            if (codeMatch && amountMatch) {
-                console.log(`[MBBank] ✓ MATCH FOUND: ${tx.transaction_id} — ${tx.amount}đ`);
-                return tx;
-            }
-
-            // Also try matching code only (amount might be slightly different due to bank fees)
-            if (codeMatch) {
-                console.log(`[MBBank] ✓ CODE MATCH (amount differs): txAmount=${tx.amount} vs expected=${amount}`);
-                return tx;
-            }
-        }
-
-        console.log(`[MBBank] ✗ No matching transaction found`);
-        return null;
-    }
-
-    async testConnection(): Promise<boolean> {
-        const transactions = await this.getTransactions(1);
-        return transactions !== null;
-    }
+function formatTransactionDate(dateStr: string): string {
+  if (!dateStr) return '';
+  if (dateStr.includes('/')) return dateStr;
+  try {
+    const date = new Date(dateStr);
+    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+  } catch { return dateStr; }
 }
 
 // QR code URL generator
 export function generateQRUrl(accountNo: string, amount: number, content: string): string {
-    const safeContent = encodeURIComponent(content);
-    return `https://img.vietqr.io/image/MB-${accountNo}-compact.png?amount=${amount}&addInfo=${safeContent}`;
+  const params = new URLSearchParams({ amount: amount.toString(), addInfo: content, accountName: process.env.MBBANK_OWNER_NAME || 'NGUYEN TAI DAT' });
+  return `https://img.vietqr.io/image/MB-${accountNo}-compact.png?${params.toString()}`;
 }
 
-// Singleton
-let mbBankService: MBBankService | null = null;
+// Legacy exports for backward compatibility
+export class MBBankService {
+  async getTransactions(limit = 20) {
+    try {
+      const txs = await fetchMBBankTransactionsFromWeb();
+      return txs.slice(0, limit).map(t => ({
+        transaction_id: t.transactionID,
+        amount: parseInt(t.amount),
+        description: t.description,
+        transaction_date: t.transactionDate,
+        type: t.type,
+      }));
+    } catch { return null; }
+  }
 
-export function getMBBankService(): MBBankService {
-    if (!mbBankService) {
-        mbBankService = new MBBankService();
+  async checkDeposit(content: string, amount: number) {
+    const txs = await this.getTransactions();
+    if (!txs) return null;
+    const searchCode = content.toUpperCase().replace(/\s/g, '');
+    for (const tx of txs) {
+      if (tx.amount <= 0) continue;
+      const txDesc = tx.description.toUpperCase().replace(/\s/g, '');
+      if (txDesc.includes(searchCode)) return tx;
     }
-    return mbBankService;
+    return null;
+  }
+
+  async testConnection() { const t = await this.getTransactions(1); return t !== null; }
+}
+
+let mbBankService: MBBankService | null = null;
+export function getMBBankService(): MBBankService {
+  if (!mbBankService) mbBankService = new MBBankService();
+  return mbBankService;
 }
