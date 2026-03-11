@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateApiKey } from '@/lib/api-keys';
 import { getAllMockUsers } from '@/lib/mock-auth';
-import { getOrdersByUserId } from '../purchase/route';
+import { getOrdersByUserId } from '@/lib/api-order-store';
 
 /**
  * Public API — Orders & Balance

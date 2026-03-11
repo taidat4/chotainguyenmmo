@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateApiKey } from '@/lib/api-keys';
 import { products } from '@/lib/mock-data';
-import { findMockUserByUsername, getAllMockUsers } from '@/lib/mock-auth';
+import { getAllMockUsers } from '@/lib/mock-auth';
+import { stockItems, addApiOrder } from '@/lib/api-order-store';
 
 /**
  * Public API — Purchase
@@ -12,34 +13,6 @@ import { findMockUserByUsername, getAllMockUsers } from '@/lib/mock-auth';
  * 
  * Deducts from wallet, returns purchased items (keys/accounts)
  */
-
-// Mock stock items (in production, this would be in DB)
-const stockItems: Record<string, string[]> = {
-    'prod-1': ['netflix_acc_01@gmail.com:Pass123', 'netflix_acc_02@gmail.com:Pass456', 'netflix_acc_03@gmail.com:Pass789'],
-    'prod-2': ['spotify_key_ABC123', 'spotify_key_DEF456', 'spotify_key_GHI789'],
-    'prod-3': ['canva_pro_01@mail.com:Pro2026', 'canva_pro_02@mail.com:Pro2026'],
-    'prod-4': ['chatgpt_plus_key_001', 'chatgpt_plus_key_002'],
-};
-
-// Order history (in-memory)
-interface Order {
-    id: string;
-    userId: string;
-    productId: string;
-    productName: string;
-    quantity: number;
-    totalPrice: number;
-    items: string[];
-    status: string;
-    createdAt: string;
-    apiKeyId: string;
-}
-
-const orders: Order[] = [];
-
-export function getOrdersByUserId(userId: string): Order[] {
-    return orders.filter(o => o.userId === userId);
-}
 
 export async function POST(req: NextRequest) {
     // Validate API key
@@ -110,7 +83,7 @@ export async function POST(req: NextRequest) {
     user.walletBalance = (user.walletBalance || 0) - totalPrice;
 
     // Create order
-    const order: Order = {
+    const order = {
         id: `ORD-${Date.now().toString(36).toUpperCase()}`,
         userId: keyData.userId,
         productId,
@@ -122,7 +95,7 @@ export async function POST(req: NextRequest) {
         createdAt: new Date().toISOString(),
         apiKeyId: keyData.id,
     };
-    orders.push(order);
+    addApiOrder(order);
 
     return NextResponse.json({
         success: true,

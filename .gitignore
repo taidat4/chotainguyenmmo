@@ -34,3 +34,6 @@ next-env.d.ts
 
 # runtime data
 /data
+
+# Bot (sensitive credentials - run separately)
+/MY_BOT
