@@ -1,0 +1,4606 @@
+{
+  "users": [
+    "8058736254"
+  ],
+  "8058736254": {
+    "user_id": 8058736254,
+    "username": "datshopmmo_04",
+    "full_name": "Shop MMO Đạt-",
+    "first_seen": "2025-12-10T00:10:45.110839",
+    "last_seen": "2026-01-12T18:40:21.510653+07:00",
+    "language": "vi",
+    "balance": 500000
+  },
+  "7961536218": {
+    "user_id": 7961536218,
+    "username": "thinh_shopmmo04",
+    "full_name": "Thịnh _ Shop MMO",
+    "first_seen": "2025-12-20T21:55:35.155321+07:00",
+    "last_seen": "2026-02-28T22:56:51.732233+07:00",
+    "language": "vi"
+  },
+  "5307991443": {
+    "user_id": 5307991443,
+    "username": "Huy30042001",
+    "full_name": "Huy Huy",
+    "first_seen": "2025-12-21T15:36:13.207591+07:00",
+    "last_seen": "2026-01-25T10:39:28.281427+07:00"
+  },
+  "8001776903": {
+    "user_id": 8001776903,
+    "username": "dunghoatdong",
+    "full_name": "@datshopmmo_04 Ae Kb lại với e_",
+    "first_seen": "2025-12-21T15:36:27.841007+07:00",
+    "last_seen": "2026-02-27T14:50:30.801304+07:00",
+    "language": "en",
+    "balance": 506000
+  },
+  "1753173815": {
+    "user_id": 1753173815,
+    "username": "Noanything02",
+    "full_name": "No Anything",
+    "first_seen": "2025-12-21T15:50:08.692071+07:00",
+    "last_seen": "2026-02-23T20:11:50.473600+07:00"
+  },
+  "1081760970": {
+    "user_id": 1081760970,
+    "username": "anan132121",
+    "full_name": "An An",
+    "first_seen": "2025-12-21T16:08:19.924275+07:00",
+    "last_seen": "2026-01-18T21:32:35.347463+07:00"
+  },
+  "8274674173": {
+    "user_id": 8274674173,
+    "username": "vanlinh2300",
+    "full_name": "Anh Tuan",
+    "first_seen": "2025-12-21T16:50:03.798036+07:00",
+    "last_seen": "2025-12-31T16:44:12.310279+07:00"
+  },
+  "1765421294": {
+    "user_id": 1765421294,
+    "username": "minhthanh68",
+    "full_name": "Minh Thành",
+    "first_seen": "2025-12-21T17:09:04.330059+07:00",
+    "last_seen": "2026-02-28T18:34:38.582481+07:00"
+  },
+  "1102480759": {
+    "user_id": 1102480759,
+    "username": "datphanmemstore",
+    "full_name": "Đạt Phần Mềm",
+    "first_seen": "2025-12-21T18:14:59.306973+07:00",
+    "last_seen": "2026-01-03T10:02:00.701878+07:00"
+  },
+  "1653851599": {
+    "user_id": 1653851599,
+    "username": "ADuy_PDo",
+    "full_name": "Äduy :Ƥdo",
+    "first_seen": "2025-12-21T19:35:58.342411+07:00",
+    "last_seen": "2026-02-25T16:48:38.102723+07:00"
+  },
+  "5495117765": {
+    "user_id": 5495117765,
+    "username": "babybubi86",
+    "full_name": "Baby Shark",
+    "first_seen": "2025-12-21T19:48:01.592485+07:00",
+    "last_seen": "2025-12-21T19:48:05.706622+07:00"
+  },
+  "5060139342": {
+    "user_id": 5060139342,
+    "username": "minhtuan999222",
+    "full_name": "Sohara Ka",
+    "first_seen": "2025-12-21T19:49:11.968049+07:00",
+    "last_seen": "2026-01-02T10:08:30.451287+07:00"
+  },
+  "641240986": {
+    "user_id": 641240986,
+    "username": "duongvu2",
+    "full_name": "Dương Vũ",
+    "first_seen": "2025-12-21T20:00:58.324389+07:00",
+    "last_seen": "2025-12-21T20:01:02.705564+07:00"
+  },
+  "8476266978": {
+    "user_id": 8476266978,
+    "username": "phaphela",
+    "full_name": "Gia Huy",
+    "first_seen": "2025-12-21T21:31:17.346827+07:00",
+    "last_seen": "2025-12-22T08:44:36.805057+07:00"
+  },
+  "5795992855": {
+    "user_id": 5795992855,
+    "username": "hhuy2798",
+    "full_name": "H Huy",
+    "first_seen": "2025-12-21T22:26:23.955678+07:00",
+    "last_seen": "2025-12-26T06:55:59.566204+07:00"
+  },
+  "1209723277": {
+    "user_id": 1209723277,
+    "username": "Alexngynn",
+    "full_name": "Nguyen Alex",
+    "first_seen": "2025-12-21T23:04:58.228724+07:00",
+    "last_seen": "2026-02-28T23:19:57.341269+07:00",
+    "language": "vi"
+  },
+  "6664286112": {
+    "user_id": 6664286112,
+    "username": "nguyen_quyy",
+    "full_name": "qy qy quy",
+    "first_seen": "2025-12-21T23:20:22.065479+07:00",
+    "last_seen": "2026-01-05T11:36:31.561358+07:00"
+  },
+  "6602551755": {
+    "user_id": 6602551755,
+    "username": "baovo41",
+    "full_name": "Bao Vo",
+    "first_seen": "2025-12-22T09:04:15.372639+07:00",
+    "last_seen": "2025-12-22T09:57:01.738013+07:00"
+  },
+  "5129454950": {
+    "user_id": 5129454950,
+    "username": "Kang8386",
+    "full_name": "Kang",
+    "first_seen": "2025-12-22T09:05:40.593388+07:00",
+    "last_seen": "2026-02-27T10:51:22.475082+07:00",
+    "language": "vi"
+  },
+  "7880944832": {
+    "user_id": 7880944832,
+    "username": "mucphe",
+    "full_name": "Mực Phệ",
+    "first_seen": "2025-12-22T09:06:08.197783+07:00",
+    "last_seen": "2026-02-20T16:27:50.216963+07:00"
+  },
+  "893093543": {
+    "user_id": 893093543,
+    "username": "ha168865",
+    "full_name": "Huuanh",
+    "first_seen": "2025-12-22T09:06:52.619058+07:00",
+    "last_seen": "2026-02-26T20:11:50.976680+07:00"
+  },
+  "484507121": {
+    "user_id": 484507121,
+    "username": "kidkaitoo",
+    "full_name": "KID",
+    "first_seen": "2025-12-22T09:07:41.204660+07:00",
+    "last_seen": "2026-01-24T09:54:31.657588+07:00"
+  },
+  "6368681038": {
+    "user_id": 6368681038,
+    "username": "shin0in07",
+    "full_name": "᠌𝙎𝙝𝙞𝙣0 ᠌",
+    "first_seen": "2025-12-22T09:12:30.946301+07:00",
+    "last_seen": "2025-12-23T12:15:16.879305+07:00"
+  },
+  "1385728167": {
+    "user_id": 1385728167,
+    "username": "VieBoizz",
+    "full_name": "VieBoiz|Daos/Acc",
+    "first_seen": "2025-12-22T09:13:09.945346+07:00",
+    "last_seen": "2026-01-05T14:57:45.151978+07:00"
+  },
+  "7527368791": {
+    "user_id": 7527368791,
+    "username": "ntdatutc12",
+    "full_name": "Hiệp Đào Hữu",
+    "first_seen": "2025-12-22T09:13:47.477580+07:00",
+    "last_seen": "2026-02-23T18:23:12.645669+07:00"
+  },
+  "6808449294": {
+    "user_id": 6808449294,
+    "username": "kieunghiso1",
+    "full_name": "kieu nghi",
+    "first_seen": "2025-12-22T09:14:24.803105+07:00",
+    "last_seen": "2025-12-22T09:14:27.412197+07:00"
+  },
+  "8304418758": {
+    "user_id": 8304418758,
+    "username": "wilsonjjr71285",
+    "full_name": "James Wilson",
+    "first_seen": "2025-12-22T09:15:42.198464+07:00",
+    "last_seen": "2026-02-26T14:40:27.311939+07:00"
+  },
+  "5628832542": {
+    "user_id": 5628832542,
+    "username": "",
+    "full_name": "Huag",
+    "first_seen": "2025-12-22T09:17:22.253531+07:00",
+    "last_seen": "2026-02-28T22:25:21.807098+07:00",
+    "language": "vi"
+  },
+  "1983888209": {
+    "user_id": 1983888209,
+    "username": "maitheluc1998",
+    "full_name": "Mai Thế Lực | Mr Hiroshi 🦴",
+    "first_seen": "2025-12-22T09:26:44.443322+07:00",
+    "last_seen": "2026-02-26T16:21:38.858840+07:00",
+    "language": "vi"
+  },
+  "2144819419": {
+    "user_id": 2144819419,
+    "username": "haoanhhungxt",
+    "full_name": "Faker",
+    "first_seen": "2025-12-22T09:39:59.980491+07:00",
+    "last_seen": "2025-12-22T09:40:07.218226+07:00"
+  },
+  "5910161214": {
+    "user_id": 5910161214,
+    "username": "Daudau0307",
+    "full_name": "Minchou Ng",
+    "first_seen": "2025-12-22T09:43:57.417922+07:00",
+    "last_seen": "2025-12-22T09:44:03.259334+07:00"
+  },
+  "7821011190": {
+    "user_id": 7821011190,
+    "username": "Safa19872",
+    "full_name": "S N",
+    "first_seen": "2025-12-22T09:48:51.649800+07:00",
+    "last_seen": "2025-12-22T09:49:22.962285+07:00"
+  },
+  "1208676281": {
+    "user_id": 1208676281,
+    "username": "",
+    "full_name": "Gin",
+    "first_seen": "2025-12-22T10:45:06.336659+07:00",
+    "last_seen": "2026-01-08T14:50:40.682082+07:00"
+  },
+  "506669609": {
+    "user_id": 506669609,
+    "username": "daokimluc",
+    "full_name": "L DK",
+    "first_seen": "2025-12-22T11:05:52.583751+07:00",
+    "last_seen": "2026-02-26T12:02:43.136025+07:00"
+  },
+  "7494643195": {
+    "user_id": 7494643195,
+    "username": "CloudxSephiroth",
+    "full_name": "Mavis Legend",
+    "first_seen": "2025-12-22T11:06:43.022781+07:00",
+    "last_seen": "2025-12-22T11:06:50.642675+07:00"
+  },
+  "7495682609": {
+    "user_id": 7495682609,
+    "username": "realll_lhn",
+    "full_name": "👑lhn",
+    "first_seen": "2025-12-22T11:46:44.208789+07:00",
+    "last_seen": "2025-12-22T11:47:21.015971+07:00"
+  },
+  "998585249": {
+    "user_id": 998585249,
+    "username": "hoapzh",
+    "full_name": "Hoa Nguyen",
+    "first_seen": "2025-12-22T12:14:41.949609+07:00",
+    "last_seen": "2025-12-22T12:15:18.832186+07:00"
+  },
+  "431096322": {
+    "user_id": 431096322,
+    "username": "long_gnol",
+    "full_name": "Long Ng",
+    "first_seen": "2025-12-22T12:14:47.267373+07:00",
+    "last_seen": "2026-01-08T20:07:12.392401+07:00"
+  },
+  "531053378": {
+    "user_id": 531053378,
+    "username": "Comsdaddy",
+    "full_name": "Ho Li",
+    "first_seen": "2025-12-22T12:31:20.964470+07:00",
+    "last_seen": "2025-12-22T12:31:31.041749+07:00"
+  },
+  "6687328203": {
+    "user_id": 6687328203,
+    "username": "thanhvo615",
+    "full_name": "ViEnTi ( ONLY BANK NAME: VO NHUT THANH )",
+    "first_seen": "2025-12-22T13:02:08.099027+07:00",
+    "last_seen": "2026-02-01T12:53:02.555764+07:00"
+  },
+  "6622396766": {
+    "user_id": 6622396766,
+    "username": "huongnguyen2911",
+    "full_name": "Hương Vũ",
+    "first_seen": "2025-12-22T13:05:59.004693+07:00",
+    "last_seen": "2026-01-09T08:26:09.411470+07:00"
+  },
+  "2138828741": {
+    "user_id": 2138828741,
+    "username": "badman192",
+    "full_name": "𝐁𝐚𝐝",
+    "first_seen": "2025-12-22T13:07:48.322146+07:00",
+    "last_seen": "2026-02-13T11:21:12.158056+07:00"
+  },
+  "6188590103": {
+    "user_id": 6188590103,
+    "username": "ai4allfans",
+    "full_name": "Dr HO",
+    "first_seen": "2025-12-22T13:34:46.809687+07:00",
+    "last_seen": "2026-01-26T14:37:43.229866+07:00"
+  },
+  "6338389321": {
+    "user_id": 6338389321,
+    "username": "hoze6789",
+    "full_name": "Lee Hoag team XQ-phòng MT",
+    "first_seen": "2025-12-22T13:35:21.516827+07:00",
+    "last_seen": "2025-12-26T13:39:22.718378+07:00"
+  },
+  "1684768952": {
+    "user_id": 1684768952,
+    "username": "Zedmkt",
+    "full_name": "DotCom",
+    "first_seen": "2025-12-22T13:39:41.374770+07:00",
+    "last_seen": "2026-01-30T06:17:45.863562+07:00"
+  },
+  "1963208840": {
+    "user_id": 1963208840,
+    "username": "NhuTho886",
+    "full_name": "Như Thọ",
+    "first_seen": "2025-12-22T13:47:06.765088+07:00",
+    "last_seen": "2026-02-28T10:04:20.861553+07:00",
+    "language": "vi"
+  },
+  "1911403634": {
+    "user_id": 1911403634,
+    "username": "tuanhoanghowk",
+    "full_name": "💠 Tuấn Hoàng",
+    "first_seen": "2025-12-22T13:54:11.640997+07:00",
+    "last_seen": "2025-12-22T13:54:12.312358+07:00"
+  },
+  "5840851724": {
+    "user_id": 5840851724,
+    "username": "amanhasmi1",
+    "full_name": "Anh Manh",
+    "first_seen": "2025-12-22T13:55:34.801948+07:00",
+    "last_seen": "2026-02-03T13:21:50.507033+07:00"
+  },
+  "5538268637": {
+    "user_id": 5538268637,
+    "username": "myhao1209",
+    "full_name": "My Hao",
+    "first_seen": "2025-12-22T14:01:38.460692+07:00",
+    "last_seen": "2025-12-22T14:01:55.606849+07:00"
+  },
+  "644135675": {
+    "user_id": 644135675,
+    "username": "nguyenguyen673",
+    "full_name": "KrazyNoicee",
+    "first_seen": "2025-12-22T14:07:17.959105+07:00",
+    "last_seen": "2026-02-26T21:06:05.983816+07:00",
+    "language": "vi"
+  },
+  "1164335781": {
+    "user_id": 1164335781,
+    "username": "daodhoai",
+    "full_name": "Hò Choái",
+    "first_seen": "2025-12-22T14:46:31.635872+07:00",
+    "last_seen": "2025-12-22T14:46:44.168024+07:00"
+  },
+  "1765620802": {
+    "user_id": 1765620802,
+    "username": "xuanphuoc1407",
+    "full_name": "Phước",
+    "first_seen": "2025-12-22T14:47:10.153867+07:00",
+    "last_seen": "2026-01-10T16:01:24.602785+07:00"
+  },
+  "6930760284": {
+    "user_id": 6930760284,
+    "username": "Vucuong25",
+    "full_name": "Orange Vu",
+    "first_seen": "2025-12-22T14:55:52.608766+07:00",
+    "last_seen": "2025-12-22T15:00:04.654087+07:00"
+  },
+  "1126008202": {
+    "user_id": 1126008202,
+    "username": "ngdanhvietanh",
+    "full_name": "Nguyễn Danh Việt Anh",
+    "first_seen": "2025-12-22T15:45:08.821731+07:00",
+    "last_seen": "2026-01-09T02:18:53.403621+07:00"
+  },
+  "1910057699": {
+    "user_id": 1910057699,
+    "username": "DucTan2003",
+    "full_name": "Đức Tân 𓅿",
+    "first_seen": "2025-12-22T15:46:12.727870+07:00",
+    "last_seen": "2026-02-06T22:17:06.210024+07:00"
+  },
+  "5964802213": {
+    "user_id": 5964802213,
+    "username": "koheim",
+    "full_name": "Park",
+    "first_seen": "2025-12-22T15:50:08.049704+07:00",
+    "last_seen": "2026-01-04T13:35:59.285575+07:00"
+  },
+  "8192615999": {
+    "user_id": 8192615999,
+    "username": "",
+    "full_name": "Dat Tr",
+    "first_seen": "2025-12-23T00:22:49.984476+07:00",
+    "last_seen": "2026-01-08T10:08:10.496898+07:00"
+  },
+  "1038356186": {
+    "user_id": 1038356186,
+    "username": "H_110643x2",
+    "full_name": "Hikky",
+    "first_seen": "2025-12-23T00:44:27.006297+07:00",
+    "last_seen": "2026-01-03T22:14:42.782732+07:00"
+  },
+  "1912261117": {
+    "user_id": 1912261117,
+    "username": "ZaaraOwO",
+    "full_name": "Zaara",
+    "first_seen": "2025-12-23T00:44:29.372938+07:00",
+    "last_seen": "2026-02-25T09:52:51.379790+07:00",
+    "language": "vi"
+  },
+  "5098001222": {
+    "user_id": 5098001222,
+    "username": "longdt8386",
+    "full_name": "Long ㅤㅤㅤㅤ",
+    "first_seen": "2025-12-23T00:52:28.220328+07:00",
+    "last_seen": "2025-12-23T00:52:31.519954+07:00"
+  },
+  "6090687578": {
+    "user_id": 6090687578,
+    "username": "Thangoksoke",
+    "full_name": "🐟 Henry Thang 🌬🎁",
+    "first_seen": "2025-12-23T01:23:25.788401+07:00",
+    "last_seen": "2025-12-23T01:23:26.464978+07:00"
+  },
+  "282831576": {
+    "user_id": 282831576,
+    "username": "huynguyen107",
+    "full_name": "Huy Nguyen",
+    "first_seen": "2025-12-23T01:48:35.439566+07:00",
+    "last_seen": "2026-01-04T12:43:53.897297+07:00"
+  },
+  "958673782": {
+    "user_id": 958673782,
+    "username": "yasurh",
+    "full_name": "Beakmin",
+    "first_seen": "2025-12-23T03:28:48.443995+07:00",
+    "last_seen": "2026-02-04T09:00:59.136825+07:00"
+  },
+  "809393041": {
+    "user_id": 809393041,
+    "username": "tuannguyen9425",
+    "full_name": "ALex KWon",
+    "first_seen": "2025-12-23T04:25:26.262782+07:00",
+    "last_seen": "2025-12-23T04:25:26.919433+07:00"
+  },
+  "6164122466": {
+    "user_id": 6164122466,
+    "username": "dtdt28",
+    "full_name": "Dt 28",
+    "first_seen": "2025-12-23T07:41:22.929105+07:00",
+    "last_seen": "2026-02-28T22:25:26.920133+07:00"
+  },
+  "1187100247": {
+    "user_id": 1187100247,
+    "username": "linquocte",
+    "full_name": "Tín",
+    "first_seen": "2025-12-23T08:57:52.855201+07:00",
+    "last_seen": "2025-12-23T08:57:58.350170+07:00"
+  },
+  "5922065395": {
+    "user_id": 5922065395,
+    "username": "Dac_Winning",
+    "full_name": "Dac Winning 💎",
+    "first_seen": "2025-12-23T09:04:21.121538+07:00",
+    "last_seen": "2026-02-26T14:14:45.756210+07:00"
+  },
+  "592992432": {
+    "user_id": 592992432,
+    "username": "tambh95",
+    "full_name": "Mr D.Luffy",
+    "first_seen": "2025-12-23T09:09:16.776671+07:00",
+    "last_seen": "2026-02-26T20:59:38.309369+07:00"
+  },
+  "739201165": {
+    "user_id": 739201165,
+    "username": "hoangdh",
+    "full_name": "hoangdh",
+    "first_seen": "2025-12-23T09:25:19.966908+07:00",
+    "last_seen": "2026-01-08T15:49:07.891364+07:00"
+  },
+  "585066496": {
+    "user_id": 585066496,
+    "username": "snoworm",
+    "full_name": "snowden",
+    "first_seen": "2025-12-23T09:57:31.189141+07:00",
+    "last_seen": "2026-02-26T20:39:49.140752+07:00"
+  },
+  "866521219": {
+    "user_id": 866521219,
+    "username": "Mrleosong",
+    "full_name": "Leo Song",
+    "first_seen": "2025-12-23T10:59:51.759879+07:00",
+    "last_seen": "2025-12-23T10:59:52.407380+07:00"
+  },
+  "5560569505": {
+    "user_id": 5560569505,
+    "username": "qwochwi",
+    "full_name": "ɱɾ.ßạɔħ •",
+    "first_seen": "2025-12-23T11:16:35.759911+07:00",
+    "last_seen": "2026-02-23T23:22:48.592893+07:00",
+    "language": "vi"
+  },
+  "5206685922": {
+    "user_id": 5206685922,
+    "username": "telelebox",
+    "full_name": "Vivek",
+    "first_seen": "2025-12-23T11:39:34.479935+07:00",
+    "last_seen": "2025-12-26T15:26:16.454400+07:00"
+  },
+  "7493521642": {
+    "user_id": 7493521642,
+    "username": "d4t_shoppremium",
+    "full_name": "D4T SHOP",
+    "first_seen": "2025-12-23T13:57:01.169125+07:00",
+    "last_seen": "2026-02-25T16:15:55.307034+07:00"
+  },
+  "7318843548": {
+    "user_id": 7318843548,
+    "username": "tanhoiz",
+    "full_name": "Thích Car Money",
+    "first_seen": "2025-12-23T14:26:39.862361+07:00",
+    "last_seen": "2025-12-23T14:26:45.494569+07:00"
+  },
+  "827340013": {
+    "user_id": 827340013,
+    "username": "Ali416416",
+    "full_name": "Muhammad Ali",
+    "first_seen": "2025-12-23T14:51:20.876778+07:00",
+    "last_seen": "2026-01-29T16:12:38.558337+07:00"
+  },
+  "7245821297": {
+    "user_id": 7245821297,
+    "username": "",
+    "full_name": "Ssshher",
+    "first_seen": "2025-12-23T15:39:46.071351+07:00",
+    "last_seen": "2026-01-03T14:27:42.895005+07:00"
+  },
+  "2005056223": {
+    "user_id": 2005056223,
+    "username": "blakeeng",
+    "full_name": "Blake Nguyen",
+    "first_seen": "2025-12-23T15:47:15.130351+07:00",
+    "last_seen": "2025-12-23T15:47:17.691331+07:00"
+  },
+  "943514618": {
+    "user_id": 943514618,
+    "username": "allanle797979",
+    "full_name": "Mran",
+    "first_seen": "2025-12-23T16:05:15.847298+07:00",
+    "last_seen": "2026-02-12T23:42:58.543014+07:00"
+  },
+  "1997149773": {
+    "user_id": 1997149773,
+    "username": "shin3757",
+    "full_name": "Bi",
+    "first_seen": "2025-12-23T17:07:25.505524+07:00",
+    "last_seen": "2025-12-23T17:07:35.876637+07:00"
+  },
+  "1137078297": {
+    "user_id": 1137078297,
+    "username": "nockasdd",
+    "full_name": "Alex wan",
+    "first_seen": "2025-12-23T18:37:08.875273+07:00",
+    "last_seen": "2026-01-08T12:17:19.277478+07:00"
+  },
+  "5330181496": {
+    "user_id": 5330181496,
+    "username": "hanchaniee",
+    "full_name": "Ganggh",
+    "first_seen": "2025-12-23T19:08:39.757622+07:00",
+    "last_seen": "2026-01-05T13:09:34.135585+07:00"
+  },
+  "7117601466": {
+    "user_id": 7117601466,
+    "username": "",
+    "full_name": "Hung",
+    "first_seen": "2025-12-24T14:06:49.480351+07:00",
+    "last_seen": "2026-02-26T17:03:43.097518+07:00"
+  },
+  "6415489100": {
+    "user_id": 6415489100,
+    "username": "tuongnguyendn",
+    "full_name": "Fitz Nguyen",
+    "first_seen": "2025-12-24T15:09:37.985661+07:00",
+    "last_seen": "2026-01-04T16:00:48.156295+07:00"
+  },
+  "5025417382": {
+    "user_id": 5025417382,
+    "username": "Behiuvin",
+    "full_name": "Híu",
+    "first_seen": "2025-12-24T16:39:07.679307+07:00",
+    "last_seen": "2026-02-27T13:05:03.202903+07:00"
+  },
+  "5252740815": {
+    "user_id": 5252740815,
+    "username": "nghi0608",
+    "full_name": "Ho Xuan Nghi",
+    "first_seen": "2025-12-24T16:44:58.825785+07:00",
+    "last_seen": "2026-01-30T13:53:23.922933+07:00"
+  },
+  "5582437613": {
+    "user_id": 5582437613,
+    "username": "adam02202",
+    "full_name": "Thanh Nhã",
+    "first_seen": "2025-12-24T17:01:17.744028+07:00",
+    "last_seen": "2025-12-25T15:25:50.086351+07:00"
+  },
+  "6865555166": {
+    "user_id": 6865555166,
+    "username": "",
+    "full_name": "Tín Phan",
+    "first_seen": "2025-12-24T17:04:53.121198+07:00",
+    "last_seen": "2026-01-08T17:52:30.311468+07:00"
+  },
+  "6212713292": {
+    "user_id": 6212713292,
+    "username": "",
+    "full_name": "Luc Áp",
+    "first_seen": "2025-12-24T17:06:33.166523+07:00",
+    "last_seen": "2025-12-30T12:33:46.508119+07:00"
+  },
+  "474650823": {
+    "user_id": 474650823,
+    "username": "NamDinh",
+    "full_name": "NamDM",
+    "first_seen": "2025-12-24T18:05:35.237759+07:00",
+    "last_seen": "2026-02-06T14:56:12.047997+07:00"
+  },
+  "446151690": {
+    "user_id": 446151690,
+    "username": "Cuongus",
+    "full_name": "Nguyen Kaka",
+    "first_seen": "2025-12-24T19:34:38.390143+07:00",
+    "last_seen": "2026-01-10T16:30:39.168929+07:00"
+  },
+  "1990109097": {
+    "user_id": 1990109097,
+    "username": "hungthai1401",
+    "full_name": "Thai Nguyen",
+    "first_seen": "2025-12-24T20:07:19.612187+07:00",
+    "last_seen": "2026-01-18T23:17:28.716708+07:00"
+  },
+  "6083934616": {
+    "user_id": 6083934616,
+    "username": "tismboss",
+    "full_name": "TisM Boss",
+    "first_seen": "2025-12-24T21:19:36.810229+07:00",
+    "last_seen": "2025-12-24T21:19:43.269360+07:00"
+  },
+  "6970765286": {
+    "user_id": 6970765286,
+    "username": "anonymususer000012",
+    "full_name": "hello world",
+    "first_seen": "2025-12-24T21:41:23.768504+07:00",
+    "last_seen": "2025-12-25T17:20:18.869831+07:00"
+  },
+  "5876794863": {
+    "user_id": 5876794863,
+    "username": "pvnien",
+    "full_name": "Phan Nien",
+    "first_seen": "2025-12-24T22:55:40.875100+07:00",
+    "last_seen": "2026-02-26T14:46:23.203743+07:00",
+    "language": "vi",
+    "balance": 70000
+  },
+  "7012967532": {
+    "user_id": 7012967532,
+    "username": "",
+    "full_name": "Minh Nhat",
+    "first_seen": "2025-12-25T00:01:38.938367+07:00",
+    "last_seen": "2025-12-25T00:01:39.617365+07:00"
+  },
+  "2104215304": {
+    "user_id": 2104215304,
+    "username": "Nguyenonn",
+    "full_name": "Thịnh",
+    "first_seen": "2025-12-25T09:11:52.026948+07:00",
+    "last_seen": "2026-01-10T15:15:42.665199+07:00"
+  },
+  "5329415166": {
+    "user_id": 5329415166,
+    "username": "hihiqqq",
+    "full_name": "Thanh Minh",
+    "first_seen": "2025-12-25T11:19:10.360305+07:00",
+    "last_seen": "2026-02-26T21:23:14.792546+07:00"
+  },
+  "7853803386": {
+    "user_id": 7853803386,
+    "username": "titai27",
+    "full_name": "Tai Nguyen",
+    "first_seen": "2025-12-25T11:29:23.293241+07:00",
+    "last_seen": "2026-02-20T19:00:49.190769+07:00"
+  },
+  "5611553923": {
+    "user_id": 5611553923,
+    "username": "",
+    "full_name": "Quyen",
+    "first_seen": "2025-12-25T12:22:32.490524+07:00",
+    "last_seen": "2026-02-27T09:21:54.055803+07:00"
+  },
+  "5126286974": {
+    "user_id": 5126286974,
+    "username": "nhquann",
+    "full_name": "Quan NH",
+    "first_seen": "2025-12-25T12:31:20.308836+07:00",
+    "last_seen": "2025-12-25T15:11:47.206502+07:00"
+  },
+  "6007710961": {
+    "user_id": 6007710961,
+    "username": "dnhat79",
+    "full_name": "D Nhat",
+    "first_seen": "2025-12-25T15:18:11.337625+07:00",
+    "last_seen": "2025-12-25T15:18:13.507953+07:00"
+  },
+  "7489934404": {
+    "user_id": 7489934404,
+    "username": "dungle2204",
+    "full_name": "Black Finger",
+    "first_seen": "2025-12-25T15:35:43.792390+07:00",
+    "last_seen": "2025-12-25T15:35:51.305829+07:00"
+  },
+  "6763794700": {
+    "user_id": 6763794700,
+    "username": "smscodevn",
+    "full_name": "Hưng | SMSGIARE.IO.VN",
+    "first_seen": "2025-12-25T15:44:23.143301+07:00",
+    "last_seen": "2025-12-25T15:44:41.275623+07:00"
+  },
+  "6426214779": {
+    "user_id": 6426214779,
+    "username": "MinhVuonggg",
+    "full_name": "Minh Vuong",
+    "first_seen": "2025-12-25T15:57:37.109709+07:00",
+    "last_seen": "2025-12-25T15:57:37.773856+07:00"
+  },
+  "8013734967": {
+    "user_id": 8013734967,
+    "username": "gashoph",
+    "full_name": "Gà Shop",
+    "first_seen": "2025-12-25T18:02:27.639430+07:00",
+    "last_seen": "2026-02-28T07:49:59.185877+07:00",
+    "language": "en"
+  },
+  "8082777126": {
+    "user_id": 8082777126,
+    "username": "",
+    "full_name": "Le Tiep",
+    "first_seen": "2025-12-25T19:11:56.774159+07:00",
+    "last_seen": "2025-12-25T19:12:11.101808+07:00"
+  },
+  "5881335891": {
+    "user_id": 5881335891,
+    "username": "",
+    "full_name": "Abc Def",
+    "first_seen": "2025-12-25T19:19:56.153231+07:00",
+    "last_seen": "2025-12-25T19:19:56.831343+07:00"
+  },
+  "1648033150": {
+    "user_id": 1648033150,
+    "username": "bigbosss19",
+    "full_name": "BOSS",
+    "first_seen": "2025-12-25T20:42:42.628884+07:00",
+    "last_seen": "2025-12-25T20:45:42.430035+07:00"
+  },
+  "5677537156": {
+    "user_id": 5677537156,
+    "username": "QDT69",
+    "full_name": "Q Đ T",
+    "first_seen": "2025-12-25T22:18:16.323282+07:00",
+    "last_seen": "2026-02-26T16:52:45.919351+07:00",
+    "language": "vi"
+  },
+  "5638748076": {
+    "user_id": 5638748076,
+    "username": "hoangsontiktokuytin",
+    "full_name": "Hoàng Sơn Nạp xu , bán kênh tiktok",
+    "first_seen": "2025-12-25T22:26:34.317204+07:00",
+    "last_seen": "2026-02-24T22:52:24.022232+07:00"
+  },
+  "5816179451": {
+    "user_id": 5816179451,
+    "username": "",
+    "full_name": "Học Code",
+    "first_seen": "2025-12-25T22:32:03.821078+07:00",
+    "last_seen": "2026-02-28T20:10:27.615495+07:00",
+    "language": "vi"
+  },
+  "7587447198": {
+    "user_id": 7587447198,
+    "username": "nvha63",
+    "full_name": "Nghia",
+    "first_seen": "2025-12-25T22:48:38.616869+07:00",
+    "last_seen": "2025-12-30T07:54:24.100698+07:00"
+  },
+  "8120187963": {
+    "user_id": 8120187963,
+    "username": "saledigital247",
+    "full_name": "Andy Nguyen",
+    "first_seen": "2025-12-26T00:49:42.284777+07:00",
+    "last_seen": "2026-01-11T23:43:52.543625+07:00"
+  },
+  "6770106447": {
+    "user_id": 6770106447,
+    "username": "huhenine1006",
+    "full_name": "Hung Nguyen",
+    "first_seen": "2025-12-26T10:26:12.470980+07:00",
+    "last_seen": "2026-02-28T22:51:25.449370+07:00"
+  },
+  "2067643897": {
+    "user_id": 2067643897,
+    "username": "minhle8668",
+    "full_name": "Minh Le",
+    "first_seen": "2025-12-26T11:49:43.310038+07:00",
+    "last_seen": "2026-01-04T23:52:54.316073+07:00"
+  },
+  "7086237331": {
+    "user_id": 7086237331,
+    "username": "h3ungv4n",
+    "full_name": "h3ung v4n 🥷",
+    "first_seen": "2025-12-26T12:00:06.493972+07:00",
+    "last_seen": "2026-02-27T07:18:38.079580+07:00",
+    "language": "vi"
+  },
+  "7472645879": {
+    "user_id": 7472645879,
+    "username": "manhan98",
+    "full_name": "Mạnh An",
+    "first_seen": "2025-12-26T12:00:30.237566+07:00",
+    "last_seen": "2025-12-26T18:08:51.871193+07:00"
+  },
+  "7272549379": {
+    "user_id": 7272549379,
+    "username": "Milotcr",
+    "full_name": "M I L O",
+    "first_seen": "2025-12-26T12:11:33.571554+07:00",
+    "last_seen": "2026-01-28T05:05:58.558621+07:00"
+  },
+  "6299791747": {
+    "user_id": 6299791747,
+    "username": "",
+    "full_name": "Duy Nguyen",
+    "first_seen": "2025-12-26T12:17:53.929184+07:00",
+    "last_seen": "2025-12-26T12:18:14.810540+07:00"
+  },
+  "6600613535": {
+    "user_id": 6600613535,
+    "username": "dngoc9",
+    "full_name": "NNM Shop",
+    "first_seen": "2025-12-26T12:40:54.852575+07:00",
+    "last_seen": "2026-02-24T07:40:21.130259+07:00"
+  },
+  "1950958372": {
+    "user_id": 1950958372,
+    "username": "qshop123",
+    "full_name": "wuyeens",
+    "first_seen": "2025-12-26T12:41:38.720882+07:00",
+    "last_seen": "2026-01-19T20:05:09.491458+07:00"
+  },
+  "7784951778": {
+    "user_id": 7784951778,
+    "username": "justlee1010",
+    "full_name": "Lee",
+    "first_seen": "2025-12-26T13:32:13.596944+07:00",
+    "last_seen": "2026-02-28T22:44:57.360952+07:00",
+    "language": "vi"
+  },
+  "6883511621": {
+    "user_id": 6883511621,
+    "username": "domain1881",
+    "full_name": "James",
+    "first_seen": "2025-12-26T14:12:25.398251+07:00",
+    "last_seen": "2025-12-26T14:12:27.883582+07:00"
+  },
+  "6347317902": {
+    "user_id": 6347317902,
+    "username": "Wangzwhikey",
+    "full_name": "Tranz Wangg",
+    "first_seen": "2025-12-26T16:41:10.037711+07:00",
+    "last_seen": "2026-01-10T14:57:56.540525+07:00"
+  },
+  "7690121825": {
+    "user_id": 7690121825,
+    "username": "hienminh100",
+    "full_name": "Minh Hien",
+    "first_seen": "2025-12-26T17:28:45.590413+07:00",
+    "last_seen": "2026-02-13T10:55:13.670080+07:00"
+  },
+  "5701389661": {
+    "user_id": 5701389661,
+    "username": "HPhucVer2",
+    "full_name": "Phuc",
+    "first_seen": "2025-12-27T07:31:44.150602+07:00",
+    "last_seen": "2025-12-27T07:31:44.818350+07:00"
+  },
+  "1240963161": {
+    "user_id": 1240963161,
+    "username": "vucaothu",
+    "full_name": "Mr Rain",
+    "first_seen": "2025-12-27T09:22:59.855723+07:00",
+    "last_seen": "2026-01-24T09:25:00.610741+07:00"
+  },
+  "8354280500": {
+    "user_id": 8354280500,
+    "username": "fullsellaz",
+    "full_name": "Full Sell AZ",
+    "first_seen": "2025-12-27T10:02:56.686115+07:00",
+    "last_seen": "2026-01-07T17:43:58.140825+07:00"
+  },
+  "6757436299": {
+    "user_id": 6757436299,
+    "username": "wonjima",
+    "full_name": "Ha Nhi",
+    "first_seen": "2025-12-27T12:31:29.566557+07:00",
+    "last_seen": "2026-01-09T10:27:18.487619+07:00"
+  },
+  "6313043461": {
+    "user_id": 6313043461,
+    "username": "",
+    "full_name": "092869 tdat",
+    "first_seen": "2025-12-27T13:00:03.533148+07:00",
+    "last_seen": "2026-01-04T20:44:48.901376+07:00"
+  },
+  "1035037994": {
+    "user_id": 1035037994,
+    "username": "tuantran205",
+    "full_name": "tuan",
+    "first_seen": "2025-12-27T13:33:39.583643+07:00",
+    "last_seen": "2025-12-27T13:33:42.227267+07:00"
+  },
+  "537734236": {
+    "user_id": 537734236,
+    "username": "minhtu241",
+    "full_name": "Đặng Tú",
+    "first_seen": "2025-12-27T13:56:12.128143+07:00",
+    "last_seen": "2026-02-13T11:04:41.461966+07:00"
+  },
+  "7812463084": {
+    "user_id": 7812463084,
+    "username": "hgngo22",
+    "full_name": "Shop ChatGPT giá rẻ",
+    "first_seen": "2025-12-27T13:56:30.934439+07:00",
+    "last_seen": "2026-01-05T18:52:25.943442+07:00"
+  },
+  "845046902": {
+    "user_id": 845046902,
+    "username": "chugaxai",
+    "full_name": "ChugAx",
+    "first_seen": "2025-12-27T14:47:51.300317+07:00",
+    "last_seen": "2026-02-28T22:59:08.148345+07:00",
+    "language": "vi"
+  },
+  "5924470916": {
+    "user_id": 5924470916,
+    "username": "liam_lancaster",
+    "full_name": "liam_lancaster",
+    "first_seen": "2025-12-27T19:10:36.072347+07:00",
+    "last_seen": "2026-01-08T14:18:14.293427+07:00",
+    "language": "vi"
+  },
+  "5698952507": {
+    "user_id": 5698952507,
+    "username": "tuananhhoang2303",
+    "full_name": "T.Anh Hoang",
+    "first_seen": "2025-12-27T20:06:31.310465+07:00",
+    "last_seen": "2026-02-28T08:15:49.558343+07:00",
+    "balance": 40000,
+    "language": "vi"
+  },
+  "1438664347": {
+    "user_id": 1438664347,
+    "username": "trialneverdie",
+    "full_name": "TF",
+    "first_seen": "2025-12-27T20:32:02.514108+07:00",
+    "last_seen": "2026-01-03T13:46:25.421628+07:00"
+  },
+  "7655205610": {
+    "user_id": 7655205610,
+    "username": "",
+    "full_name": "Frederic Fonny",
+    "first_seen": "2025-12-27T20:43:22.174441+07:00",
+    "last_seen": "2026-01-09T10:05:54.682962+07:00",
+    "language": "vi"
+  },
+  "1016209784": {
+    "user_id": 1016209784,
+    "username": "peanut1010",
+    "full_name": "Peter Nguyen",
+    "first_seen": "2025-12-27T20:45:52.870827+07:00",
+    "last_seen": "2026-01-08T15:19:05.840644+07:00"
+  },
+  "612308825": {
+    "user_id": 612308825,
+    "username": "quyenaki",
+    "full_name": "Triệu Quyền",
+    "first_seen": "2025-12-28T07:47:42.777175+07:00",
+    "last_seen": "2026-02-23T15:39:05.901352+07:00"
+  },
+  "1821579096": {
+    "user_id": 1821579096,
+    "username": "",
+    "full_name": "Quang nguyên",
+    "first_seen": "2025-12-28T09:46:06.447942+07:00",
+    "last_seen": "2025-12-28T09:46:11.676006+07:00"
+  },
+  "7406329865": {
+    "user_id": 7406329865,
+    "username": "luckystar_1305",
+    "full_name": "Linh Nguyễn",
+    "first_seen": "2025-12-28T12:41:13.173791+07:00",
+    "last_seen": "2026-02-25T14:37:35.305184+07:00"
+  },
+  "7290380352": {
+    "user_id": 7290380352,
+    "username": "Anne3710",
+    "full_name": "An Le",
+    "first_seen": "2025-12-28T12:42:43.215797+07:00",
+    "last_seen": "2026-02-06T10:08:17.504430+07:00"
+  },
+  "6460777938": {
+    "user_id": 6460777938,
+    "username": "hanvv1",
+    "full_name": "𝐻𝑎̂𝑛 𝐴𝑛ℎ ♨️",
+    "first_seen": "2025-12-28T12:52:55.371133+07:00",
+    "last_seen": "2025-12-28T12:52:58.742389+07:00"
+  },
+  "5136527729": {
+    "user_id": 5136527729,
+    "username": "nvulong",
+    "full_name": "Nguyễn Long",
+    "first_seen": "2025-12-28T12:56:48.602040+07:00",
+    "last_seen": "2025-12-28T13:09:22.742929+07:00"
+  },
+  "5778225284": {
+    "user_id": 5778225284,
+    "username": "",
+    "full_name": "Hiếu",
+    "first_seen": "2025-12-28T13:10:15.380403+07:00",
+    "last_seen": "2026-01-10T19:02:50.765662+07:00"
+  },
+  "5836712161": {
+    "user_id": 5836712161,
+    "username": "mtanvn",
+    "full_name": "Võ Minh Tân",
+    "first_seen": "2025-12-28T13:12:55.539289+07:00",
+    "last_seen": "2026-02-25T22:01:30.829995+07:00"
+  },
+  "1321092788": {
+    "user_id": 1321092788,
+    "username": "richardv273",
+    "full_name": "Richard",
+    "first_seen": "2025-12-28T15:02:33.224411+07:00",
+    "last_seen": "2025-12-28T15:02:36.821179+07:00"
+  },
+  "1519671661": {
+    "user_id": 1519671661,
+    "username": "anionzo",
+    "full_name": "Mai Trung Tiến",
+    "first_seen": "2025-12-28T17:20:08.010708+07:00",
+    "last_seen": "2026-02-27T20:56:49.272416+07:00"
+  },
+  "6341768980": {
+    "user_id": 6341768980,
+    "username": "",
+    "full_name": "Bé Bơ Bơ",
+    "first_seen": "2025-12-28T22:54:46.955580+07:00",
+    "last_seen": "2025-12-28T22:54:57.440748+07:00"
+  },
+  "958055909": {
+    "user_id": 958055909,
+    "username": "kiennguyenbg",
+    "full_name": "Kien Nguyen",
+    "first_seen": "2025-12-29T00:04:22.287284+07:00",
+    "last_seen": "2025-12-29T10:00:19.992014+07:00"
+  },
+  "1087968824": {
+    "user_id": 1087968824,
+    "username": "GroupAnonymousBot",
+    "full_name": "Group",
+    "first_seen": "2025-12-29T01:06:21.869771+07:00",
+    "last_seen": "2025-12-29T01:06:21.869789+07:00"
+  },
+  "7222500409": {
+    "user_id": 7222500409,
+    "username": "adobeedu80",
+    "full_name": "Adobe edu 80gb - Giá sỉ",
+    "first_seen": "2025-12-29T11:16:36.854285+07:00",
+    "last_seen": "2026-02-08T20:43:25.418195+07:00"
+  },
+  "6196645370": {
+    "user_id": 6196645370,
+    "username": "taicorn24",
+    "full_name": "TaiCorn",
+    "first_seen": "2025-12-29T17:53:43.458088+07:00",
+    "last_seen": "2026-02-26T10:22:30.300442+07:00",
+    "language": "vi"
+  },
+  "5391174301": {
+    "user_id": 5391174301,
+    "username": "tinhtn810",
+    "full_name": "Tinh Tran",
+    "first_seen": "2025-12-30T01:48:12.777922+07:00",
+    "last_seen": "2026-02-28T16:50:08.490128+07:00",
+    "language": "vi"
+  },
+  "6609056580": {
+    "user_id": 6609056580,
+    "username": "",
+    "full_name": "Hai Dang",
+    "first_seen": "2025-12-30T02:22:14.862514+07:00",
+    "last_seen": "2026-01-01T11:11:53.904497+07:00"
+  },
+  "5151424613": {
+    "user_id": 5151424613,
+    "username": "aaronvu",
+    "full_name": "Aaron",
+    "first_seen": "2025-12-30T03:01:06.341505+07:00",
+    "last_seen": "2026-01-11T17:51:37.669339+07:00"
+  },
+  "1809632623": {
+    "user_id": 1809632623,
+    "username": "Vuquang0415",
+    "full_name": "Quang Vũ",
+    "first_seen": "2025-12-30T08:21:47.657891+07:00",
+    "last_seen": "2026-01-05T18:12:26.853812+07:00"
+  },
+  "6358118049": {
+    "user_id": 6358118049,
+    "username": "bebabula",
+    "full_name": "BÉ",
+    "first_seen": "2025-12-30T09:08:26.558260+07:00",
+    "last_seen": "2026-01-01T20:11:04.934627+07:00"
+  },
+  "5084362284": {
+    "user_id": 5084362284,
+    "username": "dhuan03",
+    "full_name": "Đăng Huấn",
+    "first_seen": "2025-12-30T09:12:44.116855+07:00",
+    "last_seen": "2026-02-27T08:31:17.412964+07:00"
+  },
+  "7269869582": {
+    "user_id": 7269869582,
+    "username": "namlc1",
+    "full_name": "Nam Lee",
+    "first_seen": "2025-12-30T09:20:31.246272+07:00",
+    "last_seen": "2026-02-26T11:36:39.190439+07:00",
+    "balance": 0
+  },
+  "5302500145": {
+    "user_id": 5302500145,
+    "username": "Adszxcv",
+    "full_name": "Tiến Nguyễn",
+    "first_seen": "2025-12-30T10:20:05.622006+07:00",
+    "last_seen": "2026-01-10T00:31:32.482804+07:00"
+  },
+  "1144132826": {
+    "user_id": 1144132826,
+    "username": "khahernandez",
+    "full_name": "Kha Hernandez",
+    "first_seen": "2025-12-30T10:24:22.349353+07:00",
+    "last_seen": "2025-12-30T10:24:30.304275+07:00"
+  },
+  "1368788377": {
+    "user_id": 1368788377,
+    "username": "cnguyen0",
+    "full_name": "C 🦴 nguyen",
+    "first_seen": "2025-12-30T11:59:27.991903+07:00",
+    "last_seen": "2026-02-28T09:29:50.388217+07:00"
+  },
+  "7830460815": {
+    "user_id": 7830460815,
+    "username": "loveyousomuch_01",
+    "full_name": "Dragon",
+    "first_seen": "2025-12-30T13:44:42.950337+07:00",
+    "last_seen": "2026-02-24T12:53:50.320021+07:00"
+  },
+  "7479725238": {
+    "user_id": 7479725238,
+    "username": "huysocial",
+    "full_name": "Huy",
+    "first_seen": "2025-12-30T13:59:24.665891+07:00",
+    "last_seen": "2026-01-03T13:04:38.713717+07:00"
+  },
+  "1436907608": {
+    "user_id": 1436907608,
+    "username": "danh6789",
+    "full_name": "66668888",
+    "first_seen": "2025-12-30T14:49:21.259062+07:00",
+    "last_seen": "2026-02-27T16:12:24.218238+07:00"
+  },
+  "6787743629": {
+    "user_id": 6787743629,
+    "username": "livastoreFAQ",
+    "full_name": "Liva Store",
+    "first_seen": "2025-12-30T15:39:48.729314+07:00",
+    "last_seen": "2026-01-24T12:36:44.379092+07:00"
+  },
+  "1160601562": {
+    "user_id": 1160601562,
+    "username": "Onlynonut",
+    "full_name": "No Nut",
+    "first_seen": "2025-12-30T19:21:58.525903+07:00",
+    "last_seen": "2025-12-30T19:22:05.361948+07:00"
+  },
+  "1346062220": {
+    "user_id": 1346062220,
+    "username": "dangninh02",
+    "full_name": "Đăng Ninh",
+    "first_seen": "2025-12-31T06:21:53.110913+07:00",
+    "last_seen": "2025-12-31T06:22:58.120131+07:00"
+  },
+  "6546487155": {
+    "user_id": 6546487155,
+    "username": "Sang712",
+    "full_name": "Pen",
+    "first_seen": "2025-12-31T10:54:12.700354+07:00",
+    "last_seen": "2026-01-03T12:47:09.925230+07:00"
+  },
+  "6611149859": {
+    "user_id": 6611149859,
+    "username": "",
+    "full_name": "Mai Khương",
+    "first_seen": "2025-12-31T13:14:34.605336+07:00",
+    "last_seen": "2025-12-31T13:14:34.605352+07:00"
+  },
+  "900792514": {
+    "user_id": 900792514,
+    "username": "patarvit",
+    "full_name": "Patarvit 💎",
+    "first_seen": "2025-12-31T15:21:39.130674+07:00",
+    "last_seen": "2025-12-31T15:21:39.502429+07:00"
+  },
+  "1864852655": {
+    "user_id": 1864852655,
+    "username": "keosua2k2",
+    "full_name": "Kẹo Sữa | Telegram Account Seller",
+    "first_seen": "2025-12-31T15:44:10.930945+07:00",
+    "last_seen": "2025-12-31T15:44:15.645717+07:00"
+  },
+  "1024864741": {
+    "user_id": 1024864741,
+    "username": "premium69gr",
+    "full_name": "Premium 69",
+    "first_seen": "2025-12-31T18:51:11.247437+07:00",
+    "last_seen": "2026-02-25T14:19:48.986928+07:00"
+  },
+  "6584014638": {
+    "user_id": 6584014638,
+    "username": "swllette",
+    "full_name": "snow",
+    "first_seen": "2025-12-31T18:51:46.333513+07:00",
+    "last_seen": "2026-01-10T21:01:34.593862+07:00"
+  },
+  "5369341620": {
+    "user_id": 5369341620,
+    "username": "hoanglong6896",
+    "full_name": "Long Hoang",
+    "first_seen": "2025-12-31T21:07:55.947124+07:00",
+    "last_seen": "2026-01-24T19:23:11.654682+07:00"
+  },
+  "5419911492": {
+    "user_id": 5419911492,
+    "username": "IuMewmew",
+    "full_name": "Mew Mew",
+    "first_seen": "2026-01-01T13:50:55.771304+07:00",
+    "last_seen": "2026-01-11T18:42:22.900033+07:00"
+  },
+  "5568206434": {
+    "user_id": 5568206434,
+    "username": "Vincentzo99",
+    "full_name": "Vincentzo",
+    "first_seen": "2026-01-01T15:01:25.360403+07:00",
+    "last_seen": "2026-02-28T20:54:13.959662+07:00",
+    "language": "vi"
+  },
+  "334376750": {
+    "user_id": 334376750,
+    "username": "oxjacky",
+    "full_name": "Chun Chun.",
+    "first_seen": "2026-01-01T15:08:44.402950+07:00",
+    "last_seen": "2026-01-01T15:08:45.174448+07:00"
+  },
+  "5470445330": {
+    "user_id": 5470445330,
+    "username": "khoaAI",
+    "full_name": "Nguyễn Đăng Khoa",
+    "first_seen": "2026-01-01T18:21:14.240940+07:00",
+    "last_seen": "2026-01-08T16:14:26.410723+07:00",
+    "language": "vi"
+  },
+  "1955543555": {
+    "user_id": 1955543555,
+    "username": "phuanqoq",
+    "full_name": "Tài khoản AI Giá Rẻ",
+    "first_seen": "2026-01-01T18:21:25.358618+07:00",
+    "last_seen": "2026-02-01T02:58:07.623790+07:00"
+  },
+  "6959536565": {
+    "user_id": 6959536565,
+    "username": "Minhhung_muabantelegram",
+    "full_name": "Minh Hùngي",
+    "first_seen": "2026-01-01T18:34:06.974150+07:00",
+    "last_seen": "2026-01-17T09:01:54.081580+07:00"
+  },
+  "1612049735": {
+    "user_id": 1612049735,
+    "username": "iso9081",
+    "full_name": "johnny hưng",
+    "first_seen": "2026-01-01T22:57:12.334527+07:00",
+    "last_seen": "2026-01-01T22:57:29.878264+07:00"
+  },
+  "6206076083": {
+    "user_id": 6206076083,
+    "username": "Scofield_OK",
+    "full_name": "Scofield.D",
+    "first_seen": "2026-01-01T23:04:11.289692+07:00",
+    "last_seen": "2026-02-26T17:48:09.488499+07:00"
+  },
+  "1110368240": {
+    "user_id": 1110368240,
+    "username": "benjamintran79",
+    "full_name": "Đức Trần",
+    "first_seen": "2026-01-02T09:06:08.405731+07:00",
+    "last_seen": "2026-02-25T22:55:06.296827+07:00"
+  },
+  "7461007373": {
+    "user_id": 7461007373,
+    "username": "Digitalkeyvn",
+    "full_name": "Digitalkeyvn",
+    "first_seen": "2026-01-02T13:34:36.899706+07:00",
+    "last_seen": "2026-01-02T13:34:41.851525+07:00"
+  },
+  "7695209234": {
+    "user_id": 7695209234,
+    "username": "Meomeo99999999",
+    "full_name": "Luoits Luxury 💎",
+    "first_seen": "2026-01-03T14:06:39.004735+07:00",
+    "last_seen": "2026-01-03T14:06:42.209797+07:00"
+  },
+  "7492300197": {
+    "user_id": 7492300197,
+    "username": "nejfii",
+    "full_name": "Hãy Bao Nuôi Zaki",
+    "first_seen": "2026-01-03T23:01:05.884177+07:00",
+    "last_seen": "2026-01-08T08:15:49.840998+07:00"
+  },
+  "1993247449": {
+    "user_id": 1993247449,
+    "username": "libi94",
+    "full_name": "Mr Bi",
+    "first_seen": "2026-01-03T23:19:16.406276+07:00",
+    "last_seen": "2026-01-09T08:42:00.582564+07:00"
+  },
+  "1105582070": {
+    "user_id": 1105582070,
+    "username": "",
+    "full_name": "Tran Danh",
+    "first_seen": "2026-01-04T00:13:08.968400+07:00",
+    "last_seen": "2026-01-04T12:00:49.316706+07:00"
+  },
+  "1843061565": {
+    "user_id": 1843061565,
+    "username": "biendo27",
+    "full_name": "Đỗ Biên",
+    "first_seen": "2026-01-04T00:17:27.343101+07:00",
+    "last_seen": "2026-01-06T14:25:32.340857+07:00"
+  },
+  "5047039998": {
+    "user_id": 5047039998,
+    "username": "sonmoi2409",
+    "full_name": "Sơn moi",
+    "first_seen": "2026-01-04T00:50:42.007445+07:00",
+    "last_seen": "2026-02-13T13:42:16.974110+07:00"
+  },
+  "6020812101": {
+    "user_id": 6020812101,
+    "username": "MissedLover",
+    "full_name": "Ketamin",
+    "first_seen": "2026-01-04T00:50:45.992865+07:00",
+    "last_seen": "2026-01-04T00:50:56.411136+07:00"
+  },
+  "5987569086": {
+    "user_id": 5987569086,
+    "username": "smile_smole",
+    "full_name": "Smile",
+    "first_seen": "2026-01-04T00:51:53.230719+07:00",
+    "last_seen": "2026-01-04T00:51:54.031491+07:00"
+  },
+  "984650200": {
+    "user_id": 984650200,
+    "username": "wuangz",
+    "full_name": "Hí Anh Em",
+    "first_seen": "2026-01-04T00:53:13.006749+07:00",
+    "last_seen": "2026-02-25T17:07:52.290265+07:00"
+  },
+  "7042946409": {
+    "user_id": 7042946409,
+    "username": "eosupro",
+    "full_name": "Eo Su",
+    "first_seen": "2026-01-04T01:01:32.126456+07:00",
+    "last_seen": "2026-01-04T01:01:38.751697+07:00"
+  },
+  "6308532936": {
+    "user_id": 6308532936,
+    "username": "Thingo0703",
+    "full_name": "Thi",
+    "first_seen": "2026-01-04T09:29:53.553693+07:00",
+    "last_seen": "2026-02-05T12:14:35.309801+07:00"
+  },
+  "7384042487": {
+    "user_id": 7384042487,
+    "username": "",
+    "full_name": "Tran Cong Tuan",
+    "first_seen": "2026-01-04T13:39:49.889039+07:00",
+    "last_seen": "2026-01-10T10:38:54.017888+07:00"
+  },
+  "7878206792": {
+    "user_id": 7878206792,
+    "username": "",
+    "full_name": "Cường nguyễn",
+    "first_seen": "2026-01-04T14:24:54.127624+07:00",
+    "last_seen": "2026-01-04T14:24:54.581938+07:00"
+  },
+  "1937854254": {
+    "user_id": 1937854254,
+    "username": "thanhson031195",
+    "full_name": "Bi Bi",
+    "first_seen": "2026-01-04T21:46:19.844831+07:00",
+    "last_seen": "2026-02-25T12:19:40.195565+07:00"
+  },
+  "920644971": {
+    "user_id": 920644971,
+    "username": "madafakaar",
+    "full_name": "Vuong Tran",
+    "first_seen": "2026-01-05T10:16:19.561681+07:00",
+    "last_seen": "2026-01-09T23:34:01.233399+07:00"
+  },
+  "1726052778": {
+    "user_id": 1726052778,
+    "username": "linhnh1210",
+    "full_name": "Linh Nguyễn Hồng",
+    "first_seen": "2026-01-05T10:21:21.654554+07:00",
+    "last_seen": "2026-02-25T15:23:04.256329+07:00",
+    "language": "vi"
+  },
+  "6024470745": {
+    "user_id": 6024470745,
+    "username": "hqmktele",
+    "full_name": "Tìm nguồn resell",
+    "first_seen": "2026-01-05T10:50:19.423353+07:00",
+    "last_seen": "2026-02-26T12:05:16.891998+07:00",
+    "language": "vi"
+  },
+  "5579031628": {
+    "user_id": 5579031628,
+    "username": "nodiyong",
+    "full_name": "NoDi Yong |🌸",
+    "first_seen": "2026-01-05T11:45:09.075028+07:00",
+    "last_seen": "2026-01-05T11:45:20.471220+07:00"
+  },
+  "1995640480": {
+    "user_id": 1995640480,
+    "username": "crazykenvn",
+    "full_name": "Crazy Ken",
+    "first_seen": "2026-01-05T13:32:43.191336+07:00",
+    "last_seen": "2026-01-09T09:23:04.301956+07:00",
+    "language": "vi"
+  },
+  "1788989973": {
+    "user_id": 1788989973,
+    "username": "duyho0712",
+    "full_name": "Hồ Duy",
+    "first_seen": "2026-01-05T14:05:28.192562+07:00",
+    "last_seen": "2026-01-05T14:05:47.459274+07:00"
+  },
+  "1248855145": {
+    "user_id": 1248855145,
+    "username": "tranan007",
+    "full_name": "An Tran",
+    "first_seen": "2026-01-05T14:47:01.629038+07:00",
+    "last_seen": "2026-01-05T14:47:02.470419+07:00"
+  },
+  "6294655848": {
+    "user_id": 6294655848,
+    "username": "",
+    "full_name": "TwinBlade",
+    "first_seen": "2026-01-05T14:54:18.420004+07:00",
+    "last_seen": "2026-01-05T14:54:36.461385+07:00"
+  },
+  "2002897371": {
+    "user_id": 2002897371,
+    "username": "",
+    "full_name": "Khởi Nguyễn",
+    "first_seen": "2026-01-05T22:51:35.358078+07:00",
+    "last_seen": "2026-01-05T22:51:37.320423+07:00"
+  },
+  "7131334504": {
+    "user_id": 7131334504,
+    "username": "DarkburhGG",
+    "full_name": "zxc🧑🏿‍🦯",
+    "first_seen": "2026-01-06T09:52:11.886294+07:00",
+    "last_seen": "2026-01-06T09:52:14.644850+07:00"
+  },
+  "8250868841": {
+    "user_id": 8250868841,
+    "username": "",
+    "full_name": "Long Mạnh",
+    "first_seen": "2026-01-06T12:09:01.837499+07:00",
+    "last_seen": "2026-02-07T14:49:55.948111+07:00"
+  },
+  "1491835160": {
+    "user_id": 1491835160,
+    "username": "Sui282",
+    "full_name": "Sủi Bọt",
+    "first_seen": "2026-01-06T13:05:10.257045+07:00",
+    "last_seen": "2026-02-25T20:42:31.827922+07:00"
+  },
+  "2060665332": {
+    "user_id": 2060665332,
+    "username": "an_jinhi",
+    "full_name": "Anji",
+    "first_seen": "2026-01-06T14:07:14.367092+07:00",
+    "last_seen": "2026-01-07T19:06:12.214959+07:00"
+  },
+  "6202919723": {
+    "user_id": 6202919723,
+    "username": "nguyenoka",
+    "full_name": "Pro Nark",
+    "first_seen": "2026-01-07T10:48:07.851763+07:00",
+    "last_seen": "2026-01-07T16:07:26.805463+07:00"
+  },
+  "6332470794": {
+    "user_id": 6332470794,
+    "username": "bentrequetoi71",
+    "full_name": "Bến Tre Que Tôi",
+    "first_seen": "2026-01-07T11:13:39.108618+07:00",
+    "last_seen": "2026-01-10T19:16:51.046994+07:00"
+  },
+  "8058736524": {
+    "user_id": 8058736524,
+    "balance": 5000000000000
+  },
+  "8343690184": {
+    "user_id": 8343690184,
+    "username": "Jawonyong2",
+    "full_name": "Tâm Đoan",
+    "first_seen": "2026-01-07T16:30:42.445279+07:00",
+    "last_seen": "2026-01-07T16:30:42.445300+07:00"
+  },
+  "7009427684": {
+    "user_id": 7009427684,
+    "username": "trungbnqt",
+    "full_name": "Văn Trung",
+    "first_seen": "2026-01-07T20:41:17.454516+07:00",
+    "last_seen": "2026-01-07T20:41:23.649137+07:00"
+  },
+  "1777955471": {
+    "user_id": 1777955471,
+    "username": "jonhkyc",
+    "full_name": "CHUYÊN KYC CÁC SÀN + BANK",
+    "first_seen": "2026-01-07T23:44:29.131125+07:00",
+    "last_seen": "2026-01-08T09:45:12.394063+07:00"
+  },
+  "8172653481": {
+    "user_id": 8172653481,
+    "username": "ostwan",
+    "full_name": "OS TWAN 10D-win",
+    "first_seen": "2026-01-08T04:19:56.505723+07:00",
+    "last_seen": "2026-01-08T04:20:01.106797+07:00"
+  },
+  "1085667699": {
+    "user_id": 1085667699,
+    "username": "bvq1221",
+    "full_name": "Quang Han",
+    "first_seen": "2026-01-08T09:57:28.583284+07:00",
+    "last_seen": "2026-01-08T09:57:28.583301+07:00"
+  },
+  "5867864987": {
+    "user_id": 5867864987,
+    "username": "hoangtubongdem02",
+    "full_name": "Gà Con",
+    "first_seen": "2026-01-08T10:34:39.812562+07:00",
+    "last_seen": "2026-01-10T13:32:07.415756+07:00"
+  },
+  "531869857": {
+    "user_id": 531869857,
+    "username": "bigdream6789",
+    "full_name": "Lưu Bang",
+    "first_seen": "2026-01-08T11:27:29.751451+07:00",
+    "last_seen": "2026-01-20T10:55:43.265484+07:00"
+  },
+  "1431031483": {
+    "user_id": 1431031483,
+    "username": "",
+    "full_name": "Tuấn NQ",
+    "first_seen": "2026-01-08T11:31:39.233821+07:00",
+    "last_seen": "2026-02-24T08:25:33.037019+07:00"
+  },
+  "6770283407": {
+    "user_id": 6770283407,
+    "username": "",
+    "full_name": "Trinh Nguyễn",
+    "first_seen": "2026-01-08T13:38:00.799912+07:00",
+    "last_seen": "2026-01-11T17:07:11.403510+07:00"
+  },
+  "7185563190": {
+    "user_id": 7185563190,
+    "username": "taolahinhsuhuyen",
+    "full_name": "Hình Sự Huyện",
+    "first_seen": "2026-01-08T14:20:00.211706+07:00",
+    "last_seen": "2026-02-26T11:33:11.939805+07:00"
+  },
+  "6044423686": {
+    "user_id": 6044423686,
+    "username": "Anbatocoin",
+    "full_name": "Ăn ba tô coin",
+    "first_seen": "2026-01-08T15:23:36.515885+07:00",
+    "last_seen": "2026-02-27T19:33:10.340190+07:00"
+  },
+  "6597022197": {
+    "user_id": 6597022197,
+    "username": "nguyenkhoi489",
+    "full_name": "Nguyên Khôi",
+    "first_seen": "2026-01-08T18:06:36.626408+07:00",
+    "last_seen": "2026-02-25T18:32:12.636431+07:00"
+  },
+  "876752123": {
+    "user_id": 876752123,
+    "username": "christiangrey922",
+    "full_name": "Christ Grey 🌱🌱🌱🌱",
+    "first_seen": "2026-01-08T23:42:36.958525+07:00",
+    "last_seen": "2026-02-14T19:47:45.134306+07:00"
+  },
+  "7204752707": {
+    "user_id": 7204752707,
+    "username": "Bouchoy",
+    "full_name": "Bou Chou",
+    "first_seen": "2026-01-09T07:50:13.019651+07:00",
+    "last_seen": "2026-01-09T07:50:18.420739+07:00"
+  },
+  "6774500470": {
+    "user_id": 6774500470,
+    "username": "nguyenhongdang099",
+    "full_name": "NGUYEN HONG DANG",
+    "first_seen": "2026-01-09T08:17:41.084971+07:00",
+    "last_seen": "2026-01-09T08:17:46.681709+07:00",
+    "language": "vi"
+  },
+  "6551002489": {
+    "user_id": 6551002489,
+    "username": "khoaiba",
+    "full_name": "ManhHung",
+    "first_seen": "2026-01-09T08:44:52.984613+07:00",
+    "last_seen": "2026-01-10T18:02:28.181007+07:00"
+  },
+  "727423483": {
+    "user_id": 727423483,
+    "username": "phuongthoa",
+    "full_name": "Hà Phương",
+    "first_seen": "2026-01-09T20:35:44.500712+07:00",
+    "last_seen": "2026-02-26T16:01:14.559219+07:00"
+  },
+  "8381236104": {
+    "user_id": 8381236104,
+    "username": "hoakieu2603",
+    "full_name": "Le Hoa",
+    "first_seen": "2026-01-09T22:27:56.342420+07:00",
+    "last_seen": "2026-01-09T22:27:56.342446+07:00"
+  },
+  "5081164137": {
+    "user_id": 5081164137,
+    "username": "z12435z",
+    "full_name": "­",
+    "first_seen": "2026-01-09T22:58:32.912322+07:00",
+    "last_seen": "2026-02-24T12:53:47.992557+07:00",
+    "language": "vi"
+  },
+  "1871559810": {
+    "user_id": 1871559810,
+    "username": "daanoob",
+    "full_name": "Noob",
+    "first_seen": "2026-01-09T23:32:40.818231+07:00",
+    "last_seen": "2026-01-09T23:32:40.818240+07:00"
+  },
+  "6163760952": {
+    "user_id": 6163760952,
+    "username": "huynhhieunghia",
+    "full_name": "Nghĩa Huỳnh",
+    "first_seen": "2026-01-10T11:48:07.802553+07:00",
+    "last_seen": "2026-01-10T11:48:07.802571+07:00"
+  },
+  "5387292661": {
+    "user_id": 5387292661,
+    "username": "canvaedu1",
+    "full_name": "Mặc Nhiên",
+    "first_seen": "2026-01-10T12:29:22.239373+07:00",
+    "last_seen": "2026-01-10T12:29:26.220462+07:00"
+  },
+  "5639670641": {
+    "user_id": 5639670641,
+    "username": "sonizme",
+    "full_name": "VietCong Dude",
+    "first_seen": "2026-01-10T14:44:48.113844+07:00",
+    "last_seen": "2026-01-10T14:44:50.649025+07:00"
+  },
+  "7781042177": {
+    "user_id": 7781042177,
+    "username": "",
+    "full_name": "📿 Khánh 📿",
+    "first_seen": "2026-01-10T15:16:26.458020+07:00",
+    "last_seen": "2026-01-10T15:16:26.458036+07:00"
+  },
+  "2041840074": {
+    "user_id": 2041840074,
+    "username": "ductai_a4k57",
+    "full_name": "Tàiii",
+    "first_seen": "2026-01-10T15:16:29.509561+07:00",
+    "last_seen": "2026-01-10T20:48:04.229428+07:00"
+  },
+  "1449401823": {
+    "user_id": 1449401823,
+    "username": "WinnerBe0612",
+    "full_name": "Nguyễn Chiến Thắng",
+    "first_seen": "2026-01-10T15:17:46.664717+07:00",
+    "last_seen": "2026-01-10T15:17:46.664735+07:00"
+  },
+  "5353631911": {
+    "user_id": 5353631911,
+    "username": "Hoanganhquoc02",
+    "full_name": "Hoàng Anh Quốc",
+    "first_seen": "2026-01-10T16:14:08.394877+07:00",
+    "last_seen": "2026-01-10T16:40:08.828409+07:00"
+  },
+  "8422457593": {
+    "user_id": 8422457593,
+    "username": "namtocdai",
+    "full_name": "THMAN",
+    "first_seen": "2026-01-10T16:21:43.962506+07:00",
+    "last_seen": "2026-01-10T16:21:43.962522+07:00"
+  },
+  "678002119": {
+    "user_id": 678002119,
+    "username": "liutue",
+    "full_name": "Tue Liu",
+    "first_seen": "2026-01-10T16:21:47.439153+07:00",
+    "last_seen": "2026-01-10T16:21:47.439168+07:00"
+  },
+  "1126656808": {
+    "user_id": 1126656808,
+    "username": "nakokele2011",
+    "full_name": "bOO",
+    "first_seen": "2026-01-10T17:08:15.541778+07:00",
+    "last_seen": "2026-01-27T11:20:17.724047+07:00"
+  },
+  "801119307": {
+    "user_id": 801119307,
+    "username": "unsou1ttyy",
+    "full_name": "anee anee",
+    "first_seen": "2026-01-10T19:01:47.212611+07:00",
+    "last_seen": "2026-02-26T12:24:12.598035+07:00"
+  },
+  "988599741": {
+    "user_id": 988599741,
+    "username": "nghiant0704",
+    "full_name": "TN N",
+    "first_seen": "2026-01-11T19:26:36.767014+07:00",
+    "last_seen": "2026-02-12T18:11:02.245624+07:00"
+  },
+  "7313815805": {
+    "user_id": 7313815805,
+    "username": "",
+    "full_name": "Phương Anh",
+    "first_seen": "2026-01-11T21:24:19.200277+07:00",
+    "last_seen": "2026-01-11T21:24:20.910309+07:00"
+  },
+  "5256783743": {
+    "user_id": 5256783743,
+    "username": "dat_shopmmo_04",
+    "full_name": "Đạt - ShopMMO",
+    "first_seen": "2026-01-13T19:03:58.602906+07:00",
+    "last_seen": "2026-02-28T23:29:32.963555+07:00",
+    "language": "vi"
+  },
+  "1417433485": {
+    "user_id": 1417433485,
+    "username": "hirobin2",
+    "full_name": "Bin Ro",
+    "first_seen": "2026-01-14T11:45:08.556205+07:00",
+    "last_seen": "2026-02-27T11:07:28.104075+07:00",
+    "language": "vi"
+  },
+  "7353915691": {
+    "user_id": 7353915691,
+    "username": "ZeroBit2k4",
+    "full_name": "Hương Phạm Hoàng",
+    "first_seen": "2026-01-14T20:59:42.229271+07:00",
+    "last_seen": "2026-01-24T20:09:44.203691+07:00"
+  },
+  "6315303240": {
+    "user_id": 6315303240,
+    "username": "hminhnef",
+    "full_name": "Minh Nguyễn",
+    "first_seen": "2026-01-15T10:30:10.615599+07:00",
+    "last_seen": "2026-01-15T11:01:18.079269+07:00"
+  },
+  "8177642853": {
+    "user_id": 8177642853,
+    "username": "",
+    "full_name": "Bí Kê",
+    "first_seen": "2026-01-15T10:53:47.340078+07:00",
+    "last_seen": "2026-01-17T22:12:24.043888+07:00"
+  },
+  "7642488022": {
+    "user_id": 7642488022,
+    "username": "PabloEscobarVN",
+    "full_name": "Pablo Escobar",
+    "first_seen": "2026-01-15T14:40:20.471434+07:00",
+    "last_seen": "2026-01-15T14:44:18.474676+07:00"
+  },
+  "5973182811": {
+    "user_id": 5973182811,
+    "username": "qccron191",
+    "full_name": "Cron",
+    "first_seen": "2026-01-15T15:12:25.823115+07:00",
+    "last_seen": "2026-02-28T01:50:36.792565+07:00"
+  },
+  "838287904": {
+    "user_id": 838287904,
+    "username": "phatdath",
+    "full_name": "377HVT.QLCH.Phát Đạt",
+    "first_seen": "2026-01-15T15:18:58.733475+07:00",
+    "last_seen": "2026-02-26T14:59:06.795280+07:00"
+  },
+  "1353746336": {
+    "user_id": 1353746336,
+    "username": "vuluanhinla",
+    "full_name": "Vũ Luân",
+    "first_seen": "2026-01-15T15:25:07.439038+07:00",
+    "last_seen": "2026-02-24T21:20:29.383406+07:00"
+  },
+  "1846627491": {
+    "user_id": 1846627491,
+    "username": "the1mmo",
+    "full_name": "Trent Arnold",
+    "first_seen": "2026-01-15T15:35:55.070353+07:00",
+    "last_seen": "2026-02-27T11:16:16.136705+07:00",
+    "language": "vi"
+  },
+  "2075642340": {
+    "user_id": 2075642340,
+    "username": "Donk9125",
+    "full_name": "Donk On Thi Luoi Rep",
+    "first_seen": "2026-01-15T19:37:01.634860+07:00",
+    "last_seen": "2026-02-24T22:56:38.442701+07:00"
+  },
+  "6841148231": {
+    "user_id": 6841148231,
+    "username": "MinhTuanFN",
+    "full_name": "MT7",
+    "first_seen": "2026-01-17T01:32:41.539004+07:00",
+    "last_seen": "2026-02-23T09:33:46.450359+07:00"
+  },
+  "7061783387": {
+    "user_id": 7061783387,
+    "username": "diem225",
+    "full_name": "Diễm Phúc",
+    "first_seen": "2026-01-17T01:37:21.473129+07:00",
+    "last_seen": "2026-02-28T06:42:02.285355+07:00",
+    "language": "vi"
+  },
+  "851905132": {
+    "user_id": 851905132,
+    "username": "dukky26",
+    "full_name": "Duky",
+    "first_seen": "2026-01-17T01:40:54.397072+07:00",
+    "last_seen": "2026-02-28T09:34:24.020200+07:00"
+  },
+  "5673717757": {
+    "user_id": 5673717757,
+    "username": "tlong189231",
+    "full_name": "Đình Long",
+    "first_seen": "2026-01-17T01:42:41.827971+07:00",
+    "last_seen": "2026-02-25T15:24:30.938135+07:00"
+  },
+  "7196620465": {
+    "user_id": 7196620465,
+    "username": "mikey_11107",
+    "full_name": "Corleone",
+    "first_seen": "2026-01-17T02:04:04.798215+07:00",
+    "last_seen": "2026-01-31T22:36:33.299660+07:00"
+  },
+  "1613816901": {
+    "user_id": 1613816901,
+    "username": "rabiabasri342",
+    "full_name": "Rabia Básrî",
+    "first_seen": "2026-01-17T02:47:32.759402+07:00",
+    "last_seen": "2026-02-21T23:59:23.610404+07:00"
+  },
+  "6064549974": {
+    "user_id": 6064549974,
+    "username": "hienleminh0501",
+    "full_name": "Le Hien",
+    "first_seen": "2026-01-17T03:24:50.682235+07:00",
+    "last_seen": "2026-01-20T11:40:21.513989+07:00"
+  },
+  "5707883931": {
+    "user_id": 5707883931,
+    "username": "nxddg326",
+    "full_name": "__nxd.dg__",
+    "first_seen": "2026-01-17T05:37:17.461874+07:00",
+    "last_seen": "2026-02-28T21:17:08.176974+07:00",
+    "language": "vi"
+  },
+  "1988365791": {
+    "user_id": 1988365791,
+    "username": "pinkkkkk27",
+    "full_name": "J J",
+    "first_seen": "2026-01-17T06:28:22.424630+07:00",
+    "last_seen": "2026-02-28T22:27:05.827406+07:00"
+  },
+  "1129732875": {
+    "user_id": 1129732875,
+    "username": "Cong3636",
+    "full_name": "Duoc Cong",
+    "first_seen": "2026-01-17T06:30:06.786344+07:00",
+    "last_seen": "2026-02-05T11:57:13.817065+07:00"
+  },
+  "7702818432": {
+    "user_id": 7702818432,
+    "username": "binbin226999",
+    "full_name": "Bin Bin",
+    "first_seen": "2026-01-17T09:57:34.291594+07:00",
+    "last_seen": "2026-01-17T09:57:34.291594+07:00"
+  },
+  "7866952122": {
+    "user_id": 7866952122,
+    "username": "teaganle5165",
+    "full_name": "Teagan Le",
+    "first_seen": "2026-01-17T10:00:08.641325+07:00",
+    "last_seen": "2026-02-25T10:23:50.093569+07:00"
+  },
+  "8520195547": {
+    "user_id": 8520195547,
+    "username": "",
+    "full_name": "Kaito",
+    "first_seen": "2026-01-17T10:05:48.462024+07:00",
+    "last_seen": "2026-01-17T10:05:48.462024+07:00"
+  },
+  "7346373274": {
+    "user_id": 7346373274,
+    "username": "pnreal",
+    "full_name": "pnreal",
+    "first_seen": "2026-01-17T19:47:10.151402+07:00",
+    "last_seen": "2026-02-26T12:14:49.235510+07:00"
+  },
+  "5945225161": {
+    "user_id": 5945225161,
+    "username": "tkstkstkstks",
+    "full_name": "TKS",
+    "first_seen": "2026-01-17T22:55:57.449545+07:00",
+    "last_seen": "2026-02-27T14:51:18.642995+07:00"
+  },
+  "7195627173": {
+    "user_id": 7195627173,
+    "username": "Meow8833",
+    "full_name": "Mimolla",
+    "first_seen": "2026-01-17T22:58:12.488330+07:00",
+    "last_seen": "2026-02-24T22:55:07.009792+07:00"
+  },
+  "5482623199": {
+    "user_id": 5482623199,
+    "username": "DucDuBaii",
+    "full_name": "Nhc .",
+    "first_seen": "2026-01-18T08:28:00.443937+07:00",
+    "last_seen": "2026-02-27T20:19:22.934198+07:00"
+  },
+  "264771028": {
+    "user_id": 264771028,
+    "username": "EnTwoTi",
+    "full_name": "Nguyễn Thường",
+    "first_seen": "2026-01-18T12:56:46.792933+07:00",
+    "last_seen": "2026-02-27T04:20:17.683504+07:00"
+  },
+  "325121662": {
+    "user_id": 325121662,
+    "username": "nguyenhuuquy",
+    "full_name": "Nguyen Huu Quy",
+    "first_seen": "2026-01-18T13:17:51.660842+07:00",
+    "last_seen": "2026-02-08T15:09:18.059847+07:00",
+    "language": "vi"
+  },
+  "6103237141": {
+    "user_id": 6103237141,
+    "username": "ducvinh06",
+    "full_name": "Đức Vinh",
+    "first_seen": "2026-01-18T14:45:43.113147+07:00",
+    "last_seen": "2026-02-01T20:18:13.896097+07:00"
+  },
+  "7210122291": {
+    "user_id": 7210122291,
+    "username": "",
+    "full_name": "Hieu",
+    "first_seen": "2026-01-18T16:18:10.855204+07:00",
+    "last_seen": "2026-02-09T17:16:53.823894+07:00"
+  },
+  "7417094369": {
+    "user_id": 7417094369,
+    "username": "cuonghoangminh99",
+    "full_name": "Hoàng Minh Cương",
+    "first_seen": "2026-01-18T17:10:32.249902+07:00",
+    "last_seen": "2026-02-25T18:50:46.796782+07:00"
+  },
+  "7407411571": {
+    "user_id": 7407411571,
+    "username": "hotice_312",
+    "full_name": "Hot Ice",
+    "first_seen": "2026-01-18T17:22:57.910629+07:00",
+    "last_seen": "2026-02-26T17:44:37.652868+07:00",
+    "language": "vi"
+  },
+  "6158849726": {
+    "user_id": 6158849726,
+    "username": "destzuki",
+    "full_name": "Destz",
+    "first_seen": "2026-01-18T18:23:36.842456+07:00",
+    "last_seen": "2026-02-21T14:37:42.556906+07:00"
+  },
+  "5149100421": {
+    "user_id": 5149100421,
+    "username": "longsensi",
+    "full_name": "Long Nguyễn",
+    "first_seen": "2026-01-18T18:23:48.279725+07:00",
+    "last_seen": "2026-02-28T22:24:46.768859+07:00"
+  },
+  "8412396991": {
+    "user_id": 8412396991,
+    "username": "thangdong2712",
+    "full_name": "Đồng Đen",
+    "first_seen": "2026-01-18T18:40:09.966060+07:00",
+    "last_seen": "2026-02-26T11:42:21.856754+07:00"
+  },
+  "8162173483": {
+    "user_id": 8162173483,
+    "username": "beuyenne68",
+    "full_name": "Phuong Uyen",
+    "first_seen": "2026-01-18T18:52:20.188196+07:00",
+    "last_seen": "2026-01-18T22:03:33.365516+07:00"
+  },
+  "7775041305": {
+    "user_id": 7775041305,
+    "username": "poptitt",
+    "full_name": "Pop Títttt",
+    "first_seen": "2026-01-18T19:41:53.582235+07:00",
+    "last_seen": "2026-02-25T01:02:38.583960+07:00"
+  },
+  "7401955088": {
+    "user_id": 7401955088,
+    "username": "Quangtien22",
+    "full_name": "Tien Quang",
+    "first_seen": "2026-01-18T19:47:48.064754+07:00",
+    "last_seen": "2026-02-28T10:38:12.209221+07:00",
+    "language": "vi"
+  },
+  "7574655780": {
+    "user_id": 7574655780,
+    "username": "AI_tools_sell",
+    "full_name": "Phạm Thu",
+    "first_seen": "2026-01-18T21:28:22.271762+07:00",
+    "last_seen": "2026-02-06T17:11:04.792643+07:00"
+  },
+  "5525526323": {
+    "user_id": 5525526323,
+    "username": "hoclamm0m0",
+    "full_name": "QTb Vn",
+    "first_seen": "2026-01-18T21:29:13.039836+07:00",
+    "last_seen": "2026-02-12T18:04:31.241625+07:00"
+  },
+  "7353028974": {
+    "user_id": 7353028974,
+    "username": "trungvu2003",
+    "full_name": "Vũ Đình Trung",
+    "first_seen": "2026-01-18T21:29:14.416170+07:00",
+    "last_seen": "2026-02-25T01:08:29.354952+07:00"
+  },
+  "6004951658": {
+    "user_id": 6004951658,
+    "username": "Bothaihoang",
+    "full_name": "Bố Thái Hoàng",
+    "first_seen": "2026-01-18T21:30:01.329245+07:00",
+    "last_seen": "2026-01-18T21:30:01.329245+07:00"
+  },
+  "8554735504": {
+    "user_id": 8554735504,
+    "username": "Mysaoaa",
+    "full_name": "Mao San",
+    "first_seen": "2026-01-18T21:30:07.274838+07:00",
+    "last_seen": "2026-01-18T21:30:07.274838+07:00"
+  },
+  "1716191899": {
+    "user_id": 1716191899,
+    "username": "HTDigitalZone",
+    "full_name": "Nguyễn Thành Hoàng",
+    "first_seen": "2026-01-18T21:38:59.194378+07:00",
+    "last_seen": "2026-02-09T10:02:26.633037+07:00"
+  },
+  "5608269735": {
+    "user_id": 5608269735,
+    "username": "phttechnology",
+    "full_name": "Tiến Phạm Hoàng",
+    "first_seen": "2026-01-18T21:40:43.765578+07:00",
+    "last_seen": "2026-01-18T21:40:43.765578+07:00"
+  },
+  "7965479456": {
+    "user_id": 7965479456,
+    "username": "gaudamm",
+    "full_name": "Gấu",
+    "first_seen": "2026-01-18T21:46:43.066502+07:00",
+    "last_seen": "2026-02-12T17:15:11.234653+07:00"
+  },
+  "6729127229": {
+    "user_id": 6729127229,
+    "username": "moihiee",
+    "full_name": "Thợ săn tiểu thư",
+    "first_seen": "2026-01-18T21:54:57.322349+07:00",
+    "last_seen": "2026-02-26T21:06:15.042244+07:00"
+  },
+  "5018459074": {
+    "user_id": 5018459074,
+    "username": "tmnabe",
+    "full_name": "thanhnam.bnb",
+    "first_seen": "2026-01-18T22:29:13.234763+07:00",
+    "last_seen": "2026-01-18T22:29:52.229609+07:00"
+  },
+  "6156084963": {
+    "user_id": 6156084963,
+    "username": "Lanhcutiiii",
+    "full_name": "Lan Anh",
+    "first_seen": "2026-01-18T22:32:22.834715+07:00",
+    "last_seen": "2026-01-18T22:32:22.834715+07:00"
+  },
+  "2050371105": {
+    "user_id": 2050371105,
+    "username": "Kalu4ever2025",
+    "full_name": "Kalu",
+    "first_seen": "2026-01-18T23:19:53.189983+07:00",
+    "last_seen": "2026-01-18T23:19:53.189983+07:00"
+  },
+  "1957359100": {
+    "user_id": 1957359100,
+    "username": "MCR_Automation",
+    "full_name": "Nguyên || X(twitter)clone Account Seller",
+    "first_seen": "2026-01-18T23:41:11.492841+07:00",
+    "last_seen": "2026-01-18T23:41:11.492841+07:00"
+  },
+  "5296028317": {
+    "user_id": 5296028317,
+    "username": "Xio981",
+    "full_name": "Xio",
+    "first_seen": "2026-01-19T11:22:58.809273+07:00",
+    "last_seen": "2026-01-20T14:28:38.486259+07:00"
+  },
+  "1096570261": {
+    "user_id": 1096570261,
+    "username": "saitama123a",
+    "full_name": "Quang Huy",
+    "first_seen": "2026-01-19T14:02:52.690996+07:00",
+    "last_seen": "2026-02-15T13:03:18.121555+07:00"
+  },
+  "1766492296": {
+    "user_id": 1766492296,
+    "username": "tonywhale123",
+    "full_name": "TW",
+    "first_seen": "2026-01-19T14:03:28.786915+07:00",
+    "last_seen": "2026-01-19T14:03:28.786915+07:00"
+  },
+  "5782285360": {
+    "user_id": 5782285360,
+    "username": "minhluong612",
+    "full_name": "Nền tảng giá rẻ",
+    "first_seen": "2026-01-19T15:18:10.401823+07:00",
+    "last_seen": "2026-02-28T13:57:50.688015+07:00"
+  },
+  "5394429913": {
+    "user_id": 5394429913,
+    "username": "KuroDev7413",
+    "full_name": "Kuro Tatsuya",
+    "first_seen": "2026-01-19T15:18:24.962501+07:00",
+    "last_seen": "2026-01-19T15:18:24.962501+07:00"
+  },
+  "5712253017": {
+    "user_id": 5712253017,
+    "username": "hihihaha96",
+    "full_name": "Le Cong",
+    "first_seen": "2026-01-19T15:28:04.720247+07:00",
+    "last_seen": "2026-02-04T10:37:22.136501+07:00"
+  },
+  "7047048672": {
+    "user_id": 7047048672,
+    "username": "vanquan201",
+    "full_name": "Quân Nguyễn Văn",
+    "first_seen": "2026-01-19T15:29:14.152235+07:00",
+    "last_seen": "2026-02-27T10:06:24.267257+07:00",
+    "language": "vi"
+  },
+  "628946102": {
+    "user_id": 628946102,
+    "username": "banhmichamsua86",
+    "full_name": "KING",
+    "first_seen": "2026-01-19T15:41:17.184436+07:00",
+    "last_seen": "2026-01-19T15:41:17.184436+07:00"
+  },
+  "7883597808": {
+    "user_id": 7883597808,
+    "username": "kimchimmso",
+    "full_name": "Kim Chi",
+    "first_seen": "2026-01-19T15:43:59.235519+07:00",
+    "last_seen": "2026-01-20T11:46:41.279751+07:00"
+  },
+  "439984440": {
+    "user_id": 439984440,
+    "username": "Mrt325",
+    "full_name": "Mr T",
+    "first_seen": "2026-01-19T15:47:35.395321+07:00",
+    "last_seen": "2026-01-19T15:47:35.395321+07:00"
+  },
+  "7309859746": {
+    "user_id": 7309859746,
+    "username": "Phung2728",
+    "full_name": ". Phụng",
+    "first_seen": "2026-01-19T15:49:56.903089+07:00",
+    "last_seen": "2026-02-28T22:27:20.664360+07:00"
+  },
+  "2011241576": {
+    "user_id": 2011241576,
+    "username": "Laohacnon",
+    "full_name": "𝑳𝒂̃𝒐 𝑯𝒂̣𝒄🔰🗡️",
+    "first_seen": "2026-01-19T16:11:25.974584+07:00",
+    "last_seen": "2026-02-08T13:29:06.696311+07:00"
+  },
+  "822260527": {
+    "user_id": 822260527,
+    "username": "",
+    "full_name": "BB Why",
+    "first_seen": "2026-01-19T16:12:21.711164+07:00",
+    "last_seen": "2026-02-27T14:04:00.657356+07:00"
+  },
+  "7032936098": {
+    "user_id": 7032936098,
+    "username": "inootrum",
+    "full_name": "iNoo | Trùmᯓᡣ𐭩",
+    "first_seen": "2026-01-19T16:28:37.377983+07:00",
+    "last_seen": "2026-02-27T17:54:00.112458+07:00"
+  },
+  "6735316267": {
+    "user_id": 6735316267,
+    "username": "hvbinh73",
+    "full_name": "BÌNH",
+    "first_seen": "2026-01-19T16:37:45.228872+07:00",
+    "last_seen": "2026-02-28T23:21:41.954759+07:00"
+  },
+  "606840089": {
+    "user_id": 606840089,
+    "username": "ninjac9",
+    "full_name": "Lê Anh Tuấn",
+    "first_seen": "2026-01-19T19:05:59.037695+07:00",
+    "last_seen": "2026-02-07T15:59:31.619525+07:00"
+  },
+  "2032263410": {
+    "user_id": 2032263410,
+    "username": "hidelimited",
+    "full_name": "Hide",
+    "first_seen": "2026-01-19T19:15:51.806515+07:00",
+    "last_seen": "2026-02-28T14:45:40.646080+07:00"
+  },
+  "8344247593": {
+    "user_id": 8344247593,
+    "username": "vangiangnguyenn",
+    "full_name": "Van Giang Nguyen",
+    "first_seen": "2026-01-19T19:23:44.250032+07:00",
+    "last_seen": "2026-01-24T09:54:08.207222+07:00"
+  },
+  "8307957997": {
+    "user_id": 8307957997,
+    "username": "khanhdeptraisieucap",
+    "full_name": "Phạm Khánh",
+    "first_seen": "2026-01-19T19:31:28.078758+07:00",
+    "last_seen": "2026-02-13T13:55:59.866443+07:00"
+  },
+  "5657781483": {
+    "user_id": 5657781483,
+    "username": "DavidNope",
+    "full_name": "David Nope",
+    "first_seen": "2026-01-19T19:35:46.735298+07:00",
+    "last_seen": "2026-01-19T19:35:46.735298+07:00"
+  },
+  "5081016489": {
+    "user_id": 5081016489,
+    "username": "tiendat_cao",
+    "full_name": "TDat",
+    "first_seen": "2026-01-19T19:45:01.590105+07:00",
+    "last_seen": "2026-02-12T17:17:48.034573+07:00"
+  },
+  "5219655833": {
+    "user_id": 5219655833,
+    "username": "nvmjun_vn",
+    "full_name": "Jun Nguyen",
+    "first_seen": "2026-01-19T19:58:26.852110+07:00",
+    "last_seen": "2026-01-23T23:01:19.904371+07:00"
+  },
+  "5261754990": {
+    "user_id": 5261754990,
+    "username": "yuihuy",
+    "full_name": "Quoc Huy",
+    "first_seen": "2026-01-19T20:04:23.423493+07:00",
+    "last_seen": "2026-02-27T14:00:01.160114+07:00",
+    "language": "vi"
+  },
+  "7353990207": {
+    "user_id": 7353990207,
+    "username": "Randy1005",
+    "full_name": "Randy",
+    "first_seen": "2026-01-19T22:51:31.506090+07:00",
+    "last_seen": "2026-02-26T17:46:55.051641+07:00",
+    "language": "vi"
+  },
+  "5038777742": {
+    "user_id": 5038777742,
+    "username": "HenshouC",
+    "full_name": "Henshou",
+    "first_seen": "2026-01-19T23:35:19.098900+07:00",
+    "last_seen": "2026-02-15T13:05:48.534242+07:00"
+  },
+  "6628845242": {
+    "user_id": 6628845242,
+    "username": "Binnamsogen",
+    "full_name": "Bin Namsogen",
+    "first_seen": "2026-01-19T23:58:35.816794+07:00",
+    "last_seen": "2026-02-26T17:57:17.151600+07:00"
+  },
+  "5272984518": {
+    "user_id": 5272984518,
+    "username": "dtridz",
+    "full_name": "sdproxy.vn",
+    "first_seen": "2026-01-20T00:39:00.290719+07:00",
+    "last_seen": "2026-02-27T08:23:01.975749+07:00"
+  },
+  "6044774032": {
+    "user_id": 6044774032,
+    "username": "doducloc",
+    "full_name": "Marcus",
+    "first_seen": "2026-01-20T01:35:45.265954+07:00",
+    "last_seen": "2026-02-16T22:29:08.160768+07:00"
+  },
+  "5414847242": {
+    "user_id": 5414847242,
+    "username": "AkiraSubaru",
+    "full_name": "Envy",
+    "first_seen": "2026-01-20T02:47:12.250042+07:00",
+    "last_seen": "2026-02-20T23:48:25.339148+07:00"
+  },
+  "863875519": {
+    "user_id": 863875519,
+    "username": "manhjisme",
+    "full_name": "Manhihi 🇻🇳",
+    "first_seen": "2026-01-20T10:38:11.462975+07:00",
+    "last_seen": "2026-01-20T10:38:28.978600+07:00"
+  },
+  "5710603982": {
+    "user_id": 5710603982,
+    "username": "congtuhanoi1111",
+    "full_name": "Hoàng Tử Gios",
+    "first_seen": "2026-01-20T10:49:28.835147+07:00",
+    "last_seen": "2026-02-03T16:02:09.077613+07:00"
+  },
+  "6331215524": {
+    "user_id": 6331215524,
+    "username": "ongtrumairdrop01",
+    "full_name": "Thiên ▪️ Long 🐦🐾| Drops💧🆙 UXUY",
+    "first_seen": "2026-01-20T10:50:59.444518+07:00",
+    "last_seen": "2026-01-20T10:50:59.444518+07:00"
+  },
+  "7642807673": {
+    "user_id": 7642807673,
+    "username": "sinhthanh22",
+    "full_name": "Luffy D",
+    "first_seen": "2026-01-20T11:29:56.197296+07:00",
+    "last_seen": "2026-02-25T13:47:13.773934+07:00"
+  },
+  "6085683354": {
+    "user_id": 6085683354,
+    "username": "hoangminhthanh89",
+    "full_name": "Minh Thanh",
+    "first_seen": "2026-01-20T13:29:25.680068+07:00",
+    "last_seen": "2026-02-23T22:19:42.016553+07:00"
+  },
+  "8412911847": {
+    "user_id": 8412911847,
+    "username": "Sugame1",
+    "full_name": "Su Game",
+    "first_seen": "2026-01-20T14:10:14.045286+07:00",
+    "last_seen": "2026-02-20T09:36:27.465114+07:00"
+  },
+  "7787150717": {
+    "user_id": 7787150717,
+    "username": "tuand_9999",
+    "full_name": "DuongVanTuan",
+    "first_seen": "2026-01-20T14:46:23.201924+07:00",
+    "last_seen": "2026-01-26T08:51:42.774192+07:00"
+  },
+  "6932344878": {
+    "user_id": 6932344878,
+    "username": "B01150124",
+    "full_name": "B01",
+    "first_seen": "2026-01-20T16:56:31.303306+07:00",
+    "last_seen": "2026-01-20T16:56:31.303306+07:00"
+  },
+  "673957892": {
+    "user_id": 673957892,
+    "username": "agneskrivers",
+    "full_name": "Rêu",
+    "first_seen": "2026-01-20T17:06:09.219013+07:00",
+    "last_seen": "2026-01-20T17:06:09.219013+07:00"
+  },
+  "1147660391": {
+    "user_id": 1147660391,
+    "username": "hylehub",
+    "full_name": "Hy",
+    "first_seen": "2026-01-20T17:11:50.665735+07:00",
+    "last_seen": "2026-02-12T17:14:00.022862+07:00"
+  },
+  "1564916438": {
+    "user_id": 1564916438,
+    "username": "kayan881",
+    "full_name": "KaYan",
+    "first_seen": "2026-01-21T22:30:25.186842+07:00",
+    "last_seen": "2026-01-21T22:30:25.186842+07:00"
+  },
+  "5353026500": {
+    "user_id": 5353026500,
+    "username": "dHieu04",
+    "full_name": "Duy Hieu",
+    "first_seen": "2026-01-21T23:31:53.434946+07:00",
+    "last_seen": "2026-01-30T10:39:06.068233+07:00",
+    "balance": 70000
+  },
+  "6081358721": {
+    "user_id": 6081358721,
+    "username": "hunters236",
+    "full_name": "Hunter Super",
+    "first_seen": "2026-01-21T23:32:28.785076+07:00",
+    "last_seen": "2026-02-25T12:26:47.305071+07:00"
+  },
+  "5937293761": {
+    "user_id": 5937293761,
+    "username": "blackmmo9",
+    "full_name": "Thanh Thanh",
+    "first_seen": "2026-01-22T03:08:57.801473+07:00",
+    "last_seen": "2026-01-30T20:44:25.754455+07:00"
+  },
+  "5792613389": {
+    "user_id": 5792613389,
+    "username": "",
+    "full_name": "N",
+    "first_seen": "2026-01-22T07:11:11.996840+07:00",
+    "last_seen": "2026-02-28T18:00:36.027503+07:00"
+  },
+  "1644969498": {
+    "user_id": 1644969498,
+    "username": "jimmynguyen123",
+    "full_name": "Jimmy ️",
+    "first_seen": "2026-01-22T08:57:20.328790+07:00",
+    "last_seen": "2026-02-24T15:56:30.250712+07:00"
+  },
+  "1707027319": {
+    "user_id": 1707027319,
+    "username": "iNupakachi",
+    "full_name": "Pham Phuong",
+    "first_seen": "2026-01-22T09:56:09.393677+07:00",
+    "last_seen": "2026-02-24T14:03:01.146300+07:00"
+  },
+  "764083121": {
+    "user_id": 764083121,
+    "username": "ThanhThuan1802",
+    "full_name": "THUAN THANH NGUYEN",
+    "first_seen": "2026-01-22T10:24:54.257434+07:00",
+    "last_seen": "2026-01-22T10:25:27.531216+07:00"
+  },
+  "7860139288": {
+    "user_id": 7860139288,
+    "username": "duckien3103",
+    "full_name": "DQ Store",
+    "first_seen": "2026-01-22T10:50:15.552245+07:00",
+    "last_seen": "2026-02-01T08:17:28.722271+07:00"
+  },
+  "1457220425": {
+    "user_id": 1457220425,
+    "username": "",
+    "full_name": "Trần Như Quỳnh",
+    "first_seen": "2026-01-22T15:57:36.867816+07:00",
+    "last_seen": "2026-02-26T11:39:19.811950+07:00"
+  },
+  "1603882902": {
+    "user_id": 1603882902,
+    "username": "",
+    "full_name": "Charles Martel",
+    "first_seen": "2026-01-22T16:37:46.662460+07:00",
+    "last_seen": "2026-02-27T09:33:35.875582+07:00"
+  },
+  "1931060208": {
+    "user_id": 1931060208,
+    "username": "peltirogus",
+    "full_name": "Jensika",
+    "first_seen": "2026-01-22T17:03:22.304953+07:00",
+    "last_seen": "2026-02-26T16:58:33.929467+07:00",
+    "balance": 70000
+  },
+  "1137625646": {
+    "user_id": 1137625646,
+    "username": "saxichuongduong",
+    "full_name": "H",
+    "first_seen": "2026-01-22T23:07:21.268145+07:00",
+    "last_seen": "2026-01-22T23:07:21.268156+07:00"
+  },
+  "6362156908": {
+    "user_id": 6362156908,
+    "username": "thang0911",
+    "full_name": "Nguyen Quang Thang",
+    "first_seen": "2026-01-23T22:56:46.124344+07:00",
+    "last_seen": "2026-02-28T14:46:58.414169+07:00"
+  },
+  "1845925685": {
+    "user_id": 1845925685,
+    "username": "",
+    "full_name": "Minh Nguyễn",
+    "first_seen": "2026-01-24T09:07:09.670362+07:00",
+    "last_seen": "2026-02-26T14:33:15.135044+07:00",
+    "language": "vi",
+    "balance": 25000
+  },
+  "7036328759": {
+    "user_id": 7036328759,
+    "username": "Noobs1102",
+    "full_name": "1 1",
+    "first_seen": "2026-01-24T09:18:28.440389+07:00",
+    "last_seen": "2026-02-21T18:02:06.727809+07:00"
+  },
+  "6669849662": {
+    "user_id": 6669849662,
+    "username": "meobelneee",
+    "full_name": "Meo Bel",
+    "first_seen": "2026-01-24T09:19:37.222910+07:00",
+    "last_seen": "2026-01-24T09:19:37.222910+07:00"
+  },
+  "1417404635": {
+    "user_id": 1417404635,
+    "username": "taobankeo",
+    "full_name": "Nguyễn Anh Tú",
+    "first_seen": "2026-01-24T09:30:50.472834+07:00",
+    "last_seen": "2026-02-28T16:13:21.612806+07:00",
+    "balance": 0
+  },
+  "1456219428": {
+    "user_id": 1456219428,
+    "username": "zahy69",
+    "full_name": "Za Hy 🐳",
+    "first_seen": "2026-01-24T09:31:40.081495+07:00",
+    "last_seen": "2026-02-25T13:00:39.665765+07:00"
+  },
+  "6956266183": {
+    "user_id": 6956266183,
+    "username": "zinghay",
+    "full_name": "The Sung",
+    "first_seen": "2026-01-24T09:33:17.675263+07:00",
+    "last_seen": "2026-02-27T13:33:05.672364+07:00"
+  },
+  "6451749833": {
+    "user_id": 6451749833,
+    "username": "",
+    "full_name": "Pham Hang",
+    "first_seen": "2026-01-24T09:34:59.915548+07:00",
+    "last_seen": "2026-02-24T23:00:00.632754+07:00"
+  },
+  "6539821508": {
+    "user_id": 6539821508,
+    "username": "pth178",
+    "full_name": "ENIGMATIC P",
+    "first_seen": "2026-01-24T09:35:53.835708+07:00",
+    "last_seen": "2026-02-26T21:43:23.548592+07:00"
+  },
+  "5524274254": {
+    "user_id": 5524274254,
+    "username": "Thong_Pahm",
+    "full_name": "Thong Pahm",
+    "first_seen": "2026-01-24T09:56:34.798877+07:00",
+    "last_seen": "2026-01-28T04:07:59.745592+07:00"
+  },
+  "1108528039": {
+    "user_id": 1108528039,
+    "username": "Cassius_aegis",
+    "full_name": "Cassius | A E G I S",
+    "first_seen": "2026-01-24T10:46:27.921554+07:00",
+    "last_seen": "2026-02-27T11:55:30.605399+07:00"
+  },
+  "5295955655": {
+    "user_id": 5295955655,
+    "username": "NguyenNgocAnhTu",
+    "full_name": "ᅠࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧ Nguyễn Ng Anh Tú ᅠࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣩࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧࣧ",
+    "first_seen": "2026-01-24T12:03:13.335212+07:00",
+    "last_seen": "2026-02-12T18:07:41.897630+07:00"
+  },
+  "7236397727": {
+    "user_id": 7236397727,
+    "username": "zonedee",
+    "full_name": "Nọng Zone",
+    "first_seen": "2026-01-24T15:21:12.818884+07:00",
+    "last_seen": "2026-02-24T15:49:34.543863+07:00"
+  },
+  "7411657102": {
+    "user_id": 7411657102,
+    "username": "tuna6996",
+    "full_name": "6IXKZ",
+    "first_seen": "2026-01-24T16:18:12.019449+07:00",
+    "last_seen": "2026-02-20T08:31:35.837543+07:00"
+  },
+  "1201862118": {
+    "user_id": 1201862118,
+    "username": "Huu12356",
+    "full_name": "Hữu",
+    "first_seen": "2026-01-24T17:10:36.924702+07:00",
+    "last_seen": "2026-01-24T17:10:36.924702+07:00"
+  },
+  "5689379967": {
+    "user_id": 5689379967,
+    "username": "",
+    "full_name": "Linh Vũ",
+    "first_seen": "2026-01-24T17:13:13.689880+07:00",
+    "last_seen": "2026-02-25T14:22:02.926539+07:00"
+  },
+  "1039357545": {
+    "user_id": 1039357545,
+    "username": "vietha19988",
+    "full_name": "adam vn",
+    "first_seen": "2026-01-24T17:13:58.944747+07:00",
+    "last_seen": "2026-02-28T14:09:15.794675+07:00",
+    "language": "vi"
+  },
+  "5622590871": {
+    "user_id": 5622590871,
+    "username": "BMTTTTT",
+    "full_name": "BMT",
+    "first_seen": "2026-01-24T17:16:49.801831+07:00",
+    "last_seen": "2026-01-24T17:16:49.801831+07:00"
+  },
+  "490281021": {
+    "user_id": 490281021,
+    "username": "toiyeucuocsongnay",
+    "full_name": "Labs",
+    "first_seen": "2026-01-24T17:43:57.802588+07:00",
+    "last_seen": "2026-02-20T12:55:47.581895+07:00"
+  },
+  "5813594384": {
+    "user_id": 5813594384,
+    "username": "HaiPham182",
+    "full_name": "Hải Phạm",
+    "first_seen": "2026-01-24T17:44:17.573192+07:00",
+    "last_seen": "2026-02-13T20:16:12.214058+07:00"
+  },
+  "5260102157": {
+    "user_id": 5260102157,
+    "username": "DQ_STORE",
+    "full_name": "DQ Store",
+    "first_seen": "2026-01-24T17:48:05.373026+07:00",
+    "last_seen": "2026-02-22T19:17:58.246072+07:00"
+  },
+  "8100002959": {
+    "user_id": 8100002959,
+    "username": "Dungnguyen19999",
+    "full_name": "Dũng Nguyễn",
+    "first_seen": "2026-01-24T17:48:09.228185+07:00",
+    "last_seen": "2026-01-24T17:48:09.228185+07:00"
+  },
+  "6765389173": {
+    "user_id": 6765389173,
+    "username": "muataikhoanpro",
+    "full_name": "muataikhoanpro",
+    "first_seen": "2026-01-24T17:50:36.648866+07:00",
+    "last_seen": "2026-02-07T09:04:41.058483+07:00"
+  },
+  "6808483615": {
+    "user_id": 6808483615,
+    "username": "Kin216",
+    "full_name": "Kin",
+    "first_seen": "2026-01-24T17:56:44.364658+07:00",
+    "last_seen": "2026-02-27T13:09:47.833753+07:00"
+  },
+  "7295953120": {
+    "user_id": 7295953120,
+    "username": "lewisshop2411",
+    "full_name": "Siwel",
+    "first_seen": "2026-01-24T18:13:37.008452+07:00",
+    "last_seen": "2026-01-24T18:24:13.409774+07:00"
+  },
+  "6565843640": {
+    "user_id": 6565843640,
+    "username": "gldmining307",
+    "full_name": "GLD QB",
+    "first_seen": "2026-01-24T18:16:17.687078+07:00",
+    "last_seen": "2026-02-27T13:09:13.112998+07:00"
+  },
+  "8312881389": {
+    "user_id": 8312881389,
+    "username": "",
+    "full_name": "HA Plus",
+    "first_seen": "2026-01-24T18:24:28.906182+07:00",
+    "last_seen": "2026-02-09T15:44:23.364294+07:00"
+  },
+  "970038846": {
+    "user_id": 970038846,
+    "username": "monpham",
+    "full_name": "Mon Pham",
+    "first_seen": "2026-01-24T18:26:14.754757+07:00",
+    "last_seen": "2026-02-24T13:58:23.810083+07:00"
+  },
+  "914682817": {
+    "user_id": 914682817,
+    "username": "quangvinhbk542009",
+    "full_name": "Quang Bui Vinh",
+    "first_seen": "2026-01-24T18:41:35.867924+07:00",
+    "last_seen": "2026-02-26T20:27:14.283287+07:00"
+  },
+  "5292485156": {
+    "user_id": 5292485156,
+    "username": "Sunnvk4",
+    "full_name": "Vỹ nhắn zalo 0838539629 Trần",
+    "first_seen": "2026-01-24T18:58:49.607763+07:00",
+    "last_seen": "2026-01-30T10:31:14.972541+07:00"
+  },
+  "352688164": {
+    "user_id": 352688164,
+    "username": "huynhminhthien1994",
+    "full_name": "CSPR 1$ CHỐT NGHỈ 🦴",
+    "first_seen": "2026-01-24T19:27:55.711098+07:00",
+    "last_seen": "2026-01-24T19:27:55.711098+07:00"
+  },
+  "7200051811": {
+    "user_id": 7200051811,
+    "username": "huongle2708",
+    "full_name": "Hoang Le.",
+    "first_seen": "2026-01-24T19:31:34.433309+07:00",
+    "last_seen": "2026-02-08T21:47:31.006331+07:00"
+  },
+  "6919226294": {
+    "user_id": 6919226294,
+    "username": "Shoptinn",
+    "full_name": "Shop Acc rẻ",
+    "first_seen": "2026-01-24T19:49:19.977966+07:00",
+    "last_seen": "2026-02-11T21:47:51.951652+07:00",
+    "language": "vi"
+  },
+  "5514097519": {
+    "user_id": 5514097519,
+    "username": "tieuhoaina",
+    "full_name": "Na ZCX",
+    "first_seen": "2026-01-24T20:07:02.840112+07:00",
+    "last_seen": "2026-02-20T17:18:34.592594+07:00"
+  },
+  "1699287339": {
+    "user_id": 1699287339,
+    "username": "sunshinestore12",
+    "full_name": "Bắc Phoi",
+    "first_seen": "2026-01-24T20:20:48.293606+07:00",
+    "last_seen": "2026-01-29T09:28:25.770750+07:00"
+  },
+  "6070175319": {
+    "user_id": 6070175319,
+    "username": "callmebabe94",
+    "full_name": "Over Game",
+    "first_seen": "2026-01-24T20:32:55.706617+07:00",
+    "last_seen": "2026-02-28T18:32:39.523996+07:00"
+  },
+  "1058771793": {
+    "user_id": 1058771793,
+    "username": "leejihoonzz",
+    "full_name": "Lee Ji Hoon",
+    "first_seen": "2026-01-24T21:04:34.235050+07:00",
+    "last_seen": "2026-02-27T14:12:54.578223+07:00"
+  },
+  "1893652194": {
+    "user_id": 1893652194,
+    "username": "dhai6720",
+    "full_name": "Đức Hải",
+    "first_seen": "2026-01-24T21:17:25.522859+07:00",
+    "last_seen": "2026-02-12T17:04:30.847893+07:00"
+  },
+  "5903282081": {
+    "user_id": 5903282081,
+    "username": "qiloth",
+    "full_name": "𝔻𝕖𝕞𝕠𝕟𝔾𝕠𝕕𝕤",
+    "first_seen": "2026-01-24T22:25:52.903999+07:00",
+    "last_seen": "2026-01-26T10:57:53.781223+07:00"
+  },
+  "5057022371": {
+    "user_id": 5057022371,
+    "username": "quoc168",
+    "full_name": "Quốc Nguyễn",
+    "first_seen": "2026-01-25T09:27:08.585932+07:00",
+    "last_seen": "2026-02-28T22:28:56.027930+07:00",
+    "language": "vi"
+  },
+  "1335927796": {
+    "user_id": 1335927796,
+    "username": "mildleee",
+    "full_name": "Mild 🦴",
+    "first_seen": "2026-01-25T10:12:55.083516+07:00",
+    "last_seen": "2026-02-27T16:05:06.300653+07:00"
+  },
+  "1428780604": {
+    "user_id": 1428780604,
+    "username": "nthanhtinh",
+    "full_name": "Tình Nguyễn",
+    "first_seen": "2026-01-25T10:38:51.042345+07:00",
+    "last_seen": "2026-01-28T15:54:00.820029+07:00"
+  },
+  "6143487117": {
+    "user_id": 6143487117,
+    "username": "transinhazz",
+    "full_name": "Trần Sinh",
+    "first_seen": "2026-01-25T10:39:53.561303+07:00",
+    "last_seen": "2026-02-25T14:34:03.698270+07:00"
+  },
+  "703153229": {
+    "user_id": 703153229,
+    "username": "nguyendollhp",
+    "full_name": "Phạm Thanh Nguyên",
+    "first_seen": "2026-01-25T10:40:23.835728+07:00",
+    "last_seen": "2026-01-30T20:26:41.652617+07:00"
+  },
+  "7415186957": {
+    "user_id": 7415186957,
+    "username": "locnguyen1808",
+    "full_name": "Loc Nguyen",
+    "first_seen": "2026-01-25T10:41:38.185629+07:00",
+    "last_seen": "2026-02-19T13:12:31.685314+07:00"
+  },
+  "5166809585": {
+    "user_id": 5166809585,
+    "username": "ctashop1819",
+    "full_name": "CTA Shop",
+    "first_seen": "2026-01-25T11:02:28.331651+07:00",
+    "last_seen": "2026-01-25T11:02:28.331651+07:00"
+  },
+  "993114719": {
+    "user_id": 993114719,
+    "username": "betafpt",
+    "full_name": "Bodo",
+    "first_seen": "2026-01-25T11:55:34.348793+07:00",
+    "last_seen": "2026-02-20T22:11:28.521496+07:00"
+  },
+  "5809203657": {
+    "user_id": 5809203657,
+    "username": "Vinhdz2406",
+    "full_name": "Trần Công Vinh",
+    "first_seen": "2026-01-25T12:16:38.922652+07:00",
+    "last_seen": "2026-02-13T01:12:47.208608+07:00"
+  },
+  "5046813074": {
+    "user_id": 5046813074,
+    "username": "Kevillionaire",
+    "full_name": "KΞv𝒾n",
+    "first_seen": "2026-01-25T13:37:10.487998+07:00",
+    "last_seen": "2026-02-19T11:45:55.981749+07:00"
+  },
+  "6210926535": {
+    "user_id": 6210926535,
+    "username": "kewtiez",
+    "full_name": "ㅤ",
+    "first_seen": "2026-01-25T14:36:43.937592+07:00",
+    "last_seen": "2026-02-24T00:33:28.793473+07:00"
+  },
+  "1941332666": {
+    "user_id": 1941332666,
+    "username": "wudzung",
+    "full_name": "Wu Dzung",
+    "first_seen": "2026-01-25T15:59:57.773274+07:00",
+    "last_seen": "2026-01-25T15:59:57.773274+07:00"
+  },
+  "6908557585": {
+    "user_id": 6908557585,
+    "username": "tplaiyumaniisa",
+    "full_name": "Trương Lan Linh",
+    "first_seen": "2026-01-25T16:32:11.099182+07:00",
+    "last_seen": "2026-01-25T16:32:11.099182+07:00"
+  },
+  "1860648113": {
+    "user_id": 1860648113,
+    "username": "congmanh810",
+    "full_name": "Công Mạnh",
+    "first_seen": "2026-01-25T20:51:01.930423+07:00",
+    "last_seen": "2026-02-09T08:55:43.604193+07:00"
+  },
+  "6116899997": {
+    "user_id": 6116899997,
+    "username": "bachhoataikhoan",
+    "full_name": "Bách Hoá Tài Khoản Premium",
+    "first_seen": "2026-01-25T20:52:39.300558+07:00",
+    "last_seen": "2026-01-29T17:46:07.520229+07:00"
+  },
+  "7776150966": {
+    "user_id": 7776150966,
+    "username": "MarketingAI_Online",
+    "full_name": "Marketing AI Online",
+    "first_seen": "2026-01-25T20:54:41.608269+07:00",
+    "last_seen": "2026-02-25T12:20:24.474823+07:00",
+    "language": "vi"
+  },
+  "5711656220": {
+    "user_id": 5711656220,
+    "username": "yubsterr",
+    "full_name": "min",
+    "first_seen": "2026-01-25T20:55:21.938748+07:00",
+    "last_seen": "2026-01-25T21:02:10.404742+07:00"
+  },
+  "7791761187": {
+    "user_id": 7791761187,
+    "username": "",
+    "full_name": "Nguyễn Nam",
+    "first_seen": "2026-01-25T20:56:34.597055+07:00",
+    "last_seen": "2026-01-25T20:56:37.650848+07:00"
+  },
+  "957254054": {
+    "user_id": 957254054,
+    "username": "cuccutthanbi",
+    "full_name": "Con Nghiện Có Đạo Đức",
+    "first_seen": "2026-01-25T22:25:55.843231+07:00",
+    "last_seen": "2026-01-25T22:25:55.843231+07:00"
+  },
+  "5731333024": {
+    "user_id": 5731333024,
+    "username": "",
+    "full_name": "Hk War 🐈‍⬛",
+    "first_seen": "2026-01-25T23:17:47.289744+07:00",
+    "last_seen": "2026-02-27T14:10:26.859758+07:00"
+  },
+  "5943496004": {
+    "user_id": 5943496004,
+    "username": "Charchof",
+    "full_name": "Général",
+    "first_seen": "2026-01-25T23:18:58.142898+07:00",
+    "last_seen": "2026-01-25T23:19:02.745726+07:00"
+  },
+  "627653851": {
+    "user_id": 627653851,
+    "username": "bearnotbeer4",
+    "full_name": "Bear",
+    "first_seen": "2026-01-25T23:36:46.238753+07:00",
+    "last_seen": "2026-02-27T11:54:09.749487+07:00"
+  },
+  "8472616792": {
+    "user_id": 8472616792,
+    "username": "",
+    "full_name": "Tung Nguyen",
+    "first_seen": "2026-01-26T07:52:42.004410+07:00",
+    "last_seen": "2026-02-28T08:25:48.764092+07:00"
+  },
+  "6350796579": {
+    "user_id": 6350796579,
+    "username": "TruongLinh_1729",
+    "full_name": "X.Trường maxyt.vn",
+    "first_seen": "2026-01-26T09:20:03.616811+07:00",
+    "last_seen": "2026-01-26T09:38:01.751358+07:00"
+  },
+  "5034804129": {
+    "user_id": 5034804129,
+    "username": "huyduck123",
+    "full_name": "Huy Nguyễn",
+    "first_seen": "2026-01-26T10:06:56.617540+07:00",
+    "last_seen": "2026-01-26T10:06:56.617540+07:00"
+  },
+  "8021029330": {
+    "user_id": 8021029330,
+    "username": "chanquadi123zxcv",
+    "full_name": "Jung",
+    "first_seen": "2026-01-26T12:17:10.458106+07:00",
+    "last_seen": "2026-02-06T17:45:34.620519+07:00"
+  },
+  "6033919901": {
+    "user_id": 6033919901,
+    "username": "JakePhan",
+    "full_name": "Châu Phan Thanh",
+    "first_seen": "2026-01-26T13:56:08.513498+07:00",
+    "last_seen": "2026-02-24T09:04:54.488401+07:00"
+  },
+  "7182212922": {
+    "user_id": 7182212922,
+    "username": "baiyun61",
+    "full_name": "Bai yun",
+    "first_seen": "2026-01-26T13:58:40.030908+07:00",
+    "last_seen": "2026-01-26T13:58:40.030908+07:00"
+  },
+  "7698761960": {
+    "user_id": 7698761960,
+    "username": "Onhnbeer",
+    "full_name": "Beer",
+    "first_seen": "2026-01-26T14:01:34.308988+07:00",
+    "last_seen": "2026-02-25T08:55:14.734176+07:00"
+  },
+  "5610507130": {
+    "user_id": 5610507130,
+    "username": "vuhuuminh",
+    "full_name": "Vũ Hữu Minh",
+    "first_seen": "2026-01-26T14:33:15.132460+07:00",
+    "last_seen": "2026-01-31T17:58:44.829701+07:00"
+  },
+  "516780446": {
+    "user_id": 516780446,
+    "username": "daithinh",
+    "full_name": "Dai Nguyen",
+    "first_seen": "2026-01-26T14:45:19.275840+07:00",
+    "last_seen": "2026-02-12T09:59:14.548260+07:00"
+  },
+  "5572986143": {
+    "user_id": 5572986143,
+    "username": "Tranpro",
+    "full_name": "Tran",
+    "first_seen": "2026-01-26T16:09:27.049776+07:00",
+    "last_seen": "2026-01-26T16:26:51.314680+07:00"
+  },
+  "816851169": {
+    "user_id": 816851169,
+    "username": "kiethoang266",
+    "full_name": "Hoang Kiet",
+    "first_seen": "2026-01-26T17:18:37.124619+07:00",
+    "last_seen": "2026-02-25T14:09:41.135580+07:00"
+  },
+  "493307642": {
+    "user_id": 493307642,
+    "username": "tuantep",
+    "full_name": "Dragon Slayer 🗡",
+    "first_seen": "2026-01-26T17:50:21.602002+07:00",
+    "last_seen": "2026-02-04T12:50:10.080075+07:00"
+  },
+  "965846648": {
+    "user_id": 965846648,
+    "username": "cryptojapanvn",
+    "full_name": "VÂN Japan",
+    "first_seen": "2026-01-26T17:57:33.348458+07:00",
+    "last_seen": "2026-02-28T17:30:25.808703+07:00",
+    "balance": 0,
+    "language": "vi"
+  },
+  "5458807292": {
+    "user_id": 5458807292,
+    "username": "keradella",
+    "full_name": "Jode",
+    "first_seen": "2026-01-26T18:16:57.566848+07:00",
+    "last_seen": "2026-01-26T18:16:57.566848+07:00"
+  },
+  "834587238": {
+    "user_id": 834587238,
+    "username": "Paul_Hoang",
+    "full_name": "Hoàng Hợp",
+    "first_seen": "2026-01-26T20:45:05.443198+07:00",
+    "last_seen": "2026-02-27T09:33:20.895466+07:00"
+  },
+  "441780519": {
+    "user_id": 441780519,
+    "username": "sondang_dn",
+    "full_name": "Son Dang",
+    "first_seen": "2026-01-27T08:43:45.160757+07:00",
+    "last_seen": "2026-01-27T08:43:45.160757+07:00"
+  },
+  "8594955338": {
+    "user_id": 8594955338,
+    "username": "",
+    "full_name": "Nghiêm Chí Hân",
+    "first_seen": "2026-01-27T11:15:29.788718+07:00",
+    "last_seen": "2026-01-27T11:15:29.788718+07:00"
+  },
+  "5393581911": {
+    "user_id": 5393581911,
+    "username": "Emigdio1080",
+    "full_name": "Khánh Ngọc️️",
+    "first_seen": "2026-01-27T11:17:38.105318+07:00",
+    "last_seen": "2026-02-14T13:42:08.524765+07:00"
+  },
+  "884460671": {
+    "user_id": 884460671,
+    "username": "nghianguyen0904",
+    "full_name": "Nghia Nguyen",
+    "first_seen": "2026-01-27T11:36:05.662795+07:00",
+    "last_seen": "2026-02-02T14:15:44.733589+07:00"
+  },
+  "6907751445": {
+    "user_id": 6907751445,
+    "username": "liempre",
+    "full_name": "Quang Huy",
+    "first_seen": "2026-01-27T11:45:57.656649+07:00",
+    "last_seen": "2026-02-25T15:35:22.981205+07:00",
+    "language": "vi"
+  },
+  "1477470142": {
+    "user_id": 1477470142,
+    "username": "",
+    "full_name": "Huy Mai",
+    "first_seen": "2026-01-27T11:47:09.035018+07:00",
+    "last_seen": "2026-02-28T10:54:16.556432+07:00"
+  },
+  "5686049459": {
+    "user_id": 5686049459,
+    "username": "",
+    "full_name": "Come Cin",
+    "first_seen": "2026-01-27T12:07:35.962831+07:00",
+    "last_seen": "2026-02-27T13:55:39.393702+07:00"
+  },
+  "8558726969": {
+    "user_id": 8558726969,
+    "username": "Crowns110599",
+    "full_name": "Ngọc Quảng",
+    "first_seen": "2026-01-27T12:13:27.570542+07:00",
+    "last_seen": "2026-02-25T13:12:54.803128+07:00"
+  },
+  "1259864202": {
+    "user_id": 1259864202,
+    "username": "nanlux",
+    "full_name": "NanLux",
+    "first_seen": "2026-01-27T12:14:37.237170+07:00",
+    "last_seen": "2026-01-27T12:14:51.353537+07:00"
+  },
+  "6326395253": {
+    "user_id": 6326395253,
+    "username": "Thetay123",
+    "full_name": "The Tay",
+    "first_seen": "2026-01-27T12:53:03.626124+07:00",
+    "last_seen": "2026-02-02T12:07:22.393185+07:00"
+  },
+  "8362828126": {
+    "user_id": 8362828126,
+    "username": "MeowKeuGauGau",
+    "full_name": "Z Z",
+    "first_seen": "2026-01-27T13:17:55.162008+07:00",
+    "last_seen": "2026-01-27T13:17:55.162008+07:00"
+  },
+  "6295358266": {
+    "user_id": 6295358266,
+    "username": "Dongnoi01",
+    "full_name": "DN Deals",
+    "first_seen": "2026-01-27T13:46:52.442545+07:00",
+    "last_seen": "2026-02-20T14:20:10.117236+07:00"
+  },
+  "8077830142": {
+    "user_id": 8077830142,
+    "username": "premiumvietnamese",
+    "full_name": "Gift Premium",
+    "first_seen": "2026-01-27T13:46:56.864312+07:00",
+    "last_seen": "2026-02-25T14:38:15.967327+07:00"
+  },
+  "6080985397": {
+    "user_id": 6080985397,
+    "username": "cuonglamviet",
+    "full_name": "Cuong Lam Viet",
+    "first_seen": "2026-01-27T13:48:52.516401+07:00",
+    "last_seen": "2026-02-27T09:45:16.990091+07:00"
+  },
+  "799525601": {
+    "user_id": 799525601,
+    "username": "soianchay",
+    "full_name": "Andrew Ng.",
+    "first_seen": "2026-01-27T13:49:11.573502+07:00",
+    "last_seen": "2026-01-29T22:21:39.585152+07:00"
+  },
+  "8361380133": {
+    "user_id": 8361380133,
+    "username": "vanminh97",
+    "full_name": "Minh Văn",
+    "first_seen": "2026-01-27T13:49:26.071558+07:00",
+    "last_seen": "2026-01-27T13:49:26.071558+07:00"
+  },
+  "1423380865": {
+    "user_id": 1423380865,
+    "username": "tiensky123",
+    "full_name": "Tien Nguyen",
+    "first_seen": "2026-01-27T14:36:37.770715+07:00",
+    "last_seen": "2026-02-27T15:37:31.046616+07:00"
+  },
+  "1825773924": {
+    "user_id": 1825773924,
+    "username": "huyphan5688",
+    "full_name": "Huy Phan",
+    "first_seen": "2026-01-27T15:41:19.190647+07:00",
+    "last_seen": "2026-02-21T09:48:54.958533+07:00"
+  },
+  "1460241220": {
+    "user_id": 1460241220,
+    "username": "thetai007",
+    "full_name": "Thế Tài Vũ",
+    "first_seen": "2026-01-27T15:48:09.924594+07:00",
+    "last_seen": "2026-02-28T16:36:17.078047+07:00",
+    "language": "vi"
+  },
+  "2134151971": {
+    "user_id": 2134151971,
+    "username": "duyle2403",
+    "full_name": "Duy",
+    "first_seen": "2026-01-27T17:05:50.474378+07:00",
+    "last_seen": "2026-02-25T12:17:16.363210+07:00"
+  },
+  "6162675648": {
+    "user_id": 6162675648,
+    "username": "htd2k",
+    "full_name": "Un Un",
+    "first_seen": "2026-01-27T20:15:10.323972+07:00",
+    "last_seen": "2026-02-28T22:45:41.177922+07:00"
+  },
+  "5000389983": {
+    "user_id": 5000389983,
+    "username": "nona19216",
+    "full_name": "Nona",
+    "first_seen": "2026-01-27T20:36:16.869127+07:00",
+    "last_seen": "2026-02-28T10:09:45.271369+07:00",
+    "language": "vi"
+  },
+  "7884343635": {
+    "user_id": 7884343635,
+    "username": "thanhqui_work",
+    "full_name": "Thanh Quí Work",
+    "first_seen": "2026-01-28T11:42:50.816746+07:00",
+    "last_seen": "2026-02-27T13:32:19.049048+07:00",
+    "language": "vi"
+  },
+  "6329953958": {
+    "user_id": 6329953958,
+    "username": "tuphuog",
+    "full_name": "Tuan Tran Quoc",
+    "first_seen": "2026-01-28T16:22:46.729643+07:00",
+    "last_seen": "2026-02-24T22:51:09.347473+07:00"
+  },
+  "8158545748": {
+    "user_id": 8158545748,
+    "username": "",
+    "full_name": "July Nguyen",
+    "first_seen": "2026-01-28T16:24:28.028684+07:00",
+    "last_seen": "2026-02-28T08:34:58.756315+07:00"
+  },
+  "6112768539": {
+    "user_id": 6112768539,
+    "username": "dhuy94",
+    "full_name": "Đức Huy",
+    "first_seen": "2026-01-28T16:32:16.217574+07:00",
+    "last_seen": "2026-01-28T16:32:16.217574+07:00"
+  },
+  "6305801513": {
+    "user_id": 6305801513,
+    "username": "truongdata101",
+    "full_name": "TRUONGDATA",
+    "first_seen": "2026-01-28T16:57:43.676481+07:00",
+    "last_seen": "2026-02-28T22:26:39.242521+07:00"
+  },
+  "1871951171": {
+    "user_id": 1871951171,
+    "username": "Tum86e",
+    "full_name": "kiny",
+    "first_seen": "2026-01-28T17:46:51.084255+07:00",
+    "last_seen": "2026-02-24T22:48:38.944269+07:00"
+  },
+  "1222693386": {
+    "user_id": 1222693386,
+    "username": "deepblack333",
+    "full_name": "Deep Sliver",
+    "first_seen": "2026-01-28T17:48:07.556900+07:00",
+    "last_seen": "2026-02-13T14:40:46.156296+07:00"
+  },
+  "6212729953": {
+    "user_id": 6212729953,
+    "username": "robin2906",
+    "full_name": "Robin",
+    "first_seen": "2026-01-28T17:55:23.960893+07:00",
+    "last_seen": "2026-02-13T16:33:36.560957+07:00"
+  },
+  "8307633880": {
+    "user_id": 8307633880,
+    "username": "Digiprotn",
+    "full_name": "Backup",
+    "first_seen": "2026-01-28T19:05:55.174268+07:00",
+    "last_seen": "2026-02-25T00:52:36.176006+07:00"
+  },
+  "6982133757": {
+    "user_id": 6982133757,
+    "username": "Sondang2479",
+    "full_name": "Son Dang",
+    "first_seen": "2026-01-28T19:59:52.440370+07:00",
+    "last_seen": "2026-01-28T19:59:52.440370+07:00"
+  },
+  "1007537313": {
+    "user_id": 1007537313,
+    "username": "thayhieutruongg",
+    "full_name": "Kaito Vũ",
+    "first_seen": "2026-01-28T20:28:11.083150+07:00",
+    "last_seen": "2026-02-26T15:00:20.492434+07:00"
+  },
+  "6565894959": {
+    "user_id": 6565894959,
+    "username": "sell_account_premium",
+    "full_name": "Gia Linh",
+    "first_seen": "2026-01-28T21:00:07.305316+07:00",
+    "last_seen": "2026-01-28T21:00:07.305316+07:00"
+  },
+  "1030753651": {
+    "user_id": 1030753651,
+    "username": "nctrien",
+    "full_name": "Trien Nguyen ☘️",
+    "first_seen": "2026-01-29T09:24:13.613194+07:00",
+    "last_seen": "2026-02-23T13:21:53.043753+07:00"
+  },
+  "8199403759": {
+    "user_id": 8199403759,
+    "username": "venuezstore",
+    "full_name": "vstore ⋆˙| premiumsHost",
+    "first_seen": "2026-01-29T09:50:19.620539+07:00",
+    "last_seen": "2026-01-29T09:50:19.620539+07:00"
+  },
+  "5055965479": {
+    "user_id": 5055965479,
+    "username": "vinh_quang_hoang",
+    "full_name": "Quang Vinh",
+    "first_seen": "2026-01-29T10:26:15.719399+07:00",
+    "last_seen": "2026-02-20T07:42:51.046202+07:00",
+    "language": "vi"
+  },
+  "5193226701": {
+    "user_id": 5193226701,
+    "username": "Quarencia122",
+    "full_name": "New Document 󱢏",
+    "first_seen": "2026-01-29T13:27:25.894053+07:00",
+    "last_seen": "2026-02-23T14:58:57.390528+07:00"
+  },
+  "6982674066": {
+    "user_id": 6982674066,
+    "username": "iamhieusensei",
+    "full_name": "HieuSenSei",
+    "first_seen": "2026-01-29T15:57:21.891253+07:00",
+    "last_seen": "2026-02-25T01:27:12.984911+07:00"
+  },
+  "8443685676": {
+    "user_id": 8443685676,
+    "username": "nhatquyenm2",
+    "full_name": "Melanie Jones",
+    "first_seen": "2026-01-29T21:34:09.301045+07:00",
+    "last_seen": "2026-02-26T14:58:40.571399+07:00"
+  },
+  "6198540572": {
+    "user_id": 6198540572,
+    "username": "Unlockmeta",
+    "full_name": "🇳guyễn ☻ Ťøp❶ VŇ•️️ √",
+    "first_seen": "2026-01-30T10:32:00.751501+07:00",
+    "last_seen": "2026-02-09T08:42:49.671394+07:00"
+  },
+  "5898799760": {
+    "user_id": 5898799760,
+    "username": "farahdo52",
+    "full_name": "Farah Baron",
+    "first_seen": "2026-01-30T15:43:03.803396+07:00",
+    "last_seen": "2026-01-30T15:43:03.803396+07:00"
+  },
+  "7260947208": {
+    "user_id": 7260947208,
+    "username": "tomshvn",
+    "full_name": "Tom MKT",
+    "first_seen": "2026-01-30T15:44:39.706983+07:00",
+    "last_seen": "2026-02-28T16:49:14.573353+07:00",
+    "language": "vi"
+  },
+  "7448687970": {
+    "user_id": 7448687970,
+    "username": "linhh_a",
+    "full_name": "Hien ciuu",
+    "first_seen": "2026-01-30T17:57:13.600444+07:00",
+    "last_seen": "2026-02-27T23:20:18.771034+07:00"
+  },
+  "5842529685": {
+    "user_id": 5842529685,
+    "username": "ponielynk",
+    "full_name": "Nguyễn Phương Linh",
+    "first_seen": "2026-01-31T10:54:20.350509+07:00",
+    "last_seen": "2026-02-20T00:56:31.244632+07:00"
+  },
+  "8101416491": {
+    "user_id": 8101416491,
+    "username": "thanhTr789",
+    "full_name": "Inri Thanh Tm",
+    "first_seen": "2026-01-31T14:02:12.068991+07:00",
+    "last_seen": "2026-02-28T19:55:26.948938+07:00"
+  },
+  "5566456230": {
+    "user_id": 5566456230,
+    "username": "dinhchung07",
+    "full_name": "Mr PDC( Zalo 0935098983)",
+    "first_seen": "2026-01-31T22:26:38.509314+07:00",
+    "last_seen": "2026-01-31T22:26:40.948278+07:00"
+  },
+  "8319007328": {
+    "user_id": 8319007328,
+    "username": "rozatessy",
+    "full_name": "Thành Đạt",
+    "first_seen": "2026-01-31T22:36:27.476665+07:00",
+    "last_seen": "2026-02-09T19:32:23.247233+07:00"
+  },
+  "7914879301": {
+    "user_id": 7914879301,
+    "username": "Adolf_Hitle12",
+    "full_name": "Zean",
+    "first_seen": "2026-01-31T22:43:05.783186+07:00",
+    "last_seen": "2026-02-24T21:39:09.278821+07:00"
+  },
+  "7519889601": {
+    "user_id": 7519889601,
+    "username": "tronjg",
+    "full_name": "Super Jolibee",
+    "first_seen": "2026-01-31T22:47:07.597343+07:00",
+    "last_seen": "2026-01-31T22:47:07.597343+07:00"
+  },
+  "7346224361": {
+    "user_id": 7346224361,
+    "username": "Simson1223",
+    "full_name": "Sim Son🔥",
+    "first_seen": "2026-01-31T22:48:14.804802+07:00",
+    "last_seen": "2026-02-01T19:27:11.037715+07:00"
+  },
+  "6437976595": {
+    "user_id": 6437976595,
+    "username": "elsa2132",
+    "full_name": "Elsa",
+    "first_seen": "2026-01-31T22:48:32.083778+07:00",
+    "last_seen": "2026-02-24T23:58:06.388290+07:00"
+  },
+  "5842223944": {
+    "user_id": 5842223944,
+    "username": "IndieSeller",
+    "full_name": "Indie Seller",
+    "first_seen": "2026-01-31T22:50:42.107883+07:00",
+    "last_seen": "2026-02-28T23:07:38.114633+07:00",
+    "language": "vi"
+  },
+  "1025082568": {
+    "user_id": 1025082568,
+    "username": "kienvan69cm",
+    "full_name": "Lương Phúc Hậu",
+    "first_seen": "2026-01-31T23:25:28.400962+07:00",
+    "last_seen": "2026-02-12T15:45:24.291652+07:00"
+  },
+  "5439296623": {
+    "user_id": 5439296623,
+    "username": "KaioKen3379",
+    "full_name": "KaioShin",
+    "first_seen": "2026-01-31T23:49:23.224073+07:00",
+    "last_seen": "2026-02-25T16:50:44.242729+07:00"
+  },
+  "7260832022": {
+    "user_id": 7260832022,
+    "username": "brostorectv11",
+    "full_name": "Bro Store - CTV 11",
+    "first_seen": "2026-01-31T23:59:34.925219+07:00",
+    "last_seen": "2026-02-27T11:07:17.981338+07:00",
+    "language": "vi"
+  },
+  "6735663275": {
+    "user_id": 6735663275,
+    "username": "luc1usq",
+    "full_name": "Lucius",
+    "first_seen": "2026-02-01T01:04:23.793330+07:00",
+    "last_seen": "2026-02-26T14:56:56.655511+07:00"
+  },
+  "426998149": {
+    "user_id": 426998149,
+    "username": "ngngthanh",
+    "full_name": "Nguyễn Thành",
+    "first_seen": "2026-02-01T02:33:09.913609+07:00",
+    "last_seen": "2026-02-14T16:07:00.592330+07:00"
+  },
+  "1773579481": {
+    "user_id": 1773579481,
+    "username": "hn0390",
+    "full_name": "Kanvin Vux 🇳🇿",
+    "first_seen": "2026-02-01T09:00:53.301535+07:00",
+    "last_seen": "2026-02-20T20:00:15.052747+07:00"
+  },
+  "6089928491": {
+    "user_id": 6089928491,
+    "username": "ducdung373",
+    "full_name": "ZUNE",
+    "first_seen": "2026-02-01T11:40:48.684953+07:00",
+    "last_seen": "2026-02-14T14:23:29.198210+07:00"
+  },
+  "7291605958": {
+    "user_id": 7291605958,
+    "username": "scanokla06",
+    "full_name": "🐠",
+    "first_seen": "2026-02-01T11:41:45.045119+07:00",
+    "last_seen": "2026-02-23T20:51:44.824620+07:00"
+  },
+  "1838208804": {
+    "user_id": 1838208804,
+    "username": "maoleng",
+    "full_name": "Hữu Lộc",
+    "first_seen": "2026-02-01T13:33:22.387814+07:00",
+    "last_seen": "2026-02-27T15:06:39.152814+07:00"
+  },
+  "8356890091": {
+    "user_id": 8356890091,
+    "username": "Minhbrand",
+    "full_name": "Minhbrand",
+    "first_seen": "2026-02-01T16:54:34.273530+07:00",
+    "last_seen": "2026-02-09T18:02:30.205690+07:00"
+  },
+  "1690303400": {
+    "user_id": 1690303400,
+    "username": "furyyy_boyyy",
+    "full_name": "Furyyy!!!",
+    "first_seen": "2026-02-01T23:33:15.295038+07:00",
+    "last_seen": "2026-02-01T23:33:15.295038+07:00"
+  },
+  "2113452885": {
+    "user_id": 2113452885,
+    "username": "nextgen_ai01",
+    "full_name": "NextGen AI",
+    "first_seen": "2026-02-02T07:25:56.860653+07:00",
+    "last_seen": "2026-02-08T15:22:56.995792+07:00"
+  },
+  "1440238776": {
+    "user_id": 1440238776,
+    "username": "vndev91",
+    "full_name": "Luan Dev",
+    "first_seen": "2026-02-02T14:50:37.020523+07:00",
+    "last_seen": "2026-02-25T16:34:25.969330+07:00"
+  },
+  "870982557": {
+    "user_id": 870982557,
+    "username": "mrt6996",
+    "full_name": "C²",
+    "first_seen": "2026-02-02T15:13:38.677804+07:00",
+    "last_seen": "2026-02-24T17:31:35.648695+07:00"
+  },
+  "2012941449": {
+    "user_id": 2012941449,
+    "username": "kmthanh",
+    "full_name": "Km Thành",
+    "first_seen": "2026-02-02T15:27:09.618163+07:00",
+    "last_seen": "2026-02-09T15:32:31.241209+07:00"
+  },
+  "5169009597": {
+    "user_id": 5169009597,
+    "username": "ravendist",
+    "full_name": "Vinh Cố Đô",
+    "first_seen": "2026-02-02T17:04:01.022712+07:00",
+    "last_seen": "2026-02-24T19:20:42.371286+07:00"
+  },
+  "7181978695": {
+    "user_id": 7181978695,
+    "username": "vtbporo",
+    "full_name": "Nguyen Van Tay",
+    "first_seen": "2026-02-02T19:19:52.428215+07:00",
+    "last_seen": "2026-02-24T13:48:46.199749+07:00",
+    "language": "vi"
+  },
+  "7663248878": {
+    "user_id": 7663248878,
+    "username": "spectxte",
+    "full_name": "Dos9",
+    "first_seen": "2026-02-02T22:04:11.573278+07:00",
+    "last_seen": "2026-02-27T15:11:25.177099+07:00"
+  },
+  "1561800693": {
+    "user_id": 1561800693,
+    "username": "Tmshopsmartmedia",
+    "full_name": "TM Shop",
+    "first_seen": "2026-02-02T23:14:53.898831+07:00",
+    "last_seen": "2026-02-25T15:20:29.889558+07:00",
+    "balance": 0
+  },
+  "1100896343": {
+    "user_id": 1100896343,
+    "username": "",
+    "full_name": "Alisa",
+    "first_seen": "2026-02-03T08:35:43.461748+07:00",
+    "last_seen": "2026-02-11T15:37:52.394697+07:00"
+  },
+  "7109864117": {
+    "user_id": 7109864117,
+    "username": "lastersix",
+    "full_name": "Lastermine",
+    "first_seen": "2026-02-03T08:48:18.054676+07:00",
+    "last_seen": "2026-02-07T17:23:10.504953+07:00"
+  },
+  "6113546591": {
+    "user_id": 6113546591,
+    "username": "HoangTuong99",
+    "full_name": "Hoang Tuong",
+    "first_seen": "2026-02-03T11:18:57.591220+07:00",
+    "last_seen": "2026-02-27T19:00:22.500525+07:00",
+    "language": "vi"
+  },
+  "1297178549": {
+    "user_id": 1297178549,
+    "username": "qkhanh282",
+    "full_name": "shoptaikhoanvn",
+    "first_seen": "2026-02-03T12:46:42.794565+07:00",
+    "last_seen": "2026-02-28T15:30:44.269367+07:00"
+  },
+  "906441358": {
+    "user_id": 906441358,
+    "username": "mdkstudios",
+    "full_name": "Kiet Dinh",
+    "first_seen": "2026-02-03T16:34:26.515212+07:00",
+    "last_seen": "2026-02-24T21:23:55.770581+07:00"
+  },
+  "8478450775": {
+    "user_id": 8478450775,
+    "username": "Doramon456",
+    "full_name": "Mama",
+    "first_seen": "2026-02-03T17:12:51.327864+07:00",
+    "last_seen": "2026-02-03T17:12:51.327864+07:00"
+  },
+  "7629785911": {
+    "user_id": 7629785911,
+    "username": "Robert008386",
+    "full_name": "Robert Lewandowski",
+    "first_seen": "2026-02-03T20:13:28.649727+07:00",
+    "last_seen": "2026-02-03T20:13:28.649727+07:00"
+  },
+  "1890267959": {
+    "user_id": 1890267959,
+    "username": "",
+    "full_name": "MinZu Shop Ai",
+    "first_seen": "2026-02-04T11:04:24.855240+07:00",
+    "last_seen": "2026-02-24T18:08:30.524660+07:00"
+  },
+  "5964418231": {
+    "user_id": 5964418231,
+    "username": "misterKaiii",
+    "full_name": "Kai",
+    "first_seen": "2026-02-04T11:04:45.817988+07:00",
+    "last_seen": "2026-02-26T12:40:17.768107+07:00"
+  },
+  "8272635642": {
+    "user_id": 8272635642,
+    "username": "",
+    "full_name": "Anh Bui",
+    "first_seen": "2026-02-04T11:07:17.992848+07:00",
+    "last_seen": "2026-02-04T11:07:17.992848+07:00"
+  },
+  "6016092390": {
+    "user_id": 6016092390,
+    "username": "Congnamdigital",
+    "full_name": "Nguyễn Công Nam",
+    "first_seen": "2026-02-04T11:37:14.411115+07:00",
+    "last_seen": "2026-02-04T11:37:14.411115+07:00"
+  },
+  "7509665891": {
+    "user_id": 7509665891,
+    "username": "miah22",
+    "full_name": "Minh Anh",
+    "first_seen": "2026-02-04T12:22:42.753519+07:00",
+    "last_seen": "2026-02-26T21:14:46.336456+07:00"
+  },
+  "6225811178": {
+    "user_id": 6225811178,
+    "username": "PenguinShop321",
+    "full_name": "Penguin Shop",
+    "first_seen": "2026-02-04T13:22:17.846198+07:00",
+    "last_seen": "2026-02-05T01:55:31.931552+07:00"
+  },
+  "1341024844": {
+    "user_id": 1341024844,
+    "username": "Bangshyn98",
+    "full_name": "Mr.Hari Shop",
+    "first_seen": "2026-02-04T15:21:56.930500+07:00",
+    "last_seen": "2026-02-21T01:53:03.973957+07:00",
+    "language": "vi"
+  },
+  "1848556401": {
+    "user_id": 1848556401,
+    "username": "tuyen11082004",
+    "full_name": "HI",
+    "first_seen": "2026-02-04T19:29:01.303523+07:00",
+    "last_seen": "2026-02-07T11:08:38.062596+07:00"
+  },
+  "6758681559": {
+    "user_id": 6758681559,
+    "username": "etmintkuh",
+    "full_name": "nexeo - open sewa bot order, sewa web hh",
+    "first_seen": "2026-02-04T21:33:46.963971+07:00",
+    "last_seen": "2026-02-20T15:50:23.553121+07:00"
+  },
+  "5197219566": {
+    "user_id": 5197219566,
+    "username": "bie9999",
+    "full_name": "Bie",
+    "first_seen": "2026-02-04T23:07:03.491073+07:00",
+    "last_seen": "2026-02-27T23:59:35.327716+07:00"
+  },
+  "2024372250": {
+    "user_id": 2024372250,
+    "username": "Toan18089",
+    "full_name": "Edi Tu",
+    "first_seen": "2026-02-05T11:18:39.691567+07:00",
+    "last_seen": "2026-02-12T21:36:33.017408+07:00"
+  },
+  "5412510067": {
+    "user_id": 5412510067,
+    "username": "mmo365",
+    "full_name": "YOU ARE MY ANGEL",
+    "first_seen": "2026-02-05T13:45:05.971071+07:00",
+    "last_seen": "2026-02-23T12:10:52.000531+07:00"
+  },
+  "6903478758": {
+    "user_id": 6903478758,
+    "username": "lechicuonq08",
+    "full_name": "Cường Lê",
+    "first_seen": "2026-02-06T00:15:41.941306+07:00",
+    "last_seen": "2026-02-06T00:15:41.941306+07:00"
+  },
+  "7740260963": {
+    "user_id": 7740260963,
+    "username": "minine2h",
+    "full_name": "Тункой",
+    "first_seen": "2026-02-06T07:13:30.536730+07:00",
+    "last_seen": "2026-02-06T07:13:30.536730+07:00"
+  },
+  "5762664741": {
+    "user_id": 5762664741,
+    "username": "famistuong",
+    "full_name": "Ricks",
+    "first_seen": "2026-02-06T07:38:00.097326+07:00",
+    "last_seen": "2026-02-06T07:38:12.158827+07:00"
+  },
+  "5805821101": {
+    "user_id": 5805821101,
+    "username": "dnguyensg",
+    "full_name": "Duy Nguyễn",
+    "first_seen": "2026-02-06T10:50:22.059055+07:00",
+    "last_seen": "2026-02-08T09:26:39.559761+07:00"
+  },
+  "810621504": {
+    "user_id": 810621504,
+    "username": "vulct",
+    "full_name": "Vu Le",
+    "first_seen": "2026-02-06T17:52:27.341783+07:00",
+    "last_seen": "2026-02-06T17:52:27.341783+07:00"
+  },
+  "823885933": {
+    "user_id": 823885933,
+    "username": "truongnlth",
+    "full_name": "Trường TC",
+    "first_seen": "2026-02-07T20:24:35.675336+07:00",
+    "last_seen": "2026-02-07T20:24:35.675336+07:00"
+  },
+  "8058679259": {
+    "user_id": 8058679259,
+    "username": "massonfee55",
+    "full_name": "Mason",
+    "first_seen": "2026-02-07T20:27:09.186110+07:00",
+    "last_seen": "2026-02-25T10:36:40.030750+07:00"
+  },
+  "7025951359": {
+    "user_id": 7025951359,
+    "username": "handanba8",
+    "full_name": "kk",
+    "first_seen": "2026-02-07T21:16:54.493222+07:00",
+    "last_seen": "2026-02-07T21:16:54.493222+07:00"
+  },
+  "5752301634": {
+    "user_id": 5752301634,
+    "username": "babybobdz11",
+    "full_name": "Sami Bob",
+    "first_seen": "2026-02-07T21:31:00.294423+07:00",
+    "last_seen": "2026-02-07T21:31:00.294423+07:00"
+  },
+  "340618175": {
+    "user_id": 340618175,
+    "username": "duongdx",
+    "full_name": "Dương",
+    "first_seen": "2026-02-07T21:36:12.334017+07:00",
+    "last_seen": "2026-02-26T18:45:18.694752+07:00"
+  },
+  "849693709": {
+    "user_id": 849693709,
+    "username": "davidtao123",
+    "full_name": "tào tháo 2 tào tháo 2",
+    "first_seen": "2026-02-07T23:05:11.377211+07:00",
+    "last_seen": "2026-02-24T13:11:59.939547+07:00"
+  },
+  "725087258": {
+    "user_id": 725087258,
+    "username": "meohero",
+    "full_name": "Cris Zorro",
+    "first_seen": "2026-02-07T23:14:07.631086+07:00",
+    "last_seen": "2026-02-26T13:27:55.354390+07:00"
+  },
+  "6883531222": {
+    "user_id": 6883531222,
+    "username": "contentediter",
+    "full_name": "Ông Hoàng YTB",
+    "first_seen": "2026-02-08T09:20:43.655682+07:00",
+    "last_seen": "2026-02-26T12:54:31.955955+07:00"
+  },
+  "5069879813": {
+    "user_id": 5069879813,
+    "username": "nguyen64tuan",
+    "full_name": "RITO BAND",
+    "first_seen": "2026-02-08T12:24:51.090898+07:00",
+    "last_seen": "2026-02-28T22:44:07.724763+07:00"
+  },
+  "7264980980": {
+    "user_id": 7264980980,
+    "username": "youngfe666",
+    "full_name": "Fe Credits",
+    "first_seen": "2026-02-08T15:02:01.354643+07:00",
+    "last_seen": "2026-02-11T15:18:30.701229+07:00",
+    "language": "vi"
+  },
+  "6961986236": {
+    "user_id": 6961986236,
+    "username": "jerrigamble",
+    "full_name": "Captain",
+    "first_seen": "2026-02-08T15:56:05.080099+07:00",
+    "last_seen": "2026-02-19T18:31:49.549555+07:00"
+  },
+  "1530253980": {
+    "user_id": 1530253980,
+    "username": "",
+    "full_name": "John Satham",
+    "first_seen": "2026-02-08T16:18:24.311006+07:00",
+    "last_seen": "2026-02-26T18:03:58.007898+07:00"
+  },
+  "1224485469": {
+    "user_id": 1224485469,
+    "username": "cas_vcas",
+    "full_name": "Chac So Stress",
+    "first_seen": "2026-02-08T16:37:40.390361+07:00",
+    "last_seen": "2026-02-27T13:23:00.572017+07:00"
+  },
+  "6587240085": {
+    "user_id": 6587240085,
+    "username": "nyenneh11",
+    "full_name": "Nyennee",
+    "first_seen": "2026-02-08T23:16:47.846793+07:00",
+    "last_seen": "2026-02-24T11:14:15.186123+07:00"
+  },
+  "8110842171": {
+    "user_id": 8110842171,
+    "username": "hkhietiu08",
+    "full_name": "cáo. 🦊",
+    "first_seen": "2026-02-09T02:59:31.117893+07:00",
+    "last_seen": "2026-02-09T02:59:31.117893+07:00"
+  },
+  "1365570084": {
+    "user_id": 1365570084,
+    "username": "Baoden27",
+    "full_name": "Nguyễn Anh",
+    "first_seen": "2026-02-09T09:31:17.871060+07:00",
+    "last_seen": "2026-02-23T15:46:49.177915+07:00"
+  },
+  "6956969848": {
+    "user_id": 6956969848,
+    "username": "thaihoav3",
+    "full_name": "Thái Hoà",
+    "first_seen": "2026-02-09T09:59:09.040310+07:00",
+    "last_seen": "2026-02-10T16:35:44.668191+07:00"
+  },
+  "1246076473": {
+    "user_id": 1246076473,
+    "username": "Young_lillo",
+    "full_name": "Khanh Pham 🚀🚀",
+    "first_seen": "2026-02-09T10:50:20.332986+07:00",
+    "last_seen": "2026-02-27T16:09:14.966953+07:00",
+    "language": "vi"
+  },
+  "979155234": {
+    "user_id": 979155234,
+    "username": "jistorewws",
+    "full_name": "Member Ji",
+    "first_seen": "2026-02-09T11:44:18.853470+07:00",
+    "last_seen": "2026-02-27T13:28:44.745711+07:00",
+    "language": "vi"
+  },
+  "1376845546": {
+    "user_id": 1376845546,
+    "username": "Dosugar23",
+    "full_name": "Bao",
+    "first_seen": "2026-02-09T11:59:41.727697+07:00",
+    "last_seen": "2026-02-28T09:58:00.657685+07:00"
+  },
+  "5504141055": {
+    "user_id": 5504141055,
+    "username": "namphonw",
+    "full_name": "MR.BJR👾",
+    "first_seen": "2026-02-09T12:58:52.138012+07:00",
+    "last_seen": "2026-02-28T18:52:17.155814+07:00"
+  },
+  "5721723909": {
+    "user_id": 5721723909,
+    "username": "SuperAlo1",
+    "full_name": "Nợ gần 1 tỷ",
+    "first_seen": "2026-02-09T14:28:44.491191+07:00",
+    "last_seen": "2026-02-27T13:06:03.045717+07:00"
+  },
+  "1244191246": {
+    "user_id": 1244191246,
+    "username": "dokientrung16",
+    "full_name": "Trung Tran",
+    "first_seen": "2026-02-09T14:40:18.575058+07:00",
+    "last_seen": "2026-02-09T14:41:35.551693+07:00"
+  },
+  "7971835381": {
+    "user_id": 7971835381,
+    "username": "shopv7",
+    "full_name": "V7 Shop",
+    "first_seen": "2026-02-09T16:03:09.821189+07:00",
+    "last_seen": "2026-02-14T13:22:35.361707+07:00"
+  },
+  "8414466360": {
+    "user_id": 8414466360,
+    "username": "cauebutchi2o",
+    "full_name": "Cậu Bé Bút Chì",
+    "first_seen": "2026-02-09T16:51:07.296473+07:00",
+    "last_seen": "2026-02-21T01:40:58.662543+07:00"
+  },
+  "6561992442": {
+    "user_id": 6561992442,
+    "username": "thienduong1443",
+    "full_name": "Minh Chi",
+    "first_seen": "2026-02-09T17:18:03.697646+07:00",
+    "last_seen": "2026-02-09T17:18:03.697646+07:00"
+  },
+  "1130536200": {
+    "user_id": 1130536200,
+    "username": "ducchau18",
+    "full_name": "Chau Do Duc - [BBO] Won't DM first",
+    "first_seen": "2026-02-09T17:34:23.573282+07:00",
+    "last_seen": "2026-02-11T15:17:29.513619+07:00"
+  },
+  "7383406348": {
+    "user_id": 7383406348,
+    "username": "GrowUpAIShop",
+    "full_name": "Grow-Up AI Shop",
+    "first_seen": "2026-02-09T18:37:19.768959+07:00",
+    "last_seen": "2026-02-14T12:44:41.818220+07:00"
+  },
+  "6660112941": {
+    "user_id": 6660112941,
+    "username": "OnePieceDkey",
+    "full_name": "D Key 😜",
+    "first_seen": "2026-02-09T21:59:43.644554+07:00",
+    "last_seen": "2026-02-09T22:04:08.819236+07:00"
+  },
+  "5359237270": {
+    "user_id": 5359237270,
+    "username": "sun_cbd",
+    "full_name": "Sun",
+    "first_seen": "2026-02-09T22:12:15.194282+07:00",
+    "last_seen": "2026-02-25T00:21:22.705094+07:00"
+  },
+  "5609346884": {
+    "user_id": 5609346884,
+    "username": "trungtien6112",
+    "full_name": "Trung Tiến",
+    "first_seen": "2026-02-10T10:58:00.598606+07:00",
+    "last_seen": "2026-02-10T10:58:00.598624+07:00"
+  },
+  "6327648467": {
+    "user_id": 6327648467,
+    "username": "vantruc1232",
+    "full_name": "Khôi Nguyễn",
+    "first_seen": "2026-02-11T15:36:38.388620+07:00",
+    "last_seen": "2026-02-11T15:36:38.388620+07:00"
+  },
+  "8293340803": {
+    "user_id": 8293340803,
+    "username": "ScofieId_OK",
+    "full_name": "Scofield_OK",
+    "first_seen": "2026-02-11T15:57:30.842155+07:00",
+    "last_seen": "2026-02-15T08:30:29.380261+07:00"
+  },
+  "6797076326": {
+    "user_id": 6797076326,
+    "username": "hieune3110",
+    "full_name": "Hiếu Nguyễn",
+    "first_seen": "2026-02-11T17:08:09.749622+07:00",
+    "last_seen": "2026-02-11T17:08:16.281397+07:00"
+  },
+  "1495051755": {
+    "user_id": 1495051755,
+    "username": "",
+    "full_name": "Vinh An",
+    "first_seen": "2026-02-12T07:56:58.406283+07:00",
+    "last_seen": "2026-02-27T12:28:02.945700+07:00"
+  },
+  "5819321586": {
+    "user_id": 5819321586,
+    "username": "HoangAL3326",
+    "full_name": "𝙃𝙤𝙖𝙣𝙜𝘼𝙇-黄安",
+    "first_seen": "2026-02-12T14:49:39.492815+07:00",
+    "last_seen": "2026-02-12T14:49:39.492815+07:00"
+  },
+  "7800072642": {
+    "user_id": 7800072642,
+    "username": "",
+    "full_name": "Linh Le",
+    "first_seen": "2026-02-12T15:52:26.006883+07:00",
+    "last_seen": "2026-02-28T12:50:52.975470+07:00"
+  },
+  "5774849700": {
+    "user_id": 5774849700,
+    "username": "tuanbeodayy",
+    "full_name": "Lê Văn Tuấn",
+    "first_seen": "2026-02-13T11:03:26.537591+07:00",
+    "last_seen": "2026-02-13T11:03:26.537591+07:00"
+  },
+  "8211972453": {
+    "user_id": 8211972453,
+    "username": "Ai_sell_tool",
+    "full_name": "Phạm Thu",
+    "first_seen": "2026-02-13T11:05:26.765753+07:00",
+    "last_seen": "2026-02-25T20:24:05.288809+07:00"
+  },
+  "6457166080": {
+    "user_id": 6457166080,
+    "username": "quoccbaoo262",
+    "full_name": "Nguyễn Long",
+    "first_seen": "2026-02-13T11:05:28.164023+07:00",
+    "last_seen": "2026-02-26T23:25:58.704743+07:00"
+  },
+  "752356104": {
+    "user_id": 752356104,
+    "username": "Quy_seo_96",
+    "full_name": "Vũ Hồng Quý",
+    "first_seen": "2026-02-13T11:26:02.031044+07:00",
+    "last_seen": "2026-02-21T07:55:35.911382+07:00"
+  },
+  "807072903": {
+    "user_id": 807072903,
+    "username": "bejo_n",
+    "full_name": "Bejo",
+    "first_seen": "2026-02-13T12:24:41.641157+07:00",
+    "last_seen": "2026-02-13T12:24:41.641157+07:00"
+  },
+  "1318261007": {
+    "user_id": 1318261007,
+    "username": "aicygg888",
+    "full_name": "Thánh Sale",
+    "first_seen": "2026-02-13T13:09:42.026102+07:00",
+    "last_seen": "2026-02-13T13:09:42.026102+07:00"
+  },
+  "129411850": {
+    "user_id": 129411850,
+    "username": "maingocanh",
+    "full_name": "Ngoc-Anh Mai",
+    "first_seen": "2026-02-13T16:00:28.253779+07:00",
+    "last_seen": "2026-02-13T16:00:28.253779+07:00"
+  },
+  "7337937609": {
+    "user_id": 7337937609,
+    "username": "iuflop",
+    "full_name": "🅸🆄 🎧",
+    "first_seen": "2026-02-13T16:05:07.828393+07:00",
+    "last_seen": "2026-02-27T10:23:01.420868+07:00"
+  },
+  "7072800691": {
+    "user_id": 7072800691,
+    "username": "harrykend",
+    "full_name": "Harry Kend",
+    "first_seen": "2026-02-13T16:15:24.809747+07:00",
+    "last_seen": "2026-02-13T16:15:24.809747+07:00"
+  },
+  "6452895405": {
+    "user_id": 6452895405,
+    "username": "",
+    "full_name": "Nam Ly",
+    "first_seen": "2026-02-13T17:15:20.684272+07:00",
+    "last_seen": "2026-02-21T06:45:37.559381+07:00"
+  },
+  "5551827431": {
+    "user_id": 5551827431,
+    "username": "xinitpage",
+    "full_name": "A bán code data vt 4g Bán vps",
+    "first_seen": "2026-02-13T18:04:08.314718+07:00",
+    "last_seen": "2026-02-13T18:04:08.314718+07:00"
+  },
+  "7373419850": {
+    "user_id": 7373419850,
+    "username": "",
+    "full_name": "Harold",
+    "first_seen": "2026-02-13T18:38:04.236507+07:00",
+    "last_seen": "2026-02-13T18:43:45.189056+07:00",
+    "language": "vi"
+  },
+  "6426746221": {
+    "user_id": 6426746221,
+    "username": "xuankhoaa",
+    "full_name": "FSW_Solution",
+    "first_seen": "2026-02-14T08:20:40.135318+07:00",
+    "last_seen": "2026-02-26T05:59:57.755433+07:00"
+  },
+  "6943994758": {
+    "user_id": 6943994758,
+    "username": "Jpmaccounts",
+    "full_name": "JP M",
+    "first_seen": "2026-02-14T10:17:42.640855+07:00",
+    "last_seen": "2026-02-14T10:18:22.414618+07:00"
+  },
+  "1887444140": {
+    "user_id": 1887444140,
+    "username": "moingaykiem1k",
+    "full_name": "𝙙𝙝𝙢𝙝",
+    "first_seen": "2026-02-16T16:35:27.869645+07:00",
+    "last_seen": "2026-02-16T16:35:35.454874+07:00"
+  },
+  "8380795191": {
+    "user_id": 8380795191,
+    "username": "",
+    "full_name": "Joel Hamter",
+    "first_seen": "2026-02-17T15:56:21.926842+07:00",
+    "last_seen": "2026-02-17T15:56:21.926842+07:00"
+  },
+  "7141945135": {
+    "user_id": 7141945135,
+    "username": "ryanyl",
+    "full_name": "Ryan",
+    "first_seen": "2026-02-18T07:31:47.577874+07:00",
+    "last_seen": "2026-02-18T07:31:47.577874+07:00"
+  },
+  "7438739971": {
+    "user_id": 7438739971,
+    "username": "Mokia0983",
+    "full_name": "Mokia ✨🧿",
+    "first_seen": "2026-02-18T10:37:36.478976+07:00",
+    "last_seen": "2026-02-28T15:37:51.727850+07:00"
+  },
+  "7309218003": {
+    "user_id": 7309218003,
+    "username": "ductdvpro",
+    "full_name": "Duc Tradingview PRO",
+    "first_seen": "2026-02-18T10:48:08.622116+07:00",
+    "last_seen": "2026-02-27T09:31:03.348601+07:00"
+  },
+  "7996199782": {
+    "user_id": 7996199782,
+    "username": "dinhquanforjob",
+    "full_name": "Dinh Quan Nguyen",
+    "first_seen": "2026-02-19T00:30:43.909482+07:00",
+    "last_seen": "2026-02-28T23:21:07.806760+07:00",
+    "language": "en"
+  },
+  "6311662775": {
+    "user_id": 6311662775,
+    "username": "Thanhtuok1",
+    "full_name": "Tu Thanh",
+    "first_seen": "2026-02-19T14:42:18.208711+07:00",
+    "last_seen": "2026-02-19T14:42:18.208711+07:00"
+  },
+  "5890720335": {
+    "user_id": 5890720335,
+    "username": "mmanishp",
+    "full_name": "Manish Patel",
+    "first_seen": "2026-02-19T18:17:16.881375+07:00",
+    "last_seen": "2026-02-19T18:17:16.881375+07:00"
+  },
+  "5562316901": {
+    "user_id": 5562316901,
+    "username": "kiimhuyy",
+    "full_name": "Huy Kim",
+    "first_seen": "2026-02-20T10:29:38.718936+07:00",
+    "last_seen": "2026-02-26T17:43:44.779594+07:00"
+  },
+  "8543638046": {
+    "user_id": 8543638046,
+    "username": "",
+    "full_name": "T Hoang",
+    "first_seen": "2026-02-21T21:28:24.871121+07:00",
+    "last_seen": "2026-02-25T12:21:50.209971+07:00"
+  },
+  "7364437693": {
+    "user_id": 7364437693,
+    "username": "babii",
+    "full_name": "Rosy",
+    "first_seen": "2026-02-21T23:35:43.699751+07:00",
+    "last_seen": "2026-02-25T02:26:23.797026+07:00"
+  },
+  "849884954": {
+    "user_id": 849884954,
+    "username": "pzmmo123456",
+    "full_name": "P Z",
+    "first_seen": "2026-02-22T15:27:17.152731+07:00",
+    "last_seen": "2026-02-22T15:27:17.152731+07:00"
+  },
+  "8209753605": {
+    "user_id": 8209753605,
+    "username": "channie111105",
+    "full_name": "Kiều Trang Trần Thị",
+    "first_seen": "2026-02-22T18:31:37.729397+07:00",
+    "last_seen": "2026-02-27T18:33:19.216058+07:00"
+  },
+  "7550946161": {
+    "user_id": 7550946161,
+    "username": "",
+    "full_name": "Nguyen Linh",
+    "first_seen": "2026-02-23T09:24:07.662290+07:00",
+    "last_seen": "2026-02-23T09:24:07.662290+07:00"
+  },
+  "8350609993": {
+    "user_id": 8350609993,
+    "username": "Alexworld11",
+    "full_name": "Alex",
+    "first_seen": "2026-02-23T12:38:37.930068+07:00",
+    "last_seen": "2026-02-23T12:38:37.930068+07:00"
+  },
+  "6940662298": {
+    "user_id": 6940662298,
+    "username": "tunvn2002",
+    "full_name": "Tun Nguyen",
+    "first_seen": "2026-02-23T12:42:55.242896+07:00",
+    "last_seen": "2026-02-25T15:15:19.408074+07:00"
+  },
+  "286012855": {
+    "user_id": 286012855,
+    "username": "lorenkidkubi",
+    "full_name": "Say oh Yeah",
+    "first_seen": "2026-02-23T14:32:33.944339+07:00",
+    "last_seen": "2026-02-25T12:20:07.183277+07:00"
+  },
+  "6678195997": {
+    "user_id": 6678195997,
+    "username": "Pannathip",
+    "full_name": "Yang Sing",
+    "first_seen": "2026-02-24T11:38:51.118544+07:00",
+    "last_seen": "2026-02-27T13:08:17.425138+07:00"
+  },
+  "7394452214": {
+    "user_id": 7394452214,
+    "username": "",
+    "full_name": "Nguyễn Tâm",
+    "first_seen": "2026-02-24T13:11:23.015034+07:00",
+    "last_seen": "2026-02-24T13:11:23.015034+07:00"
+  },
+  "7887025453": {
+    "user_id": 7887025453,
+    "username": "sonhuynh_21",
+    "full_name": "Sơn Huỳnh",
+    "first_seen": "2026-02-24T13:21:06.372190+07:00",
+    "last_seen": "2026-02-24T13:21:06.372190+07:00"
+  },
+  "5405099561": {
+    "user_id": 5405099561,
+    "username": "",
+    "full_name": "HOÀNG NAM",
+    "first_seen": "2026-02-24T13:23:33.064086+07:00",
+    "last_seen": "2026-02-24T13:23:33.064086+07:00"
+  },
+  "868098974": {
+    "user_id": 868098974,
+    "username": "Duongnd21",
+    "full_name": "Dương",
+    "first_seen": "2026-02-24T14:01:28.160591+07:00",
+    "last_seen": "2026-02-24T22:54:44.319980+07:00"
+  },
+  "2122797971": {
+    "user_id": 2122797971,
+    "username": "longth3003",
+    "full_name": "Anh Em Bro 00",
+    "first_seen": "2026-02-24T14:21:45.230856+07:00",
+    "last_seen": "2026-02-24T14:21:52.980900+07:00",
+    "language": "vi"
+  },
+  "1396935435": {
+    "user_id": 1396935435,
+    "username": "taomini",
+    "full_name": "Tào Mini",
+    "first_seen": "2026-02-24T14:37:51.292376+07:00",
+    "last_seen": "2026-02-27T11:36:45.063798+07:00"
+  },
+  "8156479353": {
+    "user_id": 8156479353,
+    "username": "z1tzuize",
+    "full_name": "Ni TanhuD",
+    "first_seen": "2026-02-24T14:43:53.438645+07:00",
+    "last_seen": "2026-02-26T22:51:02.937453+07:00"
+  },
+  "8436400231": {
+    "user_id": 8436400231,
+    "username": "noobmmo",
+    "full_name": "AHnoob",
+    "first_seen": "2026-02-24T14:45:16.659745+07:00",
+    "last_seen": "2026-02-26T14:56:46.767894+07:00"
+  },
+  "8796895895": {
+    "user_id": 8796895895,
+    "username": "",
+    "full_name": "Ha Doan",
+    "first_seen": "2026-02-25T10:10:22.761610+07:00",
+    "last_seen": "2026-02-25T10:10:27.647546+07:00"
+  },
+  "7311124316": {
+    "user_id": 7311124316,
+    "username": "hanvv24",
+    "full_name": "Anh🇻🇳",
+    "first_seen": "2026-02-25T12:16:04.368886+07:00",
+    "last_seen": "2026-02-28T23:00:07.688094+07:00"
+  },
+  "7318377306": {
+    "user_id": 7318377306,
+    "username": "",
+    "full_name": "Fang Fang",
+    "first_seen": "2026-02-25T14:17:12.062618+07:00",
+    "last_seen": "2026-02-27T10:43:28.901963+07:00"
+  },
+  "6291208447": {
+    "user_id": 6291208447,
+    "username": "Abcdexyzghk0",
+    "full_name": "Bùi Quên",
+    "first_seen": "2026-02-25T14:24:54.758316+07:00",
+    "last_seen": "2026-02-25T14:24:54.758316+07:00"
+  },
+  "5471705521": {
+    "user_id": 5471705521,
+    "username": "xuanmai95",
+    "full_name": "Mai Le",
+    "first_seen": "2026-02-25T14:32:45.265505+07:00",
+    "last_seen": "2026-02-27T18:30:49.914403+07:00"
+  },
+  "5973444707": {
+    "user_id": 5973444707,
+    "username": "canhdinh1511",
+    "full_name": "Nguyen",
+    "first_seen": "2026-02-25T15:26:45.858833+07:00",
+    "last_seen": "2026-02-25T15:26:45.858833+07:00"
+  },
+  "6628399792": {
+    "user_id": 6628399792,
+    "username": "hungvanvu269",
+    "full_name": "Vũ Văn Hùng",
+    "first_seen": "2026-02-25T15:44:13.393115+07:00",
+    "last_seen": "2026-02-25T15:44:13.393115+07:00"
+  },
+  "618217665": {
+    "user_id": 618217665,
+    "username": "nleeee03",
+    "full_name": "Nam Le",
+    "first_seen": "2026-02-25T16:12:14.085677+07:00",
+    "last_seen": "2026-02-28T00:19:40.345159+07:00"
+  },
+  "7193749511": {
+    "user_id": 7193749511,
+    "username": "dichcutelegram",
+    "full_name": "𝘋𝘪𝘯𝘰",
+    "first_seen": "2026-02-25T23:50:59.798679+07:00",
+    "last_seen": "2026-02-26T20:59:08.327980+07:00"
+  },
+  "7019720521": {
+    "user_id": 7019720521,
+    "username": "chanaistore",
+    "full_name": "Chan Ai",
+    "first_seen": "2026-02-26T12:15:22.326825+07:00",
+    "last_seen": "2026-02-27T11:01:18.590958+07:00"
+  },
+  "1998745557": {
+    "user_id": 1998745557,
+    "username": "mewins_iter",
+    "full_name": "Mewins IT Shop (Hanh Vo)",
+    "first_seen": "2026-02-26T12:17:00.749168+07:00",
+    "last_seen": "2026-02-27T09:57:13.189810+07:00"
+  },
+  "1781918246": {
+    "user_id": 1781918246,
+    "username": "Bruce_WayneJR",
+    "full_name": "Mark Tran | Meme Mayhem",
+    "first_seen": "2026-02-26T12:34:53.840760+07:00",
+    "last_seen": "2026-02-26T12:34:53.840760+07:00"
+  },
+  "776128892": {
+    "user_id": 776128892,
+    "username": "Trantuan0203",
+    "full_name": "𝐓𝐫𝐚̂̀𝐧 𝐓𝐮𝐚̂́𝐧",
+    "first_seen": "2026-02-26T13:26:27.466475+07:00",
+    "last_seen": "2026-02-27T11:00:46.141345+07:00"
+  },
+  "6833272901": {
+    "user_id": 6833272901,
+    "username": "otis_btc",
+    "full_name": "Monkey D. Luffy",
+    "first_seen": "2026-02-26T13:32:29.624884+07:00",
+    "last_seen": "2026-02-27T13:09:31.630818+07:00"
+  },
+  "776968909": {
+    "user_id": 776968909,
+    "username": "",
+    "full_name": "Nguyễn Phát Đạt",
+    "first_seen": "2026-02-26T13:33:15.335676+07:00",
+    "last_seen": "2026-02-26T13:33:15.335676+07:00"
+  },
+  "510811276": {
+    "user_id": 510811276,
+    "username": "hung_culi",
+    "full_name": "Mavryk",
+    "first_seen": "2026-02-26T13:42:48.513470+07:00",
+    "last_seen": "2026-02-26T13:42:48.513470+07:00"
+  },
+  "1535299151": {
+    "user_id": 1535299151,
+    "username": "Suneaterr_9",
+    "full_name": "Khánh Xa Bờ",
+    "first_seen": "2026-02-26T13:45:09.116690+07:00",
+    "last_seen": "2026-02-27T13:07:37.033501+07:00"
+  },
+  "696534390": {
+    "user_id": 696534390,
+    "username": "Hoang0411",
+    "full_name": "Dazail",
+    "first_seen": "2026-02-26T14:51:22.359986+07:00",
+    "last_seen": "2026-02-26T14:51:22.359986+07:00"
+  },
+  "6269680187": {
+    "user_id": 6269680187,
+    "username": "ViruraZ",
+    "full_name": "ViruraZ",
+    "first_seen": "2026-02-26T14:58:56.584193+07:00",
+    "last_seen": "2026-02-26T21:01:27.581518+07:00"
+  },
+  "1940894081": {
+    "user_id": 1940894081,
+    "username": "teleziptk",
+    "full_name": "Danny Nguyen",
+    "first_seen": "2026-02-26T15:05:12.541970+07:00",
+    "last_seen": "2026-02-26T18:08:01.027829+07:00"
+  },
+  "5336253812": {
+    "user_id": 5336253812,
+    "username": "contact_tuananh",
+    "full_name": "Tuan Anh",
+    "first_seen": "2026-02-26T15:14:13.420681+07:00",
+    "last_seen": "2026-02-26T15:14:13.420681+07:00"
+  },
+  "307041651": {
+    "user_id": 307041651,
+    "username": "zazkiwi",
+    "full_name": "ZaZi",
+    "first_seen": "2026-02-26T15:17:29.254206+07:00",
+    "last_seen": "2026-02-26T15:17:29.254206+07:00"
+  },
+  "6420307838": {
+    "user_id": 6420307838,
+    "username": "GetTD0028",
+    "full_name": "GetTD",
+    "first_seen": "2026-02-26T16:24:10.913594+07:00",
+    "last_seen": "2026-02-27T16:10:38.729038+07:00"
+  },
+  "8108441339": {
+    "user_id": 8108441339,
+    "username": "",
+    "full_name": "Diệp Lai",
+    "first_seen": "2026-02-26T20:34:14.144325+07:00",
+    "last_seen": "2026-02-26T20:35:06.108216+07:00"
+  },
+  "6257832971": {
+    "user_id": 6257832971,
+    "username": "tunglee868",
+    "full_name": "Leo Le",
+    "first_seen": "2026-02-26T23:25:41.439095+07:00",
+    "last_seen": "2026-02-26T23:25:46.301730+07:00"
+  },
+  "1403006849": {
+    "user_id": 1403006849,
+    "username": "datf57",
+    "full_name": "Dat Piter",
+    "first_seen": "2026-02-26T23:26:39.494819+07:00",
+    "last_seen": "2026-02-26T23:26:39.494819+07:00"
+  },
+  "6990775733": {
+    "user_id": 6990775733,
+    "username": "",
+    "full_name": "Time Along",
+    "first_seen": "2026-02-26T23:30:13.076814+07:00",
+    "last_seen": "2026-02-28T22:27:02.853101+07:00"
+  },
+  "1028550381": {
+    "user_id": 1028550381,
+    "username": "baole001",
+    "full_name": "Lê Bảo",
+    "first_seen": "2026-02-27T00:06:09.552302+07:00",
+    "last_seen": "2026-02-27T00:06:09.552302+07:00"
+  },
+  "5595397330": {
+    "user_id": 5595397330,
+    "username": "datnguyen020",
+    "full_name": "Dat Nguyen",
+    "first_seen": "2026-02-27T00:56:45.486687+07:00",
+    "last_seen": "2026-02-27T00:56:45.486687+07:00"
+  },
+  "1851050461": {
+    "user_id": 1851050461,
+    "username": "M1inhcoin",
+    "full_name": "Hu man",
+    "first_seen": "2026-02-27T10:23:18.877836+07:00",
+    "last_seen": "2026-02-27T10:23:18.877836+07:00"
+  },
+  "7527608265": {
+    "user_id": 7527608265,
+    "username": "morningstar1805",
+    "full_name": "MORNING STAR",
+    "first_seen": "2026-02-27T10:23:29.741862+07:00",
+    "last_seen": "2026-02-27T10:23:29.741862+07:00"
+  },
+  "827466999": {
+    "user_id": 827466999,
+    "username": "quanganhmmo",
+    "full_name": "Anh Do Quang",
+    "first_seen": "2026-02-27T10:24:55.729361+07:00",
+    "last_seen": "2026-02-27T15:23:39.888400+07:00"
+  },
+  "1497227569": {
+    "user_id": 1497227569,
+    "username": "dtruonggiang",
+    "full_name": "Giang",
+    "first_seen": "2026-02-27T10:25:29.037401+07:00",
+    "last_seen": "2026-02-27T10:25:29.037401+07:00"
+  },
+  "501516956": {
+    "user_id": 501516956,
+    "username": "HuyOng1411",
+    "full_name": "Huy Ong|BeeSpa",
+    "first_seen": "2026-02-27T10:36:42.854785+07:00",
+    "last_seen": "2026-02-28T22:55:14.368078+07:00"
+  },
+  "1273034019": {
+    "user_id": 1273034019,
+    "username": "molyfuck111",
+    "full_name": "moly",
+    "first_seen": "2026-02-27T11:10:21.265987+07:00",
+    "last_seen": "2026-02-27T11:14:17.091146+07:00"
+  },
+  "7119034088": {
+    "user_id": 7119034088,
+    "username": "thiennhat223",
+    "full_name": "Thiên Nhật",
+    "first_seen": "2026-02-27T11:33:29.127251+07:00",
+    "last_seen": "2026-02-27T11:33:29.127251+07:00"
+  },
+  "5653212817": {
+    "user_id": 5653212817,
+    "username": "zentiboy",
+    "full_name": "(Đậu-Phụ) Minh",
+    "first_seen": "2026-02-27T12:39:59.678289+07:00",
+    "last_seen": "2026-02-28T16:04:38.296480+07:00"
+  },
+  "7017616392": {
+    "user_id": 7017616392,
+    "username": "Zangzanggg",
+    "full_name": "🧸 𝒁𝒂𝒏𝒈𝒁𝒂𝒏𝒈𝒈𝒈™",
+    "first_seen": "2026-02-27T14:54:30.154177+07:00",
+    "last_seen": "2026-02-27T14:54:30.154198+07:00"
+  },
+  "7854027039": {
+    "user_id": 7854027039,
+    "username": "siculator98",
+    "full_name": "ZH 09",
+    "first_seen": "2026-02-27T16:22:36.655103+07:00",
+    "last_seen": "2026-02-27T16:22:36.655116+07:00"
+  },
+  "7490638535": {
+    "user_id": 7490638535,
+    "username": "",
+    "full_name": "11 05",
+    "first_seen": "2026-02-28T00:45:55.247879+07:00",
+    "last_seen": "2026-02-28T00:45:55.247879+07:00"
+  },
+  "1908780883": {
+    "user_id": 1908780883,
+    "username": "thamkhang",
+    "full_name": "Thẩm Khang",
+    "first_seen": "2026-02-28T18:54:49.105249+07:00",
+    "last_seen": "2026-02-28T18:54:49.105249+07:00"
+  },
+  "8560622519": {
+    "user_id": 8560622519,
+    "username": "dat_shopmmo004",
+    "full_name": "Đạt- ShopMMO",
+    "first_seen": "2026-03-08T22:37:36.164080+07:00",
+    "last_seen": "2026-03-08T22:37:36.164091+07:00"
+  }
+}

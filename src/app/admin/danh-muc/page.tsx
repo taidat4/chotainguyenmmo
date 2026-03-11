@@ -1,0 +1,108 @@
+'use client';
+
+import { useState } from 'react';
+import { categories as initialCategories, type Category } from '@/lib/mock-data';
+import { Edit, Trash2, Plus, FolderTree, X, Save, AlertTriangle } from 'lucide-react';
+
+export default function AdminCategoriesPage() {
+    const [cats, setCats] = useState<Category[]>(initialCategories);
+    const [editModal, setEditModal] = useState<{ id?: string; name: string; slug: string } | null>(null);
+    const [deleteModal, setDeleteModal] = useState<Category | null>(null);
+    const [toast, setToast] = useState('');
+
+    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+
+    const handleSave = () => {
+        if (!editModal || !editModal.name.trim()) return;
+        if (editModal.id) {
+            setCats(prev => prev.map(c => c.id === editModal.id ? { ...c, name: editModal.name, slug: editModal.slug } : c));
+            showToast('✅ Đã cập nhật danh mục');
+        } else {
+            const newCat: Category = { id: String(Date.now()), name: editModal.name, slug: editModal.slug || editModal.name.toLowerCase().replace(/\s+/g, '-'), productCount: 0, icon: '📦', description: '', subcategories: [] };
+            setCats(prev => [...prev, newCat]);
+            showToast('✅ Đã thêm danh mục mới');
+        }
+        setEditModal(null);
+    };
+
+    const handleDelete = (id: string) => {
+        setCats(prev => prev.filter(c => c.id !== id));
+        setDeleteModal(null);
+        showToast('🗑️ Đã xóa danh mục');
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">Quản lý danh mục</h1>
+                    <p className="text-sm text-brand-text-muted">Thêm, sửa, xóa danh mục sản phẩm trên sàn.</p>
+                </div>
+                <button onClick={() => setEditModal({ name: '', slug: '' })} className="btn-primary flex items-center gap-2 !py-2 text-sm"><Plus className="w-4 h-4" /> Thêm danh mục</button>
+            </div>
+            <div className="card !p-0 overflow-hidden">
+                <table className="w-full text-sm">
+                    <thead><tr className="bg-brand-surface-2/50">
+                        <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Danh mục</th>
+                        <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Slug</th>
+                        <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Số sản phẩm</th>
+                        <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
+                    </tr></thead>
+                    <tbody>
+                        {cats.map(cat => (
+                            <tr key={cat.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30">
+                                <td className="py-3 px-4"><div className="flex items-center gap-3"><div className="w-9 h-9 rounded-lg bg-brand-primary/10 flex items-center justify-center"><FolderTree className="w-4 h-4 text-brand-primary" /></div><span className="text-sm font-medium text-brand-text-primary">{cat.name}</span></div></td>
+                                <td className="py-3 px-4 text-xs text-brand-text-muted font-mono">{cat.slug}</td>
+                                <td className="py-3 px-4 text-center text-brand-text-secondary">{cat.productCount}</td>
+                                <td className="py-3 px-4"><div className="flex items-center justify-center gap-1">
+                                    <button onClick={() => setEditModal({ id: cat.id, name: cat.name, slug: cat.slug })} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-info hover:bg-brand-surface-2 transition-colors"><Edit className="w-3.5 h-3.5" /></button>
+                                    <button onClick={() => setDeleteModal(cat)} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-danger hover:bg-brand-surface-2 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                </div></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Edit/Add Modal */}
+            {editModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-md w-full p-6">
+                        <h3 className="text-sm font-semibold text-brand-text-primary mb-4">{editModal.id ? '✏️ Sửa danh mục' : '➕ Thêm danh mục mới'}</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-2">Tên danh mục *</label>
+                                <input type="text" value={editModal.name} onChange={e => setEditModal({ ...editModal, name: e.target.value, slug: editModal.id ? editModal.slug : e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} className="input-field" placeholder="VD: Phần mềm" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-2">Slug</label>
+                                <input type="text" value={editModal.slug} onChange={e => setEditModal({ ...editModal, slug: e.target.value })} className="input-field font-mono text-sm" placeholder="phan-mem" />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-5">
+                            <button onClick={() => setEditModal(null)} className="btn-secondary flex-1 text-sm">Hủy</button>
+                            <button onClick={handleSave} className="btn-primary flex-1 text-sm flex items-center justify-center gap-1.5"><Save className="w-4 h-4" /> Lưu</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirm */}
+            {deleteModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-sm w-full p-6 text-center">
+                        <AlertTriangle className="w-10 h-10 text-brand-danger mx-auto mb-3" />
+                        <h3 className="text-sm font-semibold text-brand-text-primary mb-2">Xóa danh mục?</h3>
+                        <p className="text-xs text-brand-text-muted mb-4">Danh mục <strong>{deleteModal.name}</strong> ({deleteModal.productCount} sản phẩm) sẽ bị xóa vĩnh viễn.</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setDeleteModal(null)} className="btn-secondary flex-1 text-sm">Hủy</button>
+                            <button onClick={() => handleDelete(deleteModal.id)} className="btn-primary flex-1 text-sm !bg-brand-danger">Xóa</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {toast && <div className="fixed bottom-6 right-6 z-50 bg-brand-surface border border-brand-border rounded-xl shadow-card-hover px-5 py-3 animate-slide-up"><span className="text-sm text-brand-text-primary font-medium">{toast}</span></div>}
+        </div>
+    );
+}

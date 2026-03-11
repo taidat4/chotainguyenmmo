@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-primary: 47 107 255;
+    --brand-secondary: 124 77 255;
+    --brand-bg: 245 248 255;
+    --brand-surface: 255 255 255;
+    --brand-surface-2: 248 250 252;
+    --brand-surface-3: 238 244 255;
+    --brand-border: 217 226 242;
+    --brand-text-primary: 15 23 42;
+    --brand-text-secondary: 71 85 105;
+    --brand-text-muted: 100 116 139;
+    --brand-success: 22 163 74;
+    --brand-warning: 217 119 6;
+    --brand-danger: 220 38 38;
+    --brand-info: 2 132 199;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: rgb(var(--brand-bg));
+    color: rgb(var(--brand-text-primary));
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--brand-bg));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--brand-border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--brand-primary));
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-primary text-white font-semibold px-6 py-3 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-200 shadow-glow-primary;
+  }
+
+  .btn-secondary {
+    @apply bg-brand-surface border border-brand-border text-brand-text-primary font-semibold px-6 py-3 rounded-xl hover:bg-brand-surface-2 active:scale-[0.98] transition-all duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-brand-danger text-white font-semibold px-6 py-3 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-200;
+  }
+
+  .btn-success {
+    @apply bg-brand-success text-white font-semibold px-6 py-3 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-card transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:-translate-y-1;
+    border-color: rgb(var(--brand-primary) / 0.3);
+  }
+
+  .input-field {
+    @apply w-full bg-brand-surface-2 border border-brand-border rounded-xl px-4 py-3 text-brand-text-primary transition-all duration-200;
+  }
+
+  .input-field::placeholder {
+    color: rgb(var(--brand-text-muted));
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: rgb(var(--brand-primary));
+    box-shadow: 0 0 0 1px rgb(var(--brand-primary) / 0.3);
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-primary {
+    @apply badge text-brand-primary;
+    background-color: rgb(var(--brand-primary) / 0.1);
+  }
+
+  .badge-success {
+    @apply badge text-brand-success;
+    background-color: rgb(var(--brand-success) / 0.1);
+  }
+
+  .badge-warning {
+    @apply badge text-brand-warning;
+    background-color: rgb(var(--brand-warning) / 0.1);
+  }
+
+  .badge-danger {
+    @apply badge text-brand-danger;
+    background-color: rgb(var(--brand-danger) / 0.1);
+  }
+
+  .badge-info {
+    @apply badge text-brand-info;
+    background-color: rgb(var(--brand-info) / 0.1);
+  }
+
+  .badge-neutral {
+    @apply badge bg-brand-surface-3 text-brand-text-secondary;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl rounded-2xl shadow-card;
+    background-color: rgb(var(--brand-surface) / 0.8);
+    border: 1px solid rgb(var(--brand-border) / 0.5);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

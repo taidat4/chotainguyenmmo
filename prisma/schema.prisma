@@ -1,0 +1,712 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum Role {
+  USER
+  SELLER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum ShopStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  SUSPENDED
+}
+
+enum ProductStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  PAUSED
+  REJECTED
+  OUT_OF_STOCK
+  ARCHIVED
+}
+
+enum DeliveryType {
+  AUTO
+  MANUAL
+}
+
+enum WalletTransactionType {
+  DEPOSIT
+  PURCHASE
+  SALE_EARNING
+  REFUND
+  WITHDRAWAL
+  FEE
+  ADJUSTMENT
+}
+
+enum WalletDirection {
+  CREDIT
+  DEBIT
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  DELIVERING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  DISPUTED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum DeliveryStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  FAILED
+}
+
+enum ComplaintStatus {
+  OPEN
+  SELLER_RESPONDED
+  AWAITING_USER
+  UNDER_REVIEW
+  RESOLVED
+  REJECTED
+  REFUNDED
+}
+
+enum ComplaintReason {
+  NOT_AS_DESCRIBED
+  NOT_WORKING
+  NOT_RECEIVED
+  WRONG_ITEM
+  DUPLICATE
+  OTHER
+}
+
+enum ReviewStatus {
+  ACTIVE
+  HIDDEN
+  FLAGGED
+}
+
+enum DepositStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+  REJECTED
+}
+
+enum StockItemStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  INVALID
+}
+
+enum TermsType {
+  USER
+  SELLER
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id               String    @id @default(cuid())
+  username         String    @unique
+  email            String    @unique
+  passwordHash     String
+  fullName         String
+  avatarUrl        String?
+  phone            String?
+  role             Role      @default(USER)
+  status           UserStatus @default(ACTIVE)
+  emailVerifiedAt  DateTime?
+  lastLoginAt      DateTime?
+  lastLoginIp      String?
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret  String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Terms acceptance
+  termsVersion         String?
+  termsAcceptedAt      DateTime?
+  termsAcceptedIp      String?
+  termsAcceptedAgent   String?
+
+  // Relations
+  wallet          Wallet?
+  shop            Shop?
+  orders          Order[]       @relation("BuyerOrders")
+  complaints      Complaint[]   @relation("BuyerComplaints")
+  reviews         Review[]
+  favorites       Favorite[]
+  notifications   Notification[]
+  deposits        Deposit[]
+  withdrawals     Withdrawal[]
+  auditLogs       AuditLog[]
+
+  @@index([username])
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Wallet {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  availableBalance Int      @default(0)
+  heldBalance      Int      @default(0)
+  totalDeposited   Int      @default(0)
+  totalSpent       Int      @default(0)
+  totalRefunded    Int      @default(0)
+  totalWithdrawn   Int      @default(0)
+  currency         String   @default("VND")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user         User                @relation(fields: [userId], references: [id])
+  transactions WalletTransaction[]
+
+  @@index([userId])
+}
+
+model WalletTransaction {
+  id          String                @id @default(cuid())
+  walletId    String
+  type        WalletTransactionType
+  direction   WalletDirection
+  amount      Int
+  balanceAfter Int
+  referenceType String?
+  referenceId   String?
+  description   String?
+  note          String?
+  createdAt     DateTime            @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id])
+
+  @@index([walletId])
+  @@index([type])
+  @@index([referenceType, referenceId])
+  @@index([createdAt])
+}
+
+model Shop {
+  id                    String     @id @default(cuid())
+  ownerId               String     @unique
+  name                  String
+  slug                  String     @unique
+  logoUrl               String?
+  bannerUrl             String?
+  shortDescription      String?
+  description           String?    @db.Text
+  status                ShopStatus @default(PENDING)
+  verified              Boolean    @default(false)
+  supportTimeText       String?
+  responseRate          Float?     @default(0)
+  ratingAverage         Float?     @default(0)
+  ratingCount           Int        @default(0)
+  successfulOrdersCount Int        @default(0)
+  productCount          Int        @default(0)
+  joinedAt              DateTime   @default(now())
+
+  // Seller terms
+  sellerTermsVersion    String?
+  sellerTermsAcceptedAt DateTime?
+  sellerTermsIp         String?
+  sellerTermsAgent      String?
+
+  // Tax profile
+  legalName             String?
+  taxCode               String?
+  legalAddress          String?
+  invoiceEmail          String?
+  taxProfileStatus      String?   @default("incomplete") // incomplete, pending, verified
+  invoiceProfileStatus  String?   @default("incomplete")
+  taxInvoiceEnabled     Boolean   @default(false)
+
+  // Bank info for withdrawals
+  bankName              String?
+  bankAccount           String?
+  bankAccountName       String?
+  bankBranch            String?
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  owner      User        @relation(fields: [ownerId], references: [id])
+  products   Product[]
+  orders     Order[]     @relation("ShopOrders")
+  complaints Complaint[] @relation("ShopComplaints")
+
+  @@index([slug])
+  @@index([status])
+  @@index([ownerId])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  icon        String?
+  description String?
+  parentId    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  productCount Int      @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  parent   Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryChildren")
+  products Product[]
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+model Product {
+  id                  String        @id @default(cuid())
+  shopId              String
+  categoryId          String
+  name                String
+  slug                String        @unique
+  shortDescription    String?
+  description         String?       @db.Text
+  price               Int
+  compareAtPrice      Int?
+  status              ProductStatus @default(DRAFT)
+  deliveryType        DeliveryType  @default(AUTO)
+  warrantyPolicy      String?
+  refundPolicy        String?
+  supportPolicy       String?
+  stockCountCached    Int           @default(0)
+  soldCount           Int           @default(0)
+  ratingAverage       Float?        @default(0)
+  ratingCount         Int           @default(0)
+  minPurchaseQty      Int           @default(1)
+  maxPurchaseQty      Int           @default(10)
+  isFeatured          Boolean       @default(false)
+  isHot               Boolean       @default(false)
+  isAutoDelivery      Boolean       @default(true)
+  complaintWindowHours Int          @default(48)
+  lastStockUpdateAt   DateTime?
+  publishedAt         DateTime?
+  approvedAt          DateTime?
+  rejectionReason     String?
+  metaTitle           String?
+  metaDescription     String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  shop       Shop          @relation(fields: [shopId], references: [id])
+  category   Category      @relation(fields: [categoryId], references: [id])
+  images     ProductImage[]
+  tags       ProductTagMap[]
+  stockItems StockItem[]
+  stockBatches StockBatch[]
+  orderItems OrderItem[]
+  reviews    Review[]
+  favorites  Favorite[]
+
+  @@index([slug])
+  @@index([shopId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([price])
+  @@index([soldCount])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model ProductTag {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  products ProductTagMap[]
+}
+
+model ProductTagMap {
+  productId String
+  tagId     String
+
+  product Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     ProductTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+}
+
+model StockItem {
+  id                String          @id @default(cuid())
+  productId         String
+  rawContent        String          @db.Text
+  normalizedContent String?
+  status            StockItemStatus @default(AVAILABLE)
+  reservedAt        DateTime?
+  soldAt            DateTime?
+  orderId           String?
+  uploadedBy        String?
+  batchId           String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  product Product     @relation(fields: [productId], references: [id])
+  batch   StockBatch? @relation(fields: [batchId], references: [id])
+
+  @@index([productId, status])
+  @@index([orderId])
+  @@index([batchId])
+}
+
+model StockBatch {
+  id          String   @id @default(cuid())
+  productId   String
+  sourceType  String   @default("paste") // paste, file
+  fileName    String?
+  totalLines  Int      @default(0)
+  validLines  Int      @default(0)
+  invalidLines Int     @default(0)
+  notes       String?
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
+
+  product Product     @relation(fields: [productId], references: [id])
+  items   StockItem[]
+
+  @@index([productId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderCode       String        @unique
+  buyerId         String
+  shopId          String
+  status          OrderStatus   @default(PENDING)
+  subtotal        Int           @default(0)
+  discountAmount  Int           @default(0)
+  feeAmount       Int           @default(0)
+  totalAmount     Int           @default(0)
+  paymentStatus   PaymentStatus @default(PENDING)
+  deliveryStatus  DeliveryStatus @default(PENDING)
+  complaintStatus ComplaintStatus?
+  notes           String?
+  paidAt          DateTime?
+  deliveredAt     DateTime?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  refundedAt      DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  buyer      User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  shop       Shop        @relation("ShopOrders", fields: [shopId], references: [id])
+  items      OrderItem[]
+  deliveries Delivery[]
+  complaints Complaint[]
+
+  @@index([orderCode])
+  @@index([buyerId])
+  @@index([shopId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  unitPrice Int
+  total     Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Delivery {
+  id        String         @id @default(cuid())
+  orderId   String
+  content   String?        @db.Text
+  status    DeliveryStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+}
+
+model Complaint {
+  id              String          @id @default(cuid())
+  complaintCode   String          @unique
+  orderId         String
+  buyerId         String
+  shopId          String
+  reason          ComplaintReason
+  status          ComplaintStatus @default(OPEN)
+  priority        String?         @default("normal") // low, normal, high, urgent
+  summary         String          @db.Text
+  adminDecision   String?
+  resolutionType  String?         // refund_full, refund_partial, replace, reject
+  resolvedAt      DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  order    Order              @relation(fields: [orderId], references: [id])
+  buyer    User               @relation("BuyerComplaints", fields: [buyerId], references: [id])
+  shop     Shop               @relation("ShopComplaints", fields: [shopId], references: [id])
+  messages ComplaintMessage[]
+
+  @@index([complaintCode])
+  @@index([orderId])
+  @@index([buyerId])
+  @@index([shopId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ComplaintMessage {
+  id          String   @id @default(cuid())
+  complaintId String
+  senderId    String
+  senderRole  String   // buyer, seller, admin
+  message     String   @db.Text
+  attachments String?  // JSON array of URLs
+  createdAt   DateTime @default(now())
+
+  complaint Complaint @relation(fields: [complaintId], references: [id])
+
+  @@index([complaintId])
+}
+
+model Review {
+  id        String       @id @default(cuid())
+  productId String
+  userId    String
+  orderId   String?
+  rating    Int          // 1-5
+  comment   String?      @db.Text
+  status    ReviewStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, orderId])
+  @@index([productId])
+  @@index([userId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // order, complaint, system, wallet, promotion
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+model Deposit {
+  id             String        @id @default(cuid())
+  userId         String
+  amount         Int
+  method         String        // bank_transfer, momo, vnpay
+  status         DepositStatus @default(PENDING)
+  proofUrl       String?
+  referenceCode  String?       @unique
+  transferContent String?
+  bankTxnId      String?
+  qrUrl          String?
+  expiresAt      DateTime?
+  approvedBy     String?
+  approvedAt     DateTime?
+  rejectedReason String?
+  completedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([referenceCode])
+  @@index([createdAt])
+}
+
+model BankTransaction {
+  id          String   @id
+  userId      String?
+  depositId   String?
+  amount      Int
+  bankTime    String?
+  bankContent String?  @db.Text
+  processedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([depositId])
+}
+
+model Withdrawal {
+  id             String           @id @default(cuid())
+  userId         String
+  amount         Int
+  feeAmount      Int              @default(0)
+  netAmount      Int
+  method         String           @default("bank_transfer")
+  accountName    String?
+  accountNumber  String?
+  bankName       String?
+  status         WithdrawalStatus @default(PENDING)
+  approvedBy     String?
+  approvedAt     DateTime?
+  rejectedReason String?
+  completedAt    DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String?
+  link      String?
+  position  Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String?  @db.Text
+  status    String   @default("draft") // draft, published
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+  type  String @default("string") // string, number, boolean, json
+  group String @default("general") // general, commission, security, payment
+
+  @@index([key])
+  @@index([group])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  target    String?
+  targetId  String?
+  details   String?  @db.Text
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model TermsAcceptance {
+  id          String    @id @default(cuid())
+  userId      String
+  termsType   TermsType
+  version     String
+  acceptedAt  DateTime  @default(now())
+  acceptedIp  String?
+  userAgent   String?
+
+  @@index([userId])
+  @@index([termsType])
+}

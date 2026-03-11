@@ -1,0 +1,10 @@
+profile64@bulahastk.shop:AXF9Z2kRQ7 | Error: Message: Element <input class="Hvu6D" name="hiddenPassword" type="password"> is not reachable by keyboard; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementnotinteractableexception
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:202:5
+ElementNotInteractableError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:371:5
+webdriverSendKeysToElement@chrome://remote/content/marionette/interaction.sys.mjs:667:13
+interaction.sendKeysToElement@chrome://remote/content/marionette/interaction.sys.mjs:639:11
+sendKeysToElement@chrome://remote/content/marionette/actors/MarionetteCommandsChild.sys.mjs:610:29
+receiveMessage@chrome://remote/content/marionette/actors/MarionetteCommandsChild.sys.mjs:269:31
+

@@ -1,0 +1,88 @@
+{
+    "active_provider": "smspool",
+    "providers": {
+        "smspool": {
+            "name": "SMSPool",
+            "api_key": "1sLOpIOabK0i4xH26MRqInpEvfNe8FnV",
+            "service_id": "395",
+            "enabled": true,
+            "admin_countries": [
+                {
+                    "code": "US",
+                    "name": "United States",
+                    "dial_code": "+1",
+                    "max_tries": 2
+                }
+            ]
+        },
+        "codesim": {
+            "name": "Codesim",
+            "api_key": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YWlkYXQxIiwianRpIjoiODUwNzMiLCJpYXQiOjE3Njc4NTgwNTIsImV4cCI6MTgzMDA2NjA1Mn0.kl-OyM-7AxKFokoXoQvKf1WO65iHYsblUGEm5MTHY77PuONZGV-EkxPuJI2LefofNoalRaLN-xO-0DP7XZNhBA",
+            "service_id": "",
+            "network_id": "",
+            "enabled": true
+        },
+        "viotp": {
+            "name": "Viotp",
+            "api_key": "ecebf7432a8c473cb18e32c93b26fd83",
+            "service_id": "7",
+            "network_id": "",
+            "enabled": true
+        },
+        "365otp": {
+            "name": "365OTP",
+            "api_key": "e89c691085ff9dcb1d12ee742edbecae",
+            "service_id": "",
+            "network_id": "",
+            "default_country": "VN",
+            "enabled": true
+        }
+    },
+    "available_countries": [
+        {
+            "code": "VN",
+            "name": "Vietnam",
+            "dial_code": "+84"
+        },
+        {
+            "code": "ID",
+            "name": "Indonesia",
+            "dial_code": "+62"
+        },
+        {
+            "code": "NL",
+            "name": "Netherlands",
+            "dial_code": "+31"
+        },
+        {
+            "code": "EE",
+            "name": "Estonia",
+            "dial_code": "+372"
+        },
+        {
+            "code": "PH",
+            "name": "Philippines",
+            "dial_code": "+63"
+        },
+        {
+            "code": "MY",
+            "name": "Malaysia",
+            "dial_code": "+60"
+        },
+        {
+            "code": "TH",
+            "name": "Thailand",
+            "dial_code": "+66"
+        },
+        {
+            "code": "UK",
+            "name": "United Kingdom",
+            "dial_code": "+44"
+        },
+        {
+            "code": "US",
+            "name": "United States",
+            "dial_code": "+1"
+        }
+    ]
+}

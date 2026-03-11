@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Bot data
+mybot_data/
+*.json
+
+# JSON exceptions (must be after *.json)
+!users_list.json
+!config/smspool_config.json
+!config/sms_provider_config.json
+!pending_orders/verify_queue.json
+!pending_orders/verify_results.json
+!pending_orders/verify_status.json
+
+# Sensitive files - KHÔNG commit
+mbbank-main/config/login_credentials.json
+mbbank-main/config/config.json
+*.key
+*.pem
+credentials.json
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
