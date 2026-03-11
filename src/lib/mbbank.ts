@@ -1,5 +1,5 @@
 /**
- * MB Bank Service — Port from MY_BOT Python to TypeScript
+ * MB Bank Service — Ported from Credit-Flow Manager (working implementation)
  * Uses apicanhan.com API to check bank transactions
  */
 
@@ -9,18 +9,6 @@ interface MBTransaction {
     description: string;
     transaction_date: string;
     type: string;
-}
-
-interface MBApiResponse {
-    status: string;
-    transactions?: Array<{
-        transactionID: string;
-        amount: number;
-        description: string;
-        transactionDate: string;
-        type: string;
-    }>;
-    message?: string;
 }
 
 export class MBBankService {
@@ -39,48 +27,65 @@ export class MBBankService {
     }
 
     async getTransactions(limit = 20): Promise<MBTransaction[] | null> {
+        if (!this.apiKey || !this.accountNo) {
+            console.log('[MBBank] Missing API key or account number');
+            return null;
+        }
+
         try {
             const params = new URLSearchParams({
                 key: this.apiKey,
-                username: this.username,
-                password: this.password,
+                username: this.username || this.accountNo,
+                password: this.password || '',
                 accountNo: this.accountNo,
             });
 
-            const response = await fetch(`${this.apiUrl}?${params}`, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0',
-                    'Accept': 'application/json',
-                },
-                signal: AbortSignal.timeout(15000),
+            const url = `${this.apiUrl}?${params.toString()}`;
+            console.log(`[MBBank] Fetching: ${this.apiUrl}?key=***&username=${this.username}&accountNo=${this.accountNo}`);
+
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 30000);
+
+            const response = await fetch(url, {
+                signal: controller.signal,
             });
+            clearTimeout(timeout);
 
             if (!response.ok) {
-                console.error(`❌ MB Bank API HTTP ${response.status}`);
+                console.log(`[MBBank] API error: HTTP ${response.status}`);
                 return null;
             }
 
-            const data: MBApiResponse = await response.json();
+            const data = await response.json();
+            console.log(`[MBBank] API status: ${data.status}, message: ${data.message || 'none'}`);
 
-            if (data.status === 'success' && data.transactions) {
-                const inTransactions = data.transactions
-                    .filter(t => t.type === 'IN')
-                    .slice(0, limit)
-                    .map(t => ({
-                        transaction_id: t.transactionID || '',
-                        amount: Number(t.amount) || 0,
-                        description: t.description || '',
-                        transaction_date: t.transactionDate || '',
-                        type: t.type || 'IN',
-                    }));
-
-                return inTransactions;
+            if (data.status !== 'success') {
+                console.log(`[MBBank] API returned error: ${data.message || 'Unknown'}`);
+                return null;
             }
 
-            console.warn(`⚠️ MB Bank API error: ${data.message}`);
-            return null;
-        } catch (error) {
-            console.error(`❌ MB Bank API error:`, error);
+            const txList = data.transactions || [];
+            if (!Array.isArray(txList)) {
+                console.log('[MBBank] transactions is not an array');
+                return null;
+            }
+
+            console.log(`[MBBank] Got ${txList.length} transactions from API`);
+
+            // Return ALL transactions (not just IN), map with fallback fields like Credit-Flow
+            return txList.slice(0, limit).map((t: any) => ({
+                transaction_id: String(t.transactionNumber || t.refNo || t.transactionID || t.id || ''),
+                amount: Number(t.creditAmount || t.amount || 0),
+                description: (t.description || t.addDescription || '').toUpperCase(),
+                transaction_date: t.transactionDate || '',
+                type: t.type || (Number(t.creditAmount || 0) > 0 ? 'IN' : 'OUT'),
+            }));
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.log('[MBBank] API request timeout (30s)');
+            } else {
+                console.log(`[MBBank] API request error: ${error.message}`);
+            }
             return null;
         }
     }
@@ -94,16 +99,36 @@ export class MBBankService {
         if (!transactions) return null;
 
         const contentNormalized = this.normalize(content);
+        console.log(`[MBBank] Checking for: code="${contentNormalized}", amount=${amount}`);
+        console.log(`[MBBank] Total transactions to search: ${transactions.length}`);
 
         for (const tx of transactions) {
-            if (Math.round(tx.amount) !== amount) continue;
+            // Skip zero/negative amounts
+            if (tx.amount <= 0) continue;
 
             const txDescNormalized = this.normalize(tx.description);
-            if (txDescNormalized.includes(contentNormalized)) {
+
+            // Log each transaction for debugging
+            console.log(`[MBBank]   TX: amount=${tx.amount}, desc="${tx.description.substring(0, 60)}"`);
+
+            // Check if description contains deposit code
+            const codeMatch = txDescNormalized.includes(contentNormalized);
+            // Check if amount matches (with tolerance)
+            const amountMatch = Math.abs(Math.round(tx.amount) - amount) < 100; // 100đ tolerance
+
+            if (codeMatch && amountMatch) {
+                console.log(`[MBBank] ✓ MATCH FOUND: ${tx.transaction_id} — ${tx.amount}đ`);
+                return tx;
+            }
+
+            // Also try matching code only (amount might be slightly different due to bank fees)
+            if (codeMatch) {
+                console.log(`[MBBank] ✓ CODE MATCH (amount differs): txAmount=${tx.amount} vs expected=${amount}`);
                 return tx;
             }
         }
 
+        console.log(`[MBBank] ✗ No matching transaction found`);
         return null;
     }
 
