@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, RefreshCw, Eye, EyeOff, CheckCircle2, AlertTriangle, CreditCard, Wifi, WifiOff, Settings, Key, User, Lock, Smartphone, Hash, Globe, Cookie } from 'lucide-react';
+import { Save, RefreshCw, Eye, EyeOff, CheckCircle2, AlertTriangle, CreditCard, Wifi, WifiOff, Settings, Key, User, Lock, Smartphone, Hash, Globe, Cookie, Zap, Bug, ArrowRight } from 'lucide-react';
 
 interface GatewayConfig {
     [key: string]: string;
@@ -32,6 +32,9 @@ export default function AdminPaymentConfigPage() {
     const [toast, setToast] = useState('');
     const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
     const [testResult, setTestResult] = useState<any>(null);
+    const [testing, setTesting] = useState(false);
+    const [debugResult, setDebugResult] = useState<any>(null);
+    const [showDebug, setShowDebug] = useState(false);
 
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 4000); };
 
@@ -64,10 +67,33 @@ export default function AdminPaymentConfigPage() {
                 setTestResult(data);
             } else {
                 setApiStatus('offline');
+                setTestResult(data);
             }
         } catch {
             setApiStatus('offline');
         }
+    };
+
+    const runDetailedTest = async () => {
+        setTesting(true);
+        setDebugResult(null);
+        try {
+            const res = await fetch('/api/payment/mbbank/test');
+            const data = await res.json();
+            setDebugResult(data);
+            setShowDebug(true);
+
+            if (data.transactionCount > 0) {
+                showToast(`✅ API hoạt động! Tìm thấy ${data.transactionCount} giao dịch (${data.incomingTransactions} tiền vào)`);
+            } else if (data.parsedResponse?.status === 'success') {
+                showToast('⚠️ API kết nối OK nhưng không có giao dịch nào');
+            } else {
+                showToast('❌ API trả về lỗi — xem chi tiết phía dưới');
+            }
+        } catch (err) {
+            showToast('❌ Không thể gọi test API');
+        }
+        setTesting(false);
     };
 
     const saveConfig = async () => {
@@ -154,6 +180,120 @@ export default function AdminPaymentConfigPage() {
                 </div>
             </div>
 
+            {/* Test API Button */}
+            <div className="card !p-0 overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-brand-info/10 to-brand-primary/10 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-brand-info/20 flex items-center justify-center">
+                            <Zap className="w-5 h-5 text-brand-info" />
+                        </div>
+                        <div>
+                            <div className="text-sm font-semibold text-brand-text-primary">Test API MBBank</div>
+                            <div className="text-xs text-brand-text-muted">Gọi trực tiếp apicanhan.com để kiểm tra kết nối và xem giao dịch thật</div>
+                        </div>
+                    </div>
+                    <button onClick={runDetailedTest} disabled={testing}
+                        className="btn-primary !py-2 text-sm flex items-center gap-1.5 disabled:opacity-50 shrink-0">
+                        {testing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Bug className="w-4 h-4" />}
+                        {testing ? 'Đang test...' : 'Chạy Test'}
+                    </button>
+                </div>
+
+                {/* Debug Result Panel */}
+                {showDebug && debugResult && (
+                    <div className="p-4 border-t border-brand-border space-y-4">
+                        {/* Env Check */}
+                        <div>
+                            <div className="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2">Kiểm tra biến môi trường</div>
+                            <div className="grid grid-cols-2 gap-2">
+                                {debugResult.envCheck && Object.entries(debugResult.envCheck).map(([key, val]: [string, any]) => (
+                                    <div key={key} className={`text-xs p-2 rounded-lg ${val?.toString().startsWith('✅') ? 'bg-brand-success/10 text-brand-success' : val?.toString().startsWith('❌') ? 'bg-brand-danger/10 text-brand-danger' : 'bg-brand-surface-2 text-brand-text-secondary'}`}>
+                                        <span className="font-medium">{key}:</span> {val?.toString()}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* API Response Summary */}
+                        <div>
+                            <div className="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2">Kết quả API</div>
+                            <div className="grid grid-cols-3 gap-2">
+                                <div className={`text-center p-3 rounded-xl ${debugResult.httpStatus === 200 ? 'bg-brand-success/10' : 'bg-brand-danger/10'}`}>
+                                    <div className={`text-lg font-bold ${debugResult.httpStatus === 200 ? 'text-brand-success' : 'text-brand-danger'}`}>
+                                        {debugResult.httpStatus || '???'}
+                                    </div>
+                                    <div className="text-[10px] text-brand-text-muted">HTTP Status</div>
+                                </div>
+                                <div className="text-center p-3 rounded-xl bg-brand-primary/10">
+                                    <div className="text-lg font-bold text-brand-primary">{debugResult.transactionCount ?? '?'}</div>
+                                    <div className="text-[10px] text-brand-text-muted">Tổng GD</div>
+                                </div>
+                                <div className="text-center p-3 rounded-xl bg-brand-success/10">
+                                    <div className="text-lg font-bold text-brand-success">{debugResult.incomingTransactions ?? '?'}</div>
+                                    <div className="text-[10px] text-brand-text-muted">GD tiền vào</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* API Message/Error */}
+                        {debugResult.parsedResponse?.message && (
+                            <div className={`p-3 rounded-xl text-sm ${debugResult.parsedResponse.status === 'success' ? 'bg-brand-success/10 text-brand-success' : 'bg-brand-danger/10 text-brand-danger'}`}>
+                                <span className="font-medium">API Message:</span> {debugResult.parsedResponse.message}
+                            </div>
+                        )}
+
+                        {debugResult.fetchError && (
+                            <div className="p-3 rounded-xl bg-brand-danger/10 text-sm text-brand-danger">
+                                <span className="font-medium">Lỗi kết nối:</span> {debugResult.fetchError}
+                            </div>
+                        )}
+
+                        {debugResult.parseError && (
+                            <div className="p-3 rounded-xl bg-brand-warning/10 text-sm text-brand-warning">
+                                <span className="font-medium">{debugResult.parseError}</span>
+                                <pre className="mt-1 text-xs whitespace-pre-wrap">{debugResult.rawResponse}</pre>
+                            </div>
+                        )}
+
+                        {/* Recent Transactions from Test */}
+                        {debugResult.recentTransactions?.length > 0 && (
+                            <div>
+                                <div className="text-xs font-semibold text-brand-text-muted uppercase tracking-wider mb-2">
+                                    Giao dịch gần nhất (Top 5)
+                                </div>
+                                <div className="space-y-2">
+                                    {debugResult.recentTransactions.map((tx: any, i: number) => (
+                                        <div key={i} className={`flex items-center gap-3 p-3 rounded-xl ${tx.type === 'IN' ? 'bg-brand-success/5 border border-brand-success/20' : 'bg-brand-danger/5 border border-brand-danger/20'}`}>
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${tx.type === 'IN' ? 'bg-brand-success/15' : 'bg-brand-danger/15'}`}>
+                                                <span className={`text-xs font-bold ${tx.type === 'IN' ? 'text-brand-success' : 'text-brand-danger'}`}>{tx.type}</span>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-xs text-brand-text-primary font-medium truncate">{tx.description}</div>
+                                                <div className="text-[10px] text-brand-text-muted">{tx.date} · ID: {tx.id}</div>
+                                            </div>
+                                            <div className={`text-sm font-bold shrink-0 ${tx.type === 'IN' ? 'text-brand-success' : 'text-brand-danger'}`}>
+                                                {tx.type === 'IN' ? '+' : '-'}{parseInt(tx.amount).toLocaleString('vi-VN')}đ
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Raw JSON (collapsible) */}
+                        <details className="group">
+                            <summary className="text-xs text-brand-text-muted cursor-pointer hover:text-brand-primary transition-colors flex items-center gap-1">
+                                <ArrowRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
+                                Xem JSON gốc (debug)
+                            </summary>
+                            <pre className="mt-2 text-[10px] leading-tight bg-brand-surface-2 rounded-xl p-3 overflow-x-auto max-h-60 overflow-y-auto text-brand-text-secondary">
+                                {JSON.stringify(debugResult, null, 2)}
+                            </pre>
+                        </details>
+                    </div>
+                )}
+            </div>
+
             {/* Config Fields */}
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-4 flex items-center gap-2">
@@ -207,7 +347,7 @@ export default function AdminPaymentConfigPage() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="text-xs text-brand-text-primary font-medium truncate">{tx.description?.substring(0, 80)}</div>
-                                    <div className="text-[10px] text-brand-text-muted">{tx.transactionDate} · {tx.transactionID}</div>
+                                    <div className="text-[10px] text-brand-text-muted">{tx.transactionDate || tx.transaction_date} · {tx.transactionID || tx.transaction_id}</div>
                                 </div>
                                 <div className={`text-sm font-bold shrink-0 ${tx.type === 'IN' ? 'text-brand-success' : 'text-brand-danger'}`}>
                                     {tx.type === 'IN' ? '+' : '-'}{parseInt(tx.amount).toLocaleString('vi-VN')}đ
@@ -226,7 +366,6 @@ export default function AdminPaymentConfigPage() {
                     <div className="text-xs text-brand-text-muted mt-0.5">
                         Các thông tin nhạy cảm (API key, password, token, cookie) chỉ hiển thị trên giao diện Admin.
                         Cookie & Session ID cần được cập nhật định kỳ khi hết hạn.
-                        Khi thay đổi, hệ thống sẽ ghi đè file config gốc tại <code className="text-brand-primary">MY_BOT/mbbank-main/config/config.json</code>.
                     </div>
                 </div>
             </div>
