@@ -1,15 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPlatformSettings, updatePlatformSettings, getPlatformStats, getAllOrders, getAllTransactions } from '@/lib/mock-order-store';
+import { getPlatformSettingsAsync, updatePlatformSettings } from '@/lib/mock-order-store';
+import prisma from '@/lib/prisma';
 
 // GET /api/v1/admin/settings — Get platform settings & stats
 export async function GET() {
     try {
-        const settings = getPlatformSettings();
-        const stats = getPlatformStats();
+        const settings = await getPlatformSettingsAsync();
+
+        // Compute stats from Prisma DB
+        let totalOrders = 0, totalRevenue = 0, totalPlatformFees = 0, totalSellerEarnings = 0;
+        try {
+            totalOrders = await prisma.order.count();
+            const orderSum = await prisma.order.aggregate({
+                where: { status: { in: ['COMPLETED', 'PAID', 'PROCESSING'] } },
+                _sum: { totalAmount: true, feeAmount: true },
+            });
+            totalRevenue = orderSum._sum?.totalAmount || 0;
+            totalPlatformFees = orderSum._sum?.feeAmount || 0;
+            totalSellerEarnings = totalRevenue - totalPlatformFees;
+        } catch {}
 
         return NextResponse.json({
             success: true,
-            data: { settings, stats },
+            data: {
+                settings,
+                stats: {
+                    totalOrders,
+                    totalRevenue,
+                    totalPlatformFees,
+                    totalSellerEarnings,
+                    commissionRate: settings.commissionRate,
+                },
+            },
         });
     } catch (error) {
         console.error('Get admin settings error:', error);
@@ -31,7 +53,7 @@ export async function PUT(request: NextRequest) {
             body.commissionRate = rate;
         }
 
-        const updated = updatePlatformSettings(body);
+        const updated = await updatePlatformSettings(body);
 
         return NextResponse.json({
             success: true,

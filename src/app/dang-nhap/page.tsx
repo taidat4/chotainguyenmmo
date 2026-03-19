@@ -56,10 +56,16 @@ export default function LoginPage() {
 
             setSuccess('✅ Đăng nhập thành công! Đang chuyển hướng...');
 
-            // Redirect based on role
+            // Check for redirect param first
+            const params = new URLSearchParams(window.location.search);
+            const redirectTo = params.get('redirect');
+
+            // Redirect based on role or redirect param
             const role = data.data?.user?.role;
             setTimeout(() => {
-                if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
+                if (redirectTo) {
+                    router.push(redirectTo);
+                } else if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
                     router.push('/admin');
                 } else {
                     router.push('/');
@@ -172,15 +178,6 @@ export default function LoginPage() {
                                 </button>
                             </form>
 
-                            {/* Test accounts box */}
-                            <div className="mt-6 p-3 bg-brand-surface-3 border border-brand-border/50 rounded-xl">
-                                <p className="text-xs font-semibold text-brand-text-muted mb-2">🔑 Tài khoản test:</p>
-                                <div className="space-y-1 text-xs text-brand-text-secondary">
-                                    <p><span className="font-medium">User:</span> taidat / Dat@442003</p>
-                                    <p><span className="font-medium">Admin:</span> admin / Admin@123</p>
-                                    <p><span className="font-medium">Seller:</span> seller_tai / Seller@123</p>
-                                </div>
-                            </div>
 
                             <p className="text-center text-sm text-brand-text-muted mt-4">
                                 Chưa có tài khoản?{' '}

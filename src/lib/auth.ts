@@ -90,5 +90,5 @@ export function generateComplaintCode(): string {
 }
 
 export function generateDepositToken(): string {
-    return `DEP${randomBytes(8).toString('hex').toUpperCase()}`;
+    return randomBytes(4).toString('hex').toUpperCase().slice(0, 7);
 }

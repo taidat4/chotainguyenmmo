@@ -370,6 +370,46 @@ export default function AdminPaymentConfigPage() {
                 </div>
             </div>
 
+            {/* MoMo Gateway */}
+            <div className="card !p-0 overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-pink-500/10 to-pink-600/10 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm">
+                            MoMo
+                        </div>
+                        <div>
+                            <div className="text-sm font-semibold text-brand-text-primary">Cổng thanh toán MoMo</div>
+                            <div className="text-xs text-brand-text-muted">Collection API v2 — Ví điện tử MoMo</div>
+                        </div>
+                    </div>
+                    <a href="https://business.momo.vn/portal/app/payment-integration-center" target="_blank" rel="noopener"
+                        className="btn-primary !py-2 text-sm flex items-center gap-1.5 !bg-gradient-to-r !from-pink-500 !to-pink-600">
+                        <Settings className="w-4 h-4" /> MoMo Business
+                    </a>
+                </div>
+                <div className="p-4 space-y-3">
+                    <div className="text-xs font-semibold text-gray-600 mb-2">Biến môi trường (Railway Variables):</div>
+                    {[
+                        { key: 'MOMO_PARTNER_CODE', desc: 'Partner Code từ MoMo Business' },
+                        { key: 'MOMO_ACCESS_KEY', desc: 'Access Key' },
+                        { key: 'MOMO_SECRET_KEY', desc: 'Secret Key' },
+                        { key: 'MOMO_SANDBOX', desc: 'true = test, false = production' },
+                    ].map(v => (
+                        <div key={v.key} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                            <code className="text-xs font-mono text-pink-600 bg-pink-50 px-2 py-0.5 rounded">{v.key}</code>
+                            <span className="text-xs text-gray-500">{v.desc}</span>
+                        </div>
+                    ))}
+                    <div className="mt-3 p-3 bg-pink-50 border border-pink-100 rounded-lg">
+                        <div className="text-xs text-pink-700">
+                            <strong>Lưu ý:</strong> Cần kích hoạt &quot;Cổng thanh toán&quot; trong MoMo Business Portal.
+                            Vào <strong>Trung tâm thanh toán → Tích hợp thanh toán</strong> để lấy API keys.
+                            Nếu gặp error 13, tài khoản MoMo Business cần được duyệt bởi MoMo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {toast && (
                 <div className="fixed bottom-6 right-6 z-50 bg-brand-surface border border-brand-border rounded-xl shadow-card-hover px-5 py-3 flex items-center gap-2 animate-slide-up">
                     <CheckCircle2 className="w-5 h-5 text-brand-success" /><span className="text-sm text-brand-text-primary font-medium">{toast}</span>

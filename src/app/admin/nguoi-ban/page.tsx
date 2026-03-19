@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Eye, Store, CheckCircle, Star, Ban, PlusCircle, MinusCircle, History, Lock, Unlock, X, FileText, User, XCircle, Clock, AlertTriangle, Trash2 } from 'lucide-react';
+import { useUI } from '@/components/shared/UIProvider';
 
 interface SellerApp {
     id: string;
@@ -36,6 +37,7 @@ export default function AdminSellersPage() {
     const [balanceAmount, setBalanceAmount] = useState('');
     const [toast, setToast] = useState('');
     const [activeTab, setActiveTab] = useState<'sellers' | 'applications'>('applications');
+    const { showToast: globalToast, showConfirm } = useUI();
 
     // Seller applications from API
     const [apps, setApps] = useState<SellerApp[]>([]);
@@ -43,7 +45,7 @@ export default function AdminSellersPage() {
     const [rejectModal, setRejectModal] = useState<{ appId: string; reason: string } | null>(null);
 
 
-    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 4000); };
+    const showToast = (msg: string) => { globalToast(msg.replace(/^[✅❌🗑️🚫🔒] */, ''), msg.startsWith('✅') || msg.startsWith('🗑️') ? 'success' : msg.startsWith('❌') ? 'error' : msg.startsWith('🚫') || msg.startsWith('🔒') ? 'warning' : 'info'); };
 
     useEffect(() => { loadApps(); }, []);
 
@@ -55,7 +57,7 @@ export default function AdminSellersPage() {
             if (data.success) {
                 setApps(data.data);
                 // Build seller list from approved applications only
-                const approvedApps = (data.data as SellerApp[]).filter((a: SellerApp) => a.status === 'APPROVED');
+                const approvedApps = (data.data as SellerApp[]).filter((a: SellerApp) => a.status === 'ACTIVE');
                 const realSellers = approvedApps.map((a, i) => ({
                     id: i + 1,
                     name: a.shopName,
@@ -94,21 +96,28 @@ export default function AdminSellersPage() {
     };
 
     const deleteApp = async (appId: string) => {
-        if (!confirm('Bạn chắc chắn muốn xóa đơn đăng ký/gian hàng này? Hành động không thể hoàn tác!')) return;
-        try {
-            const res = await fetch('/api/v1/seller/register', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'delete', appId }),
-            });
-            const data = await res.json();
-            if (data.success) {
-                showToast('🗑️ Đã xóa thành công');
-                loadApps();
-            } else {
-                showToast(`❌ ${data.message}`);
+        showConfirm({
+            title: 'Xóa đơn đăng ký',
+            message: 'Bạn chắc chắn muốn xóa đơn đăng ký/gian hàng này? Hành động không thể hoàn tác!',
+            confirmText: 'Xóa vĩnh viễn',
+            variant: 'danger',
+            onConfirm: async () => {
+                try {
+                    const res = await fetch('/api/v1/seller/register', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'delete', appId }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Đã xóa thành công');
+                        loadApps();
+                    } else {
+                        showToast(`❌ ${data.message}`);
+                    }
+                } catch { showToast('❌ Lỗi'); }
             }
-        } catch { showToast('❌ Lỗi'); }
+        });
     };
 
     const pendingAppsCount = apps.filter(a => a.status === 'PENDING').length;
@@ -475,11 +484,7 @@ export default function AdminSellersPage() {
                 </div>
             )}
 
-            {toast && (
-                <div className="fixed bottom-6 right-6 z-50 bg-brand-surface border border-brand-border rounded-xl shadow-card-hover px-5 py-3 animate-slide-up">
-                    <span className="text-sm text-brand-text-primary font-medium">{toast}</span>
-                </div>
-            )}
+
         </div>
     );
 }

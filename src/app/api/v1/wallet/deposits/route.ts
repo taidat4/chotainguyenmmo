@@ -6,7 +6,7 @@ import { generateQRUrl } from '@/lib/mbbank';
 const MBBANK_ACCOUNT = process.env.MBBANK_ACCOUNT || '';
 const MBBANK_NAME = process.env.MBBANK_NAME || 'MB Bank';
 const DEPOSIT_EXPIRY_MINUTES = parseInt(process.env.DEPOSIT_EXPIRY_MINUTES || '15');
-const MIN_DEPOSIT = parseInt(process.env.MIN_DEPOSIT_AMOUNT || '10000');
+const MIN_DEPOSIT = parseInt(process.env.MIN_DEPOSIT_AMOUNT || '2000');
 
 // POST /api/v1/wallet/deposits — Request a new deposit
 export async function POST(request: NextRequest) {
@@ -23,6 +23,22 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Auto-ensure user exists (handles fresh DB)
+        const userEmail = (authResult as any).email || `${authResult.userId}@chotainguyen.com`;
+        const userName = userEmail.split('@')[0] || authResult.userId;
+        await prisma.user.upsert({
+            where: { id: authResult.userId },
+            update: {},
+            create: {
+                id: authResult.userId,
+                email: userEmail,
+                username: userName,
+                fullName: userName,
+                passwordHash: 'migrated',
+                role: (authResult as any).role || 'USER',
+            },
+        });
+
         // Rate limit: max 5 requests per minute
         const oneMinuteAgo = new Date(Date.now() - 60000);
         const recentCount = await prisma.deposit.count({
@@ -36,8 +52,7 @@ export async function POST(request: NextRequest) {
         }
 
         const token = generateDepositToken();
-        const cleanUserId = authResult.userId.replace(/_/g, '');
-        const transferContent = `NAPCTN ${cleanUserId.slice(-8).toUpperCase()} ${token}`;
+        const transferContent = `CTN${token}`;
         const expiresAt = new Date(Date.now() + DEPOSIT_EXPIRY_MINUTES * 60000);
         const qrUrl = generateQRUrl(MBBANK_ACCOUNT, amount, transferContent);
 

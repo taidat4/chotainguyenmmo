@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth, generateOrderCode } from '@/lib/auth';
+import { getPlatformSettings } from '@/lib/mock-order-store';
 
 // POST /api/v1/orders — Create a new order (purchase)
 export async function POST(request: NextRequest) {
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
         }
 
         const totalAmount = product.price * quantity;
-        const commissionRate = parseInt(process.env.PLATFORM_COMMISSION_RATE || '5');
+        const commissionRate = getPlatformSettings().commissionRate;
         const feeAmount = Math.floor(totalAmount * commissionRate / 100);
 
         // Transaction: check balance, check stock, create order, deduct wallet, reserve stock
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
                 },
             });
 
-            // 6. Credit seller wallet (held balance)
+            // 6. Credit seller wallet (ALL orders go to heldBalance — 7-day hold for scam prevention)
             const sellerEarning = totalAmount - feeAmount;
             const sellerWallet = await tx.wallet.findUnique({ where: { userId: product.shop.ownerId } });
             if (sellerWallet) {
@@ -127,9 +128,42 @@ export async function POST(request: NextRequest) {
                         balanceAfter: sellerWallet.availableBalance,
                         referenceType: 'order',
                         referenceId: order.id,
-                        description: `Bán ${product.name} x${quantity} (sau phí ${commissionRate}%)`,
+                        description: `Bán ${product.name} x${quantity} — Tổng: ${totalAmount.toLocaleString()}đ, Phí sàn ${commissionRate}%: -${feeAmount.toLocaleString()}đ, Nhận: ${sellerEarning.toLocaleString()}đ (tạm giữ 7 ngày)`,
                     },
                 });
+            }
+
+            // 6b. Credit platform commission to admin wallet
+            try {
+                const adminUser = await tx.user.findFirst({
+                    where: { role: { in: ['SUPER_ADMIN', 'ADMIN'] } },
+                    orderBy: { createdAt: 'asc' },
+                });
+                if (adminUser && feeAmount > 0) {
+                    const adminWallet = await tx.wallet.findUnique({ where: { userId: adminUser.id } });
+                    if (adminWallet) {
+                        await tx.wallet.update({
+                            where: { userId: adminUser.id },
+                            data: {
+                                availableBalance: { increment: feeAmount },
+                            },
+                        });
+                        await tx.walletTransaction.create({
+                            data: {
+                                walletId: adminWallet.id,
+                                type: 'FEE',
+                                direction: 'CREDIT',
+                                amount: feeAmount,
+                                balanceAfter: adminWallet.availableBalance + feeAmount,
+                                referenceType: 'order',
+                                referenceId: order.id,
+                                description: `Phí sàn ${commissionRate}% đơn ${orderCode} — ${product.name} x${quantity}`,
+                            },
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Credit platform fee error:', e);
             }
 
             // 7. Mark stock as sold & create delivery
@@ -212,7 +246,8 @@ export async function GET(request: NextRequest) {
                 take: limit,
                 include: {
                     items: { include: { product: { select: { name: true, slug: true, price: true } } } },
-                    shop: { select: { name: true, slug: true } },
+                    shop: { select: { name: true, slug: true, ownerId: true } },
+                    deliveries: { select: { content: true, status: true } },
                 },
             }),
             prisma.order.count({ where }),

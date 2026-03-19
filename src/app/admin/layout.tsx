@@ -7,11 +7,10 @@ import { useAuth } from '@/lib/auth-context';
 import {
     LayoutDashboard, Users, Store, Package, FolderTree, ShoppingBag,
     AlertTriangle, Wallet, ArrowDownCircle, ArrowUpCircle, Image,
-    FileText, Settings, ClipboardList, LogOut, ChevronLeft, Bell, Shield, Menu, X, CreditCard, Palette, Lock, KeyRound, Eye, EyeOff
+    FileText, Settings, ClipboardList, LogOut, ChevronLeft, Bell, Shield, Menu, X, CreditCard, Palette, Lock, KeyRound, Eye, EyeOff, MessageSquare, Loader2, Megaphone
 } from 'lucide-react';
 
 // ==================== ADMIN KEY ====================
-// Đổi key này để bảo mật admin panel
 const ADMIN_SECRET_KEY = 'CTN_ADMIN_2026_xK9mP4qR7sT2vW5yBn8jLc3';
 // ===================================================
 
@@ -25,10 +24,11 @@ const adminMenuItems = [
         group: 'Quản lý', items: [
             { icon: Users, label: 'Người dùng', href: '/admin/nguoi-dung' },
             { icon: Store, label: 'Người bán', href: '/admin/nguoi-ban' },
-            { icon: Package, label: 'Sản phẩm', href: '/admin/san-pham' },
             { icon: FolderTree, label: 'Danh mục', href: '/admin/danh-muc' },
-            { icon: ShoppingBag, label: 'Đơn hàng', href: '/admin/don-hang' },
             { icon: AlertTriangle, label: 'Khiếu nại', href: '/admin/khieu-nai' },
+            { icon: MessageSquare, label: 'Tin nhắn', href: '/admin/tin-nhan' },
+            { icon: Megaphone, label: 'Quảng cáo', href: '/admin/quang-cao' },
+            { icon: Bell, label: 'Thông báo', href: '/admin/thong-bao' },
         ]
     },
     {
@@ -37,13 +37,13 @@ const adminMenuItems = [
             { icon: ArrowDownCircle, label: 'Nạp tiền', href: '/admin/nap-tien' },
             { icon: ArrowUpCircle, label: 'Rút tiền', href: '/admin/rut-tien' },
             { icon: CreditCard, label: 'Cổng nạp', href: '/admin/cong-nap' },
+            { icon: FileText, label: 'Hóa đơn thuế', href: '/admin/hoa-don' },
         ]
     },
     {
         group: 'Hệ thống', items: [
-            { icon: Image, label: 'Banner', href: '/admin/banner' },
+            { icon: Palette, label: 'Giao diện & Banner', href: '/admin/giao-dien' },
             { icon: FileText, label: 'Nội dung', href: '/admin/noi-dung' },
-            { icon: Palette, label: 'Giao diện', href: '/admin/giao-dien' },
             { icon: Settings, label: 'Cài đặt', href: '/admin/cai-dat' },
             { icon: ClipboardList, label: 'Nhật ký', href: '/admin/nhat-ky' },
         ]
@@ -94,9 +94,6 @@ function SidebarContent({ pathname, user, onClose, onLogout }: { pathname: strin
             </nav>
 
             <div className="p-3 border-t border-brand-border">
-                <Link href="/" className="flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-brand-text-muted hover:text-brand-text-primary hover:bg-brand-surface-2 transition-all">
-                    <ChevronLeft className="w-4 h-4" /> Về trang chủ
-                </Link>
                 <button onClick={onLogout} className="flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-brand-danger hover:bg-brand-surface-2 transition-all w-full">
                     <LogOut className="w-4 h-4" /> Đăng xuất
                 </button>
@@ -105,44 +102,66 @@ function SidebarContent({ pathname, user, onClose, onLogout }: { pathname: strin
     );
 }
 
-// ==================== ADMIN KEY GATE ====================
+// ==================== ADMIN KEY GATE — Only Admin Key needed ====================
 function AdminKeyGate({ onUnlock }: { onUnlock: () => void }) {
     const [key, setKey] = useState('');
     const [error, setError] = useState('');
     const [showKey, setShowKey] = useState(false);
     const [attempts, setAttempts] = useState(0);
     const [locked, setLocked] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (locked) return;
+        if (locked || loading) return;
+        setError('');
 
-        if (key === ADMIN_SECRET_KEY) {
-            sessionStorage.setItem('admin_verified', 'true');
-            onUnlock();
-        } else {
+        // Quick client-side key check
+        if (key !== ADMIN_SECRET_KEY) {
             const newAttempts = attempts + 1;
             setAttempts(newAttempts);
             setError(`Sai Admin Key! (${newAttempts}/5)`);
             setKey('');
-
             if (newAttempts >= 5) {
                 setLocked(true);
                 setError('🔒 Đã khóa — quá nhiều lần thử sai. Vui lòng chờ 60 giây.');
-                setTimeout(() => {
-                    setLocked(false);
-                    setAttempts(0);
-                    setError('');
-                }, 60000);
+                setTimeout(() => { setLocked(false); setAttempts(0); setError(''); }, 60000);
             }
+            return;
+        }
+
+        // Key correct — call API to auto-login as admin
+        setLoading(true);
+        try {
+            const res = await fetch('/api/v1/auth/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminKey: key }),
+            });
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                setError(data.message || 'Lỗi xác thực. Thử lại.');
+                setLoading(false);
+                return;
+            }
+
+            // Store admin token separately so main site login can't overwrite it
+            localStorage.setItem('admin_token', data.data.token);
+            login(data.data.token, data.data.user);
+            sessionStorage.setItem('admin_verified', 'true');
+            onUnlock();
+        } catch {
+            setError('Không thể kết nối đến server.');
+            setLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-brand-bg p-6">
             <div className="max-w-sm w-full">
-                {/* Lock icon animation */}
                 <div className="text-center mb-8">
                     <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-danger/20 to-brand-warning/20 border-2 border-brand-danger/30 flex items-center justify-center mx-auto mb-5 shadow-lg">
                         <Lock className="w-10 h-10 text-brand-danger" />
@@ -151,7 +170,6 @@ function AdminKeyGate({ onUnlock }: { onUnlock: () => void }) {
                     <p className="text-sm text-brand-text-muted mt-1.5">Nhập Admin Key để truy cập bảng điều khiển</p>
                 </div>
 
-                {/* Key input form */}
                 <form onSubmit={handleSubmit} className="card space-y-5">
                     <div>
                         <label className="text-xs font-semibold text-brand-text-secondary mb-2 block flex items-center gap-1.5">
@@ -165,7 +183,7 @@ function AdminKeyGate({ onUnlock }: { onUnlock: () => void }) {
                                 placeholder="Nhập admin key..."
                                 className="input-field w-full !pr-12 font-mono tracking-wider"
                                 autoFocus
-                                disabled={locked}
+                                disabled={locked || loading}
                                 autoComplete="off"
                             />
                             <button
@@ -187,14 +205,17 @@ function AdminKeyGate({ onUnlock }: { onUnlock: () => void }) {
 
                     <button
                         type="submit"
-                        disabled={!key || locked}
+                        disabled={!key || locked || loading}
                         className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Shield className="w-4 h-4" /> Xác thực
+                        {loading ? (
+                            <><Loader2 className="w-4 h-4 animate-spin" /> Đang xác thực...</>
+                        ) : (
+                            <><Shield className="w-4 h-4" /> Xác thực</>
+                        )}
                     </button>
                 </form>
 
-                {/* Back link */}
                 <div className="text-center mt-5">
                     <button
                         onClick={() => router.push('/')}
@@ -204,11 +225,10 @@ function AdminKeyGate({ onUnlock }: { onUnlock: () => void }) {
                     </button>
                 </div>
 
-                {/* Security badge */}
                 <div className="text-center mt-8">
                     <div className="inline-flex items-center gap-1.5 text-[10px] text-brand-text-muted bg-brand-surface-2 rounded-full px-3 py-1">
                         <Lock className="w-3 h-3" />
-                        Bảo mật bằng Admin Secret Key · Phiên đăng nhập
+                        Bảo mật bằng Admin Secret Key
                     </div>
                 </div>
             </div>
@@ -219,12 +239,11 @@ function AdminKeyGate({ onUnlock }: { onUnlock: () => void }) {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
-    const { user, logout } = useAuth();
+    const { user, logout, isLoading } = useAuth();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [adminVerified, setAdminVerified] = useState(false);
     const [checkingSession, setCheckingSession] = useState(true);
 
-    // Check if admin key was already verified this session
     useEffect(() => {
         const verified = sessionStorage.getItem('admin_verified') === 'true';
         setAdminVerified(verified);
@@ -233,12 +252,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const handleLogout = () => {
         sessionStorage.removeItem('admin_verified');
+        localStorage.removeItem('admin_token');
         logout();
-        router.push('/dang-nhap');
+        router.push('/');
     };
 
     // Loading
-    if (checkingSession) {
+    if (isLoading || checkingSession) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-brand-bg">
                 <div className="animate-spin w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full" />
@@ -246,8 +266,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         );
     }
 
-    // Admin key gate
+    // Not verified — show admin key gate (only 1 field: admin key)
     if (!adminVerified) {
+        return <AdminKeyGate onUnlock={() => setAdminVerified(true)} />;
+    }
+
+    // Verified but user somehow missing (edge case)
+    if (!user) {
+        sessionStorage.removeItem('admin_verified');
         return <AdminKeyGate onUnlock={() => setAdminVerified(true)} />;
     }
 

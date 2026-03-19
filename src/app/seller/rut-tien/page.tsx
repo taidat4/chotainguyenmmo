@@ -1,46 +1,89 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
-import { Wallet, Plus, AlertCircle, X, CheckCircle2, BanknoteIcon } from 'lucide-react';
+import { Wallet, Plus, AlertCircle, X, CheckCircle2, BanknoteIcon, Loader2 } from 'lucide-react';
 import { VIETNAMESE_BANKS } from '@/lib/banks';
 
-const initialWithdrawals: { id: string; amount: number; method: string; status: string; createdAt: string }[] = [];
+interface WithdrawalItem {
+    id: string;
+    amount: number;
+    feeAmount: number;
+    netAmount: number;
+    method: string;
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+    status: string;
+    createdAt: string;
+}
 
 export default function WithdrawalPage() {
     const { user } = useAuth();
-    const [withdrawals, setWithdrawals] = useState(initialWithdrawals);
+    const [withdrawals, setWithdrawals] = useState<WithdrawalItem[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [amount, setAmount] = useState('');
-    const [bank, setBank] = useState('Vietcombank');
+    const [bank, setBank] = useState('VIB');
     const [accountNum, setAccountNum] = useState('');
     const [accountName, setAccountName] = useState('');
     const [toast, setToast] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [balance, setBalance] = useState(0);
 
-    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
-    const balance = user?.walletBalance || 0;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
+    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 4000); };
     const pendingAmount = withdrawals.filter(w => w.status === 'pending').reduce((s, w) => s + w.amount, 0);
-    const totalWithdrawn = withdrawals.filter(w => w.status === 'completed').reduce((s, w) => s + w.amount, 0);
+    const totalWithdrawn = withdrawals.filter(w => w.status === 'completed').reduce((s, w) => s + w.netAmount, 0);
 
-    const handleWithdraw = () => {
-        if (!amount || Number(amount) < 500000) { showToast('⚠️ Số tiền rút tối thiểu 500.000đ'); return; }
-        if (Number(amount) > balance) { showToast('⚠️ Số dư không đủ'); return; }
+    useEffect(() => { loadWithdrawals(); loadWalletBalance(); }, []);
+
+    const loadWalletBalance = async () => {
+        try {
+            const res = await fetch('/api/v1/wallet', { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (data.success) setBalance(data.data.availableBalance || 0);
+        } catch { }
+    };
+
+    const loadWithdrawals = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/v1/seller/withdrawals', { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (data.success) setWithdrawals(data.data);
+        } catch { }
+        setLoading(false);
+    };
+
+    const handleWithdraw = async () => {
+        const amt = Number(amount);
+        if (!amt || amt < 50000) { showToast('⚠️ Số tiền rút tối thiểu 50.000đ'); return; }
+        if (amt > balance) { showToast('⚠️ Số dư không đủ'); return; }
         if (!accountNum || !accountName) { showToast('⚠️ Vui lòng nhập đầy đủ thông tin'); return; }
 
-        const newWithdraw = {
-            id: `RT-${String(withdrawals.length + 1).padStart(3, '0')}`,
-            amount: Number(amount),
-            method: `${bank} ****${accountNum.slice(-4)}`,
-            status: 'pending',
-            createdAt: new Date().toISOString(),
-        };
-        setWithdrawals([newWithdraw, ...withdrawals]);
-        setShowModal(false);
-        setAmount('');
-        setAccountNum('');
-        setAccountName('');
-        showToast('✅ Đã tạo yêu cầu rút tiền thành công');
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/v1/seller/withdrawals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ amount: amt, bankName: bank, accountNumber: accountNum, accountName: accountName }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(`✅ ${data.message}`);
+                setShowModal(false);
+                setAmount('');
+                setAccountNum('');
+                setAccountName('');
+                loadWithdrawals();
+                loadWalletBalance();
+            } else {
+                showToast(`❌ ${data.message}`);
+            }
+        } catch { showToast('❌ Lỗi kết nối'); }
+        setSubmitting(false);
     };
 
     return (
@@ -48,7 +91,7 @@ export default function WithdrawalPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-bold text-brand-text-primary mb-1">Rút tiền</h1>
-                    <p className="text-sm text-brand-text-muted">Yêu cầu rút tiền về ngân hàng hoặc ví điện tử.</p>
+                    <p className="text-sm text-brand-text-muted">Yêu cầu rút tiền về ngân hàng.</p>
                 </div>
                 <button onClick={() => setShowModal(true)} className="btn-primary flex items-center gap-2 !py-2 text-sm">
                     <Plus className="w-4 h-4" /> Tạo yêu cầu rút
@@ -77,39 +120,45 @@ export default function WithdrawalPage() {
                 <div className="flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-brand-warning shrink-0 mt-0.5" />
                     <div className="text-xs text-brand-text-secondary space-y-0.5">
-                        <p>• Xử lý trong 1-3 ngày làm việc. Rút tối thiểu 500.000đ. Phí: 15.000đ/lần.</p>
+                        <p>• Xử lý trong 1-3 ngày làm việc. Rút tối thiểu 50.000đ. Phí: 15.000đ/lần.</p>
                     </div>
                 </div>
             </div>
 
             <div className="card !p-0 overflow-hidden">
                 <div className="p-4 border-b border-brand-border"><h3 className="text-sm font-semibold text-brand-text-primary">Lịch sử rút tiền</h3></div>
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="bg-brand-surface-2/50">
-                            <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Mã</th>
-                            <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Số tiền</th>
-                            <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Phương thức</th>
-                            <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Trạng thái</th>
-                            <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Thời gian</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {withdrawals.map(w => (
-                            <tr key={w.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30">
-                                <td className="py-3 px-4 text-brand-primary font-medium text-xs">{w.id}</td>
-                                <td className="py-3 px-4 text-right font-semibold text-brand-text-primary">{formatCurrency(w.amount)}</td>
-                                <td className="py-3 px-4 text-xs text-brand-text-secondary">{w.method}</td>
-                                <td className="py-3 px-4 text-center">
-                                    <span className={`badge text-[10px] ${w.status === 'completed' ? 'badge-success' : w.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
-                                        {w.status === 'completed' ? 'Hoàn tất' : w.status === 'pending' ? 'Đang chờ' : 'Từ chối'}
-                                    </span>
-                                </td>
-                                <td className="py-3 px-4 text-right text-brand-text-muted text-xs">{formatDateTime(w.createdAt)}</td>
+                {loading ? (
+                    <div className="flex items-center justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-brand-primary" /></div>
+                ) : (
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="bg-brand-surface-2/50">
+                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Mã</th>
+                                <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Số tiền</th>
+                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Phương thức</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Trạng thái</th>
+                                <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Thời gian</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {withdrawals.length === 0 ? (
+                                <tr><td colSpan={5} className="text-center py-12 text-brand-text-muted text-sm">Chưa có yêu cầu rút tiền nào.</td></tr>
+                            ) : withdrawals.map(w => (
+                                <tr key={w.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30">
+                                    <td className="py-3 px-4 text-brand-primary font-medium text-xs">{w.id.slice(-8).toUpperCase()}</td>
+                                    <td className="py-3 px-4 text-right font-semibold text-brand-text-primary">{formatCurrency(w.amount)}</td>
+                                    <td className="py-3 px-4 text-xs text-brand-text-secondary">{w.method}</td>
+                                    <td className="py-3 px-4 text-center">
+                                        <span className={`badge text-[10px] ${w.status === 'completed' ? 'badge-success' : w.status === 'pending' ? 'badge-warning' : w.status === 'rejected' ? 'badge-danger' : 'badge-default'}`}>
+                                            {w.status === 'completed' ? 'Hoàn tất' : w.status === 'pending' ? 'Đang chờ' : w.status === 'rejected' ? 'Từ chối' : w.status}
+                                        </span>
+                                    </td>
+                                    <td className="py-3 px-4 text-right text-brand-text-muted text-xs">{formatDateTime(w.createdAt)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
 
             {/* Withdrawal Request Modal */}
@@ -123,9 +172,9 @@ export default function WithdrawalPage() {
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-brand-text-primary mb-1.5">Số tiền rút *</label>
-                                <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="input-field" placeholder="Tối thiểu 100,000" />
+                                <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="input-field" placeholder="Tối thiểu 50,000" />
                                 <div className="flex gap-2 mt-2">
-                                    {[500000, 1000000, 2000000, 5000000].map(v => (
+                                    {[50000, 100000, 200000, 500000].map(v => (
                                         <button key={v} onClick={() => setAmount(String(v))} className="text-[10px] px-2 py-1 rounded-lg bg-brand-surface-2 text-brand-text-secondary hover:bg-brand-primary/10 hover:text-brand-primary transition-all">
                                             {formatCurrency(v)}
                                         </button>
@@ -135,9 +184,7 @@ export default function WithdrawalPage() {
                             <div>
                                 <label className="block text-sm font-medium text-brand-text-primary mb-1.5">Ngân hàng *</label>
                                 <select value={bank} onChange={e => setBank(e.target.value)} className="input-field">
-                                    {VIETNAMESE_BANKS.map(b => (
-                                        <option key={b.code} value={b.name}>{b.name}</option>
-                                    ))}
+                                    {VIETNAMESE_BANKS.map(b => (<option key={b.code} value={b.name}>{b.name}</option>))}
                                 </select>
                             </div>
                             <div>
@@ -151,8 +198,9 @@ export default function WithdrawalPage() {
                         </div>
                         <div className="flex gap-3 mt-5">
                             <button onClick={() => setShowModal(false)} className="btn-secondary flex-1 !py-3">Hủy</button>
-                            <button onClick={handleWithdraw} className="btn-primary flex-1 !py-3 flex items-center justify-center gap-2">
-                                <BanknoteIcon className="w-4 h-4" /> Xác nhận rút
+                            <button onClick={handleWithdraw} disabled={submitting} className="btn-primary flex-1 !py-3 flex items-center justify-center gap-2 disabled:opacity-50">
+                                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <BanknoteIcon className="w-4 h-4" />}
+                                {submitting ? 'Đang xử lý...' : 'Xác nhận rút'}
                             </button>
                         </div>
                     </div>

@@ -1,12 +1,74 @@
 'use client';
 
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 import {
     ArrowRight, Package, Store, ShoppingBag, Activity,
-    Wallet, TrendingUp, ShieldCheck, BarChart3
+    Wallet, TrendingUp, ShieldCheck, BarChart3, Sparkles
 } from 'lucide-react';
 
-export default function HeroSection() {
+interface HeroSectionProps {
+    isLoggedIn?: boolean;
+}
+
+export default function HeroSection({ isLoggedIn = false }: HeroSectionProps) {
+    const { user } = useAuth();
+
+    // Use server-side cookie for initial render, client auth for user details
+    const showCompact = isLoggedIn;
+
+    // ─── Compact Hero for logged-in users (only after mount) ───
+    if (showCompact) {
+        return (
+            <section className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/5 via-brand-secondary/3 to-transparent" />
+                <div className="max-w-container mx-auto px-4 py-6 relative z-10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        {/* Welcome message */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white">
+                                <Sparkles className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-bold text-brand-text-primary">
+                                    Xin chào, <span className="gradient-text">{user?.fullName || user?.username || 'bạn'}</span>! 👋
+                                </h2>
+                                <p className="text-sm text-brand-text-secondary">Khám phá sản phẩm mới hoặc quản lý đơn hàng của bạn</p>
+                            </div>
+                        </div>
+
+                        {/* Quick actions */}
+                        <div className="flex items-center gap-2">
+                            <Link href="/danh-muc" className="btn-primary !px-4 !py-2 text-sm flex items-center gap-1.5">
+                                <Package className="w-4 h-4" /> Khám phá
+                            </Link>
+                            <Link href="/dashboard" className="btn-secondary !px-4 !py-2 text-sm flex items-center gap-1.5">
+                                Dashboard
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Compact stats row */}
+                    <div className="flex flex-wrap items-center gap-6 mt-4 pt-4 border-t border-brand-border/50">
+                        {[
+                            { icon: Package, value: '25,000+', label: 'Sản phẩm' },
+                            { icon: Store, value: '1,200+', label: 'Gian hàng' },
+                            { icon: ShoppingBag, value: '80,000+', label: 'Giao dịch' },
+                            { icon: Activity, value: '99.9%', label: 'Uptime' },
+                        ].map((stat, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                                <stat.icon className="w-3.5 h-3.5 text-brand-primary" />
+                                <span className="text-sm font-bold text-brand-text-primary">{stat.value}</span>
+                                <span className="text-xs text-brand-text-muted">{stat.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    // ─── Full Hero (default for SSR + guests) ───
     return (
         <section className="relative overflow-hidden">
             {/* Background Effects */}

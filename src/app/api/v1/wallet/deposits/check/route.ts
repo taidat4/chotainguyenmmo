@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/auth';
 import { getMBBankService } from '@/lib/mbbank';
 
 // POST /api/v1/wallet/deposits/check — Check if a pending deposit has been paid
+// Sử dụng cookie/session + apicanhan fallback (copy logic từ shop-mmo)
 export async function POST(request: NextRequest) {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
@@ -18,15 +19,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Check MBBank transactions via apicanhan
+        console.log(`[Deposit Check] Checking depositCode="${depositCode}", amount=${amount}, userId=${authResult.userId}`);
+
+        // Check MBBank transactions (cookie/session + apicanhan fallback)
         const mbService = getMBBankService();
         const match = await mbService.checkDeposit(depositCode, parseInt(amount));
 
         if (match) {
+            console.log(`[Deposit Check] ✅ Found matching transaction: ${match.transaction_id}, amount=${match.amount}`);
+
             // Found matching transaction — credit the user's wallet
             try {
+                let alreadyProcessed = false;
+
                 await prisma.$transaction(async (tx: any) => {
-                    // Check if this transaction was already processed
+                    // Check if this transaction was already processed (prevent double-credit)
                     const existingDeposit = await tx.deposit.findFirst({
                         where: {
                             userId: authResult.userId,
@@ -36,11 +43,12 @@ export async function POST(request: NextRequest) {
                     });
 
                     if (existingDeposit) {
-                        // Already processed, skip
+                        console.log(`[Deposit Check] ⚠️ Already processed deposit for ${depositCode}, skipping`);
+                        alreadyProcessed = true;
                         return;
                     }
 
-                    // Update or create deposit record
+                    // Update pending deposit record to COMPLETED
                     const pendingDeposit = await tx.deposit.findFirst({
                         where: {
                             userId: authResult.userId,
@@ -79,16 +87,27 @@ export async function POST(request: NextRequest) {
                     await tx.wallet.upsert({
                         where: { userId: authResult.userId },
                         update: {
-                            balance: { increment: parseInt(amount) },
+                            availableBalance: { increment: parseInt(amount) },
                             totalDeposited: { increment: parseInt(amount) },
                         },
                         create: {
                             userId: authResult.userId,
-                            balance: parseInt(amount),
+                            availableBalance: parseInt(amount),
                             totalDeposited: parseInt(amount),
                         },
                     });
+
+                    console.log(`[Deposit Check] ✅ Credited ${parseInt(amount).toLocaleString()}đ to user ${authResult.userId}`);
                 });
+
+                if (alreadyProcessed) {
+                    return NextResponse.json({
+                        success: true,
+                        status: 'found',
+                        transaction: match,
+                        message: 'Giao dịch đã được xử lý trước đó.',
+                    });
+                }
 
                 return NextResponse.json({
                     success: true,
@@ -97,8 +116,8 @@ export async function POST(request: NextRequest) {
                     message: `Đã tìm thấy giao dịch và cộng ${parseInt(amount).toLocaleString('vi-VN')}đ vào ví!`,
                 });
             } catch (dbError: any) {
-                console.error('Deposit DB error:', dbError);
-                // If it's a duplicate, still return success
+                console.error('[Deposit Check] DB error:', dbError);
+                // If it's a unique constraint violation, treat as already processed
                 if (dbError.code === 'P2002') {
                     return NextResponse.json({
                         success: true,
@@ -114,13 +133,15 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        console.log(`[Deposit Check] ❌ No matching transaction found for ${depositCode}`);
+
         return NextResponse.json({
             success: true,
             status: 'not_found',
             message: 'Chưa tìm thấy giao dịch. Hệ thống sẽ tự động kiểm tra lại.',
         });
     } catch (error: any) {
-        console.error('Deposit check error:', error);
+        console.error('[Deposit Check] Error:', error);
         return NextResponse.json(
             { success: false, message: error.message },
             { status: 500 }

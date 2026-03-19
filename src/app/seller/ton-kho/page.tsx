@@ -1,51 +1,81 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Upload, Database, FileText, AlertCircle, Plus, Trash2, Search, X, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '@/lib/auth-context';
+import { Upload, Database, FileText, AlertCircle, Plus, Trash2, Search, X, CheckCircle2, Loader2 } from 'lucide-react';
 
-const initialStock: { id: number; product: string; total: number; available: number; used: number; lastUpload: string; items: string[] }[] = [];
+interface InventoryItem {
+    id: string;
+    product: string;
+    total: number;
+    available: number;
+    used: number;
+    lastUpload: string;
+}
 
 export default function InventoryPage() {
-    const [stockItems, setStockItems] = useState(initialStock);
+    const { user } = useAuth();
+    const [stockItems, setStockItems] = useState<InventoryItem[]>([]);
+    const [stats, setStats] = useState({ total: 0, available: 0, used: 0, low: 0 });
     const [search, setSearch] = useState('');
-    const [uploadModal, setUploadModal] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [uploadModal, setUploadModal] = useState<string | null>(null);
+    const [uploadProductName, setUploadProductName] = useState('');
     const [uploadText, setUploadText] = useState('');
-    const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
     const [toast, setToast] = useState('');
     const [dragOver, setDragOver] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
 
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
-    const filtered = stockItems.filter(s => !search || s.product.toLowerCase().includes(search.toLowerCase()));
+    useEffect(() => { loadInventory(); }, []);
 
-    const stats = {
-        total: stockItems.reduce((s, i) => s + i.total, 0),
-        available: stockItems.reduce((s, i) => s + i.available, 0),
-        used: stockItems.reduce((s, i) => s + i.used, 0),
-        low: stockItems.filter(i => i.available > 0 && i.available <= 5).length,
+    const loadInventory = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/v1/seller/inventory', { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (data.success) {
+                setStockItems(data.data.products);
+                setStats(data.data.stats);
+            }
+        } catch { }
+        setLoading(false);
     };
 
-    const handleUpload = () => {
-        if (!uploadText.trim() || uploadModal === null) return;
+    const filtered = stockItems.filter(s => !search || (s.product || '').toLowerCase().includes(search.toLowerCase()));
+
+    const handleUpload = async () => {
+        if (!uploadText.trim() || !uploadModal) return;
         const lines = uploadText.trim().split('\n').filter(l => l.trim());
-        setStockItems(prev => prev.map(s => s.id === uploadModal ? {
-            ...s,
-            total: s.total + lines.length,
-            available: s.available + lines.length,
-            items: [...s.items, ...lines],
-            lastUpload: new Date().toISOString().split('T')[0],
-        } : s));
-        setUploadModal(null);
-        setUploadText('');
-        showToast(`✅ Đã thêm ${lines.length} mục tồn kho`);
+        setUploading(true);
+        try {
+            const res = await fetch('/api/v1/seller/inventory', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ productId: uploadModal, items: lines, sourceType: 'paste' }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(`✅ ${data.message}`);
+                setUploadModal(null);
+                setUploadText('');
+                loadInventory();
+            } else {
+                showToast(`❌ ${data.message}`);
+            }
+        } catch { showToast('❌ Lỗi kết nối'); }
+        setUploading(false);
     };
 
-    const handleFileDrop = (e: React.DragEvent) => {
+    const handleFileDrop = (e: React.DragEvent, productId?: string) => {
         e.preventDefault();
         setDragOver(false);
         const file = e.dataTransfer.files[0];
-        if (file) readFile(file);
+        if (file) readFile(file, productId);
     };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,21 +83,61 @@ export default function InventoryPage() {
         if (file) readFile(file);
     };
 
-    const readFile = (file: File) => {
+    const readFile = async (file: File, productId?: string) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             const text = e.target?.result as string;
             const lines = text.trim().split('\n').filter(l => l.trim());
-            showToast(`📁 Đã đọc file ${file.name} (${lines.length} dòng). Chọn sản phẩm để thêm.`);
+
+            if (productId) {
+                // Direct upload to specific product
+                try {
+                    const res = await fetch('/api/v1/seller/inventory', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                        body: JSON.stringify({ productId, items: lines, sourceType: 'file', fileName: file.name }),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(`✅ ${data.message}`);
+                        loadInventory();
+                    } else {
+                        showToast(`❌ ${data.message}`);
+                    }
+                } catch { showToast('❌ Lỗi upload'); }
+            } else {
+                // Open modal to choose product
+                setUploadText(lines.join('\n'));
+                if (stockItems.length > 0) {
+                    setUploadModal(stockItems[0].id);
+                    setUploadProductName(stockItems[0].product);
+                }
+                showToast(`📁 Đã đọc ${file.name} (${lines.length} dòng). Chọn sản phẩm rồi xác nhận.`);
+            }
         };
         reader.readAsText(file);
     };
 
-    const handleDeleteAll = (id: number) => {
-        setStockItems(prev => prev.map(s => s.id === id ? { ...s, available: 0, items: [] } : s));
+    const handleDeleteAll = async (id: string) => {
+        try {
+            const res = await fetch(`/api/v1/seller/inventory?productId=${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('✅ Đã xóa tồn kho');
+                loadInventory();
+            } else {
+                showToast(`❌ ${data.message}`);
+            }
+        } catch { showToast('❌ Lỗi xóa'); }
         setDeleteTarget(null);
-        showToast('🗑️ Đã xóa tồn kho');
     };
+
+    if (loading) {
+        return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-brand-primary" /></div>;
+    }
 
     return (
         <div className="space-y-6">
@@ -96,37 +166,26 @@ export default function InventoryPage() {
                 ))}
             </div>
 
-            {/* Google Sheets Integration */}
-            <div className="card">
-                <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M3 3h18v18H3V3z" fill="#34A853" rx="2" /><path d="M7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z" fill="white" /></svg>
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-semibold text-brand-text-primary">Nhập từ Google Sheets</h3>
-                        <p className="text-xs text-brand-text-muted">Dán URL Google Sheet (phải chia sẻ công khai). Cột A = mã/key/tài khoản.</p>
-                    </div>
-                </div>
-                <div className="flex gap-2">
-                    <input type="url" placeholder="https://docs.google.com/spreadsheets/d/..." className="input-field flex-1 text-sm" />
-                    <button className="btn-primary !py-2 text-sm flex items-center gap-1.5 shrink-0" onClick={() => showToast('📊 Đang đồng bộ dữ liệu từ Google Sheets...')}>
-                        <Database className="w-4 h-4" /> Đồng bộ
-                    </button>
-                </div>
-            </div>
-
             {/* Upload Zone */}
             <div
                 className={`card border-dashed border-2 transition-all cursor-pointer ${dragOver ? 'border-brand-primary bg-brand-primary/5' : 'border-brand-border hover:border-brand-primary/50'}`}
                 onDragOver={e => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
-                onDrop={handleFileDrop}
+                onDrop={(e) => handleFileDrop(e)}
                 onClick={() => fileRef.current?.click()}
             >
                 <div className="text-center py-6">
                     <Upload className={`w-10 h-10 mx-auto mb-3 ${dragOver ? 'text-brand-primary' : 'text-brand-text-muted'}`} />
                     <h3 className="text-sm font-semibold text-brand-text-primary mb-1">Kéo thả file hoặc nhấn để upload</h3>
                     <p className="text-xs text-brand-text-muted">Hỗ trợ file .txt, .csv — Mỗi dòng là 1 mục tồn kho (key, tài khoản, link...)</p>
+                    <div className="mt-3 border-t border-brand-border/50 pt-3">
+                        <p className="text-[10px] text-brand-text-muted font-medium mb-1">📄 Format mẫu file .txt:</p>
+                        <code className="text-[10px] bg-brand-surface-2 px-2 py-1 rounded block max-w-xs mx-auto text-left font-mono text-brand-text-secondary">
+                            account1@email.com|password123<br />
+                            account2@email.com|password456<br />
+                            KEY-XXXXX-XXXXX-001
+                        </code>
+                    </div>
                 </div>
             </div>
 
@@ -153,7 +212,17 @@ export default function InventoryPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filtered.map(item => (
+                            {filtered.length === 0 ? (
+                                <tr><td colSpan={7} className="text-center py-12 text-brand-text-muted">
+                                    <Database className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                                    <p className="text-sm">
+                                        {stockItems.length === 0
+                                            ? 'Chưa có sản phẩm. Tạo sản phẩm ở tab "Sản phẩm" trước.'
+                                            : 'Không tìm thấy sản phẩm.'
+                                        }
+                                    </p>
+                                </td></tr>
+                            ) : filtered.map(item => (
                                 <tr key={item.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30 transition-colors">
                                     <td className="py-3 px-4 text-sm font-medium text-brand-text-primary">{item.product}</td>
                                     <td className="py-3 px-4 text-center text-brand-text-secondary">{item.total}</td>
@@ -164,13 +233,17 @@ export default function InventoryPage() {
                                             {item.available > 5 ? 'Còn hàng' : item.available > 0 ? 'Sắp hết' : 'Hết hàng'}
                                         </span>
                                     </td>
-                                    <td className="py-3 px-4 text-right text-xs text-brand-text-muted">{item.lastUpload}</td>
+                                    <td className="py-3 px-4 text-right text-xs text-brand-text-muted">
+                                        {item.lastUpload ? new Date(item.lastUpload).toLocaleDateString('vi-VN') : '—'}
+                                    </td>
                                     <td className="py-3 px-4">
                                         <div className="flex items-center justify-center gap-1">
-                                            <button onClick={() => { setUploadModal(item.id); setUploadText(''); }} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-primary hover:bg-brand-surface-2 transition-all" title="Upload thêm">
+                                            <button onClick={() => { setUploadModal(item.id); setUploadProductName(item.product); setUploadText(''); }}
+                                                className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-primary hover:bg-brand-surface-2 transition-all" title="Upload thêm">
                                                 <Plus className="w-3.5 h-3.5" />
                                             </button>
-                                            <button onClick={() => setDeleteTarget(item.id)} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-danger hover:bg-brand-surface-2 transition-all" title="Xóa tất cả">
+                                            <button onClick={() => setDeleteTarget(item.id)}
+                                                className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-danger hover:bg-brand-surface-2 transition-all" title="Xóa tất cả">
                                                 <Trash2 className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
@@ -189,12 +262,19 @@ export default function InventoryPage() {
                     <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-md w-full p-6 animate-slide-up">
                         <button onClick={() => setUploadModal(null)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-brand-surface-2"><X className="w-5 h-5 text-brand-text-muted" /></button>
                         <h2 className="text-lg font-bold text-brand-text-primary mb-2">📦 Thêm tồn kho</h2>
-                        <p className="text-sm text-brand-text-muted mb-4">{stockItems.find(s => s.id === uploadModal)?.product}</p>
-                        <textarea rows={8} value={uploadText} onChange={e => setUploadText(e.target.value)} className="input-field resize-none mb-4 font-mono text-xs" placeholder="Mỗi dòng 1 mục tồn kho:&#10;account1@mail.com|password123&#10;account2@mail.com|password456&#10;KEY-XXXXX-XXXXX-001" />
-                        <p className="text-xs text-brand-text-muted mb-4">💡 {uploadText.trim() ? `${uploadText.trim().split('\n').filter(l => l.trim()).length} mục sẽ được thêm` : 'Nhập hoặc paste dữ liệu vào đây'}</p>
+                        <p className="text-sm text-brand-text-muted mb-4">{uploadProductName}</p>
+                        <textarea rows={8} value={uploadText} onChange={e => setUploadText(e.target.value)}
+                            className="input-field resize-none mb-4 font-mono text-xs w-full"
+                            placeholder="Mỗi dòng 1 mục tồn kho:&#10;account1@mail.com|password123&#10;account2@mail.com|password456&#10;KEY-XXXXX-XXXXX-001" />
+                        <p className="text-xs text-brand-text-muted mb-4">
+                            💡 {uploadText.trim() ? `${uploadText.trim().split('\n').filter(l => l.trim()).length} mục sẽ được thêm` : 'Nhập hoặc paste dữ liệu vào đây'}
+                        </p>
                         <div className="flex gap-3">
                             <button onClick={() => setUploadModal(null)} className="btn-secondary flex-1 !py-3">Hủy</button>
-                            <button onClick={handleUpload} disabled={!uploadText.trim()} className="btn-primary flex-1 !py-3 disabled:opacity-50">Thêm tồn kho</button>
+                            <button onClick={handleUpload} disabled={!uploadText.trim() || uploading} className="btn-primary flex-1 !py-3 disabled:opacity-50 flex items-center justify-center gap-2">
+                                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                {uploading ? 'Đang upload...' : 'Thêm tồn kho'}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -207,7 +287,7 @@ export default function InventoryPage() {
                     <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-sm w-full p-6 animate-slide-up text-center">
                         <Trash2 className="w-12 h-12 text-brand-danger mx-auto mb-3" />
                         <h3 className="text-lg font-bold text-brand-text-primary mb-2">Xóa tất cả tồn kho?</h3>
-                        <p className="text-sm text-brand-text-muted mb-5">Toàn bộ tồn kho còn lại của sản phẩm này sẽ bị xóa.</p>
+                        <p className="text-sm text-brand-text-muted mb-5">Toàn bộ tồn kho còn lại (chưa bán) sẽ bị xóa.</p>
                         <div className="flex gap-3">
                             <button onClick={() => setDeleteTarget(null)} className="btn-secondary flex-1 !py-3">Hủy</button>
                             <button onClick={() => handleDeleteAll(deleteTarget)} className="flex-1 !py-3 bg-brand-danger text-white rounded-xl font-medium hover:bg-brand-danger/90 transition-all">Xóa</button>

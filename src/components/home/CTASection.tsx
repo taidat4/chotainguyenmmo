@@ -1,7 +1,15 @@
+'use client';
+
 import Link from 'next/link';
 import { ArrowRight, UserPlus } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 export default function CTASection() {
+    const { user, isLoading } = useAuth();
+
+    // Hide CTA when user is logged in
+    if (isLoading || user) return null;
+
     return (
         <section className="section-padding">
             <div className="max-w-container mx-auto px-4">

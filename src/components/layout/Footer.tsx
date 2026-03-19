@@ -9,12 +9,7 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="sm:col-span-2 lg:col-span-1">
                         <div className="flex items-center gap-2 mb-4">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">CT</span>
-                            </div>
-                            <div>
-                                <div className="text-lg font-bold text-brand-text-primary">ChoTaiNguyen</div>
-                            </div>
+                            <img src="/logokhongnen.png" alt="ChoTaiNguyen" style={{ height: '60px', width: 'auto' }} />
                         </div>
                         <p className="text-sm text-brand-text-secondary leading-relaxed mb-4">
                             Nền tảng giao dịch tài nguyên số với trải nghiệm nhanh, rõ ràng và thuận tiện cho cả người mua lẫn người bán.

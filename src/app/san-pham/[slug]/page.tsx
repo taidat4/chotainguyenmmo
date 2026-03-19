@@ -1,13 +1,11 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import ProductCard from '@/components/shared/ProductCard';
 import { useAuth } from '@/lib/auth-context';
-import { products, reviews, shops } from '@/lib/mock-data';
 import { formatCurrency } from '@/lib/utils';
 import {
     Star, Heart, ShoppingCart, Zap, Clock, Shield, CheckCircle,
@@ -15,15 +13,36 @@ import {
     Loader2, AlertCircle, CheckCircle2, X, Copy, ExternalLink
 } from 'lucide-react';
 
+interface ProductData {
+    id: string;
+    name: string;
+    slug: string;
+    shortDescription: string | null;
+    price: number;
+    compareAtPrice: number | null;
+    status: string;
+    deliveryType: string;
+    soldCount: number;
+    stockCountCached: number;
+    ratingAverage: number;
+    ratingCount: number;
+    isFeatured: boolean;
+    category: { name: string; slug: string };
+    shop: { name: string; slug: string; verified: boolean; logoUrl: string | null; productCount: number; ratingAverage: number; ownerId: string };
+    images: { url: string; sortOrder: number }[];
+    variants: { id: string; name: string; price: number; warrantyDays: number; isActive: boolean }[];
+}
+
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
     const router = useRouter();
     const { user, updateUser } = useAuth();
-    const product = products.find(p => p.slug === slug) || products[0];
-    const shop = shops.find(s => s.id === product.shopId);
-    const productReviews = reviews.filter(r => r.productId === product.id);
-    const relatedProducts = products.filter(p => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 4);
+
+    const [product, setProduct] = useState<ProductData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
+    const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('description');
 
     // Purchase states
@@ -32,25 +51,40 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const [purchaseResult, setPurchaseResult] = useState<{ success: boolean; message: string; order?: { orderCode: string; deliveredContent?: string; status: string }; newBalance?: number } | null>(null);
     const [copied, setCopied] = useState(false);
 
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch(`/api/v1/products/${slug}`);
+                const data = await res.json();
+                if (data.success && data.data) {
+                    setProduct(data.data);
+                    if (data.data.variants?.length > 0) setSelectedVariant(data.data.variants[0].id);
+                } else {
+                    setError(data.message || 'Không tìm thấy sản phẩm');
+                }
+            } catch {
+                setError('Lỗi tải sản phẩm');
+            }
+            setLoading(false);
+        })();
+    }, [slug]);
+
     const handleBuyClick = () => {
-        if (!user) {
-            router.push('/dang-nhap');
-            return;
-        }
+        if (!user) { router.push('/dang-nhap'); return; }
         setShowConfirm(true);
     };
 
     const handleConfirmPurchase = async () => {
         setPurchasing(true);
         try {
+            const token = localStorage.getItem('token') || '';
             const res = await fetch('/api/v1/orders/purchase', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId: product.id, quantity }),
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ productId: product?.id, variantId: selectedVariant, quantity }),
             });
             const data = await res.json();
             setShowConfirm(false);
-            setPurchaseResult(data);
             if (data.success && data.data) {
                 updateUser({ walletBalance: data.data.newBalance });
                 setPurchaseResult({ success: true, message: data.message, order: data.data.order, newBalance: data.data.newBalance });
@@ -70,12 +104,43 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const currentPrice = selectedVariant
+        ? product?.variants.find(v => v.id === selectedVariant)?.price || product?.price || 0
+        : product?.price || 0;
+
+    const currentWarranty = selectedVariant
+        ? product?.variants.find(v => v.id === selectedVariant)?.warrantyDays || 0
+        : 0;
+
+    if (loading) {
+        return (
+            <>
+                <Header />
+                <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-brand-primary" /></div>
+                <Footer />
+            </>
+        );
+    }
+
+    if (error || !product) {
+        return (
+            <>
+                <Header />
+                <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                    <AlertCircle className="w-12 h-12 text-brand-danger" />
+                    <h1 className="text-xl font-bold text-brand-text-primary">Không tìm thấy sản phẩm</h1>
+                    <p className="text-sm text-brand-text-muted">{error}</p>
+                    <Link href="/" className="btn-primary">Về trang chủ</Link>
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
     const tabs = [
         { id: 'description', label: 'Mô tả' },
-        { id: 'delivery', label: 'Giao hàng' },
-        { id: 'reviews', label: `Đánh giá (${productReviews.length})` },
+        { id: 'reviews', label: 'Đánh giá' },
         { id: 'policy', label: 'Chính sách' },
-        { id: 'faq', label: 'Câu hỏi thường gặp' },
     ];
 
     return (
@@ -89,140 +154,137 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                         <ChevronRight className="w-3 h-3" />
                         <Link href="/danh-muc" className="hover:text-brand-primary transition-colors">Danh mục</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <span className="text-brand-text-secondary">{product.categoryName}</span>
+                        <Link href={`/danh-muc/${product.category.slug}`} className="hover:text-brand-primary transition-colors">{product.category.name}</Link>
                         <ChevronRight className="w-3 h-3" />
                         <span className="text-brand-text-primary truncate max-w-[200px]">{product.name}</span>
                     </nav>
 
                     {/* Product Main */}
-                    <div className="grid lg:grid-cols-5 gap-8 mb-12">
-                        {/* Gallery */}
-                        <div className="lg:col-span-2">
-                            <div className="card !p-0 overflow-hidden">
-                                <div className="aspect-square bg-gradient-to-br from-brand-surface-2 to-brand-surface-3 flex items-center justify-center">
-                                    <div className="w-32 h-32 rounded-3xl bg-brand-primary/10 flex items-center justify-center">
-                                        <Package className="w-16 h-16 text-brand-primary/40" />
-                                    </div>
+                    <div className="grid lg:grid-cols-2 gap-6 mb-8">
+                        {/* Gallery + Trust Badges */}
+                        <div>
+                            <div className="card !p-0 overflow-hidden rounded-xl">
+                                <div className="h-[340px] bg-brand-surface-2 flex items-center justify-center">
+                                    {product.images?.[0]?.url ? (
+                                        <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-24 h-24 rounded-2xl bg-brand-primary/10 flex items-center justify-center">
+                                            <Package className="w-12 h-12 text-brand-primary/40" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                            {/* Thumbnails */}
-                            <div className="flex gap-2 mt-3">
-                                {[1, 2, 3].map((_, i) => (
-                                    <div key={i} className={`w-16 h-16 rounded-xl bg-brand-surface-2 border ${i === 0 ? 'border-brand-primary' : 'border-brand-border'} flex items-center justify-center cursor-pointer hover:border-brand-primary/50 transition-all`}>
-                                        <Package className="w-6 h-6 text-brand-text-muted" />
-                                    </div>
-                                ))}
+                            {product.images.length > 1 && (
+                                <div className="flex gap-2 mt-2">
+                                    {product.images.map((img, i) => (
+                                        <div key={i} className={`w-14 h-14 rounded-lg border ${i === 0 ? 'border-brand-primary' : 'border-brand-border'} overflow-hidden cursor-pointer hover:border-brand-primary/50 transition-all`}>
+                                            <img src={img.url} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {/* Trust Badges — under image */}
+                            <div className="flex items-center gap-4 mt-3 text-xs text-brand-text-muted">
+                                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-brand-info" />{product.deliveryType === 'AUTO' ? 'Giao ngay' : 'Xử lý thủ công'}</span>
+                                {currentWarranty > 0 && <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-brand-success" />BH {currentWarranty} ngày</span>}
+                                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-brand-warning" />KN trong 24h</span>
                             </div>
                         </div>
 
                         {/* Product Info */}
-                        <div className="lg:col-span-3">
-                            {/* Badges */}
-                            <div className="flex flex-wrap gap-2 mb-3">
-                                {product.badges.map((badge, i) => (
-                                    <span key={i} className={`badge ${badge === 'Bán chạy' ? 'badge-danger' : badge === 'Nổi bật' ? 'badge-primary' : badge === 'Tự động' ? 'badge-info' : badge === 'Uy tín' ? 'badge-success' : 'badge-neutral'}`}>
-                                        {badge}
-                                    </span>
-                                ))}
-                            </div>
-
-                            {/* Title */}
-                            <h1 className="text-xl md:text-2xl font-bold text-brand-text-primary mb-3">{product.name}</h1>
-
-                            {/* Seller */}
-                            <Link href={`/shop/${shop?.slug}`} className="inline-flex items-center gap-2 mb-4 group">
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                                    <span className="text-[10px] text-white font-bold">{product.shopName.charAt(0)}</span>
+                        <div>
+                            {/* Title + Seller */}
+                            <h1 className="text-lg md:text-xl font-bold text-brand-text-primary mb-1">{product.name}</h1>
+                            <Link href={`/shop/${product.shop.slug}`} className="inline-flex items-center gap-1.5 mb-3 group">
+                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
+                                    <span className="text-[9px] text-white font-bold">{product.shop.name.charAt(0)}</span>
                                 </div>
-                                <span className="text-sm text-brand-text-secondary group-hover:text-brand-primary transition-colors">{product.shopName}</span>
-                                {product.shopVerified && <CheckCircle className="w-4 h-4 text-brand-primary" />}
+                                <span className="text-xs text-brand-text-secondary group-hover:text-brand-primary transition-colors">{product.shop.name}</span>
+                                {product.shop.verified && <CheckCircle className="w-3.5 h-3.5 text-brand-primary" />}
                             </Link>
 
+                            {/* Variants */}
+                            {product.variants.length > 0 && (
+                                <div className="mb-3">
+                                    <label className="text-xs text-brand-text-muted mb-1.5 block">Chọn gói</label>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {product.variants.filter(v => v.isActive).map(v => (
+                                            <button
+                                                key={v.id}
+                                                onClick={() => setSelectedVariant(v.id)}
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${selectedVariant === v.id
+                                                    ? 'border-brand-primary bg-brand-primary/10 text-brand-primary'
+                                                    : 'border-brand-border text-brand-text-secondary hover:border-brand-primary/40'}`}
+                                            >
+                                                {v.name} — {formatCurrency(v.price)}
+                                                {v.warrantyDays > 0 && <span className="text-[10px] text-brand-text-muted ml-1">({v.warrantyDays}d BH)</span>}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Price */}
-                            <div className="flex items-baseline gap-3 mb-4">
-                                <span className="text-3xl font-bold text-brand-primary">{formatCurrency(product.price)}</span>
-                                {product.compareAtPrice && (
-                                    <span className="text-lg text-brand-text-muted line-through">{formatCurrency(product.compareAtPrice)}</span>
-                                )}
-                                {product.compareAtPrice && (
-                                    <span className="badge-danger">-{Math.round((1 - product.price / product.compareAtPrice) * 100)}%</span>
+                            <div className="flex items-baseline gap-2 mb-3">
+                                <span className="text-2xl font-bold text-brand-primary">{formatCurrency(currentPrice)}</span>
+                                {product.compareAtPrice && product.compareAtPrice > currentPrice && (
+                                    <>
+                                        <span className="text-sm text-brand-text-muted line-through">{formatCurrency(product.compareAtPrice)}</span>
+                                        <span className="badge-danger text-[10px]">-{Math.round((1 - currentPrice / product.compareAtPrice) * 100)}%</span>
+                                    </>
                                 )}
                             </div>
 
-                            {/* Meta Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                                <div className="bg-brand-surface-2 rounded-xl p-3 text-center">
-                                    <div className="text-xs text-brand-text-muted mb-1">Đã bán</div>
-                                    <div className="text-sm font-bold text-brand-text-primary">{product.soldCount}</div>
-                                </div>
-                                <div className="bg-brand-surface-2 rounded-xl p-3 text-center">
-                                    <div className="text-xs text-brand-text-muted mb-1">Tồn kho</div>
-                                    <div className="text-sm font-bold text-brand-success">{product.stockCount}</div>
-                                </div>
-                                <div className="bg-brand-surface-2 rounded-xl p-3 text-center">
-                                    <div className="text-xs text-brand-text-muted mb-1">Đánh giá</div>
-                                    <div className="flex items-center justify-center gap-1">
-                                        <Star className="w-3.5 h-3.5 text-brand-warning fill-brand-warning" />
-                                        <span className="text-sm font-bold text-brand-text-primary">{product.ratingAverage}</span>
-                                        <span className="text-xs text-brand-text-muted">({product.ratingCount})</span>
-                                    </div>
-                                </div>
-                                <div className="bg-brand-surface-2 rounded-xl p-3 text-center">
-                                    <div className="text-xs text-brand-text-muted mb-1">Giao hàng</div>
-                                    <div className="flex items-center justify-center gap-1">
-                                        {product.deliveryType === 'auto' ? (
-                                            <>
-                                                <Zap className="w-3.5 h-3.5 text-brand-info" />
-                                                <span className="text-sm font-bold text-brand-info">Tự động</span>
-                                            </>
-                                        ) : (
-                                            <span className="text-sm font-bold text-brand-text-primary">Thủ công</span>
-                                        )}
-                                    </div>
-                                </div>
+                            {/* Meta inline */}
+                            <div className="flex items-center gap-3 text-xs text-brand-text-muted mb-3 flex-wrap">
+                                <span>Đã bán: <b className="text-brand-text-primary">{product.soldCount}</b></span>
+                                <span>Tồn kho: <b className="text-brand-success">{product.stockCountCached}</b></span>
+                                <span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-brand-warning fill-brand-warning" /><b className="text-brand-text-primary">{product.ratingAverage || 0}</b></span>
+                                <span className="flex items-center gap-0.5">{product.deliveryType === 'AUTO' ? <><Zap className="w-3 h-3 text-brand-info" /><b className="text-brand-info">Tự động</b></> : <b>Thủ công</b>}</span>
                             </div>
 
                             {/* Description */}
-                            <p className="text-sm text-brand-text-secondary leading-relaxed mb-6">{product.shortDescription}</p>
+                            {product.shortDescription && (
+                                <p className="text-xs text-brand-text-secondary leading-relaxed mb-3">{product.shortDescription}</p>
+                            )}
 
                             {/* Quantity & Buy */}
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="flex items-center border border-brand-border rounded-xl">
-                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 text-brand-text-muted hover:text-brand-text-primary transition-colors">
-                                        <Minus className="w-4 h-4" />
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="flex items-center border border-brand-border rounded-lg">
+                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-2 text-brand-text-muted hover:text-brand-text-primary transition-colors">
+                                        <Minus className="w-3.5 h-3.5" />
                                     </button>
-                                    <span className="px-4 text-sm font-semibold text-brand-text-primary min-w-[40px] text-center">{quantity}</span>
-                                    <button onClick={() => setQuantity(Math.min(product.stockCount, quantity + 1))} className="p-3 text-brand-text-muted hover:text-brand-text-primary transition-colors">
-                                        <Plus className="w-4 h-4" />
+                                    <span className="px-3 text-sm font-semibold text-brand-text-primary min-w-[32px] text-center">{quantity}</span>
+                                    <button onClick={() => setQuantity(quantity + 1)} className="p-2 text-brand-text-muted hover:text-brand-text-primary transition-colors">
+                                        <Plus className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
                                 <div className="text-sm text-brand-text-muted">
-                                    Tổng: <span className="text-brand-primary font-bold text-lg">{formatCurrency(product.price * quantity)}</span>
+                                    Tổng: <span className="text-brand-primary font-bold">{formatCurrency(currentPrice * quantity)}</span>
                                 </div>
                             </div>
 
-                            <div className="flex gap-3 mb-6">
-                                <button onClick={handleBuyClick} className="btn-primary flex-1 flex items-center justify-center gap-2 !py-3.5">
-                                    <ShoppingCart className="w-5 h-5" /> {user ? 'Mua ngay' : 'Đăng nhập để mua'}
+                            <div className="flex gap-2">
+                                <button onClick={handleBuyClick} className="btn-primary flex-1 flex items-center justify-center gap-2 !py-3">
+                                    <ShoppingCart className="w-4 h-4" /> {user ? 'Mua ngay' : 'Đăng nhập để mua'}
                                 </button>
-                                <button className="btn-secondary !px-4">
-                                    <Heart className="w-5 h-5" />
+                                <button
+                                    onClick={() => {
+                                        const params = new URLSearchParams({
+                                            shop: product.shop.ownerId,
+                                            productId: product.id,
+                                            productName: product.name,
+                                            productPrice: String(currentPrice),
+                                        });
+                                        if (product.images?.[0]?.url) params.set('productImage', product.images[0].url);
+                                        router.push(`/dashboard/tin-nhan?${params.toString()}`);
+                                    }}
+                                    className="btn-secondary !px-3"
+                                    title="Nhắn tin seller"
+                                >
+                                    <MessageSquare className="w-4 h-4" />
                                 </button>
-                            </div>
-
-                            {/* Trust Info */}
-                            <div className="space-y-2.5">
-                                {[
-                                    { icon: Zap, label: product.deliveryType === 'auto' ? 'Giao ngay sau thanh toán' : 'Xử lý trong thời gian quy định', color: 'text-brand-info' },
-                                    { icon: Clock, label: `Hỗ trợ khiếu nại trong ${product.complaintWindowHours} giờ`, color: 'text-brand-warning' },
-                                    { icon: Shield, label: product.warrantyPolicy.split('.')[0], color: 'text-brand-success' },
-                                    { icon: MessageSquare, label: product.supportPolicy, color: 'text-brand-text-muted' },
-                                ].map((info, i) => (
-                                    <div key={i} className="flex items-center gap-2.5 text-sm text-brand-text-secondary">
-                                        <info.icon className={`w-4 h-4 ${info.color} shrink-0`} />
-                                        <span>{info.label}</span>
-                                    </div>
-                                ))}
+                                <button className="btn-secondary !px-3"><Heart className="w-4 h-4" /></button>
                             </div>
                         </div>
                     </div>
@@ -231,14 +293,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     <div className="mb-12">
                         <div className="flex gap-1 border-b border-brand-border mb-6 overflow-x-auto">
                             {tabs.map(tab => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`px-5 py-3 text-sm font-medium whitespace-nowrap transition-all border-b-2 ${activeTab === tab.id
-                                        ? 'text-brand-primary border-brand-primary'
-                                        : 'text-brand-text-muted border-transparent hover:text-brand-text-secondary'
-                                        }`}
-                                >
+                                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                                    className={`px-5 py-3 text-sm font-medium whitespace-nowrap transition-all border-b-2 ${activeTab === tab.id ? 'text-brand-primary border-brand-primary' : 'text-brand-text-muted border-transparent hover:text-brand-text-secondary'}`}>
                                     {tab.label}
                                 </button>
                             ))}
@@ -247,74 +303,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                         <div className="card">
                             {activeTab === 'description' && (
                                 <div className="prose prose-sm max-w-none text-brand-text-secondary leading-relaxed">
-                                    <p>{product.description}</p>
+                                    <p>{product.shortDescription || 'Chưa có mô tả chi tiết.'}</p>
                                 </div>
                             )}
-                            {activeTab === 'delivery' && (
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-3">
-                                        <Zap className="w-5 h-5 text-brand-info" />
-                                        <div>
-                                            <div className="text-sm font-medium text-brand-text-primary">
-                                                {product.deliveryType === 'auto' ? 'Giao hàng tự động' : 'Giao hàng thủ công'}
-                                            </div>
-                                            <div className="text-xs text-brand-text-muted">
-                                                {product.deliveryType === 'auto' ? 'Giao ngay sau thanh toán' : 'Xử lý trong thời gian quy định'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+
                             {activeTab === 'reviews' && (
-                                <div className="space-y-4">
-                                    {productReviews.length > 0 ? productReviews.map(review => (
-                                        <div key={review.id} className="border-b border-brand-border pb-4 last:border-0 last:pb-0">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                                                    <span className="text-white text-xs font-bold">{review.buyerName.charAt(0)}</span>
-                                                </div>
-                                                <div>
-                                                    <div className="text-sm font-medium text-brand-text-primary">{review.buyerName}</div>
-                                                    <div className="flex items-center gap-1">
-                                                        {[...Array(review.rating)].map((_, j) => (
-                                                            <Star key={j} className="w-3 h-3 text-brand-warning fill-brand-warning" />
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                                {review.verified && <span className="badge-success ml-auto">Đã mua</span>}
-                                            </div>
-                                            <p className="text-sm text-brand-text-secondary">{review.content}</p>
-                                        </div>
-                                    )) : (
-                                        <p className="text-sm text-brand-text-muted text-center py-8">Chưa có đánh giá nào cho sản phẩm này.</p>
-                                    )}
-                                </div>
+                                <p className="text-sm text-brand-text-muted text-center py-8">Chưa có đánh giá nào cho sản phẩm này.</p>
                             )}
                             {activeTab === 'policy' && (
                                 <div className="space-y-4 text-sm text-brand-text-secondary">
-                                    <div>
-                                        <h4 className="font-medium text-brand-text-primary mb-1">Bảo hành</h4>
-                                        <p>{product.warrantyPolicy}</p>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-medium text-brand-text-primary mb-1">Hỗ trợ</h4>
-                                        <p>{product.supportPolicy}</p>
-                                    </div>
+                                    {currentWarranty > 0 && (
+                                        <div>
+                                            <h4 className="font-medium text-brand-text-primary mb-1">Bảo hành</h4>
+                                            <p>Sản phẩm được bảo hành {currentWarranty} ngày kể từ ngày mua.</p>
+                                        </div>
+                                    )}
                                     <div>
                                         <h4 className="font-medium text-brand-text-primary mb-1">Khiếu nại</h4>
-                                        <p>Người dùng có thể gửi khiếu nại trong {product.complaintWindowHours} giờ kể từ khi nhận hàng.</p>
-                                    </div>
-                                </div>
-                            )}
-                            {activeTab === 'faq' && (
-                                <div className="space-y-4 text-sm text-brand-text-secondary">
-                                    <div>
-                                        <h4 className="font-medium text-brand-text-primary mb-1">Sau khi mua, nhận hàng ở đâu?</h4>
-                                        <p>Thông tin giao hàng sẽ hiển thị ngay trong mục Đơn hàng của tôi sau khi thanh toán thành công.</p>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-medium text-brand-text-primary mb-1">Nếu sản phẩm lỗi thì sao?</h4>
-                                        <p>Bạn có thể tạo khiếu nại trong thời gian hỗ trợ để được xem xét và xử lý.</p>
+                                        <p>Người dùng có thể gửi khiếu nại trong 24 giờ kể từ khi nhận hàng.</p>
                                     </div>
                                 </div>
                             )}
@@ -322,41 +328,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
 
                     {/* Seller Info */}
-                    {shop && (
-                        <div className="card mb-12">
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center border border-brand-border">
-                                    <span className="text-xl font-bold gradient-text">{shop.name.charAt(0)}</span>
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-semibold text-brand-text-primary">{shop.name}</h3>
-                                        {shop.verified && <CheckCircle className="w-4 h-4 text-brand-primary" />}
-                                    </div>
-                                    <div className="flex items-center gap-4 mt-1 text-xs text-brand-text-muted">
-                                        <span>{shop.productCount} sản phẩm</span>
-                                        <span>⭐ {shop.ratingAverage}</span>
-                                        <span>Phản hồi {shop.responseRate}%</span>
-                                    </div>
-                                </div>
-                                <Link href={`/shop/${shop.slug}`} className="btn-secondary !px-4 !py-2 text-sm flex items-center gap-1.5">
-                                    <Store className="w-4 h-4" /> Xem gian hàng
-                                </Link>
+                    <div className="card mb-12">
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center border border-brand-border">
+                                <span className="text-xl font-bold gradient-text">{product.shop.name.charAt(0)}</span>
                             </div>
-                        </div>
-                    )}
-
-                    {/* Related Products */}
-                    {relatedProducts.length > 0 && (
-                        <div>
-                            <h2 className="text-xl font-bold text-brand-text-primary mb-6">Sản phẩm liên quan</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                                {relatedProducts.map(p => (
-                                    <ProductCard key={p.id} product={p} />
-                                ))}
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold text-brand-text-primary">{product.shop.name}</h3>
+                                    {product.shop.verified && <CheckCircle className="w-4 h-4 text-brand-primary" />}
+                                </div>
+                                <div className="flex items-center gap-4 mt-1 text-xs text-brand-text-muted">
+                                    <span>{product.shop.productCount || 0} sản phẩm</span>
+                                    <span>⭐ {product.shop.ratingAverage || 0}</span>
+                                </div>
                             </div>
+                            <Link href={`/shop/${product.shop.slug}`} className="btn-secondary !px-4 !py-2 text-sm flex items-center gap-1.5">
+                                <Store className="w-4 h-4" /> Xem gian hàng
+                            </Link>
                         </div>
-                    )}
+                    </div>
                 </div>
             </main>
             <Footer />
@@ -379,12 +370,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="text-sm font-semibold text-brand-text-primary truncate">{product.name}</div>
-                                    <div className="text-xs text-brand-text-muted">{product.shopName}</div>
+                                    <div className="text-xs text-brand-text-muted">{product.shop.name}</div>
                                 </div>
                             </div>
                             <div className="flex justify-between text-sm border-t border-brand-border pt-3">
                                 <span className="text-brand-text-muted">Đơn giá</span>
-                                <span className="text-brand-text-primary font-medium">{formatCurrency(product.price)}</span>
+                                <span className="text-brand-text-primary font-medium">{formatCurrency(currentPrice)}</span>
                             </div>
                             <div className="flex justify-between text-sm mt-1">
                                 <span className="text-brand-text-muted">Số lượng</span>
@@ -392,11 +383,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             </div>
                             <div className="flex justify-between text-sm mt-1">
                                 <span className="text-brand-text-muted">Giao hàng</span>
-                                <span className="text-brand-info font-medium">{product.deliveryType === 'auto' ? '⚡ Tự động' : '📦 Thủ công'}</span>
+                                <span className="text-brand-info font-medium">{product.deliveryType === 'AUTO' ? '⚡ Tự động' : '📦 Thủ công'}</span>
                             </div>
                             <div className="border-t border-brand-border mt-3 pt-3 flex justify-between">
                                 <span className="text-sm font-semibold text-brand-text-primary">Tổng thanh toán</span>
-                                <span className="text-lg font-bold text-brand-primary">{formatCurrency(product.price * quantity)}</span>
+                                <span className="text-lg font-bold text-brand-primary">{formatCurrency(currentPrice * quantity)}</span>
                             </div>
                         </div>
 
@@ -439,10 +430,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     <div className="bg-brand-surface-2 border border-brand-border rounded-xl p-4 mb-4">
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="text-sm font-semibold text-brand-text-primary">📦 Thông tin sản phẩm</h3>
-                                            <button
-                                                onClick={() => handleCopyContent(purchaseResult.order!.deliveredContent!)}
-                                                className="flex items-center gap-1 text-xs text-brand-primary hover:underline"
-                                            >
+                                            <button onClick={() => handleCopyContent(purchaseResult.order!.deliveredContent!)} className="flex items-center gap-1 text-xs text-brand-primary hover:underline">
                                                 <Copy className="w-3 h-3" /> {copied ? 'Đã copy!' : 'Copy'}
                                             </button>
                                         </div>
@@ -481,7 +469,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     <p className="text-sm text-brand-danger mt-2">{purchaseResult.message}</p>
                                 </div>
                                 <div className="flex gap-3">
-                                    <Link href="/dashboard/vi" className="btn-secondary flex-1 !py-3 text-center">Nạp tiền</Link>
+                                    <Link href="/dashboard/nap-tien" className="btn-secondary flex-1 !py-3 text-center">Nạp tiền</Link>
                                     <button onClick={() => setPurchaseResult(null)} className="btn-primary flex-1 !py-3">Thử lại</button>
                                 </div>
                             </>

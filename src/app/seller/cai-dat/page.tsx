@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { Store, CreditCard, Bell, Save, Upload, CheckCircle2, Loader2 } from 'lucide-react';
 import { VIETNAMESE_BANKS } from '@/lib/banks';
@@ -8,16 +8,18 @@ import { VIETNAMESE_BANKS } from '@/lib/banks';
 export default function SellerSettingsPage() {
     const { user } = useAuth();
     const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState('');
 
-    const [shopName, setShopName] = useState('AI Resource Center');
-    const [shopDesc, setShopDesc] = useState('Chuyên cung cấp tài khoản AI premium, phần mềm bản quyền và tài nguyên số chất lượng cao.');
-    const [email, setEmail] = useState('contact@airesource.vn');
-    const [phone, setPhone] = useState('0901 234 567');
-    const [bankName, setBankName] = useState('Vietcombank');
-    const [bankAccount, setBankAccount] = useState('1234567890');
-    const [bankOwner, setBankOwner] = useState('NGUYEN VAN A');
-    const [bankBranch, setBankBranch] = useState('TP.HCM');
+    const [shopName, setShopName] = useState('');
+    const [shopDesc, setShopDesc] = useState('');
+    const [logoUrl, setLogoUrl] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [bankName, setBankName] = useState('');
+    const [bankAccount, setBankAccount] = useState('');
+    const [bankOwner, setBankOwner] = useState('');
+    const [bankBranch, setBankBranch] = useState('');
     const [notifications, setNotifications] = useState([
         { key: 'orders', label: 'Thông báo đơn hàng mới', desc: 'Nhận thông báo khi có đơn hàng mới', on: true },
         { key: 'complaints', label: 'Thông báo khiếu nại', desc: 'Nhận thông báo khi có khiếu nại từ khách', on: true },
@@ -25,7 +27,30 @@ export default function SellerSettingsPage() {
         { key: 'weekly', label: 'Email hàng tuần', desc: 'Báo cáo doanh thu tuần qua email', on: false },
     ]);
 
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch('/api/v1/seller/settings', { headers: { Authorization: `Bearer ${token}` } });
+                const json = await res.json();
+                if (json.success && json.data) {
+                    const d = json.data;
+                    setShopName(d.name || '');
+                    setShopDesc(d.description || '');
+                    setLogoUrl(d.logoUrl || '');
+                    setEmail(d.email || '');
+                    setPhone(d.phone || '');
+                    setBankName(d.bankName || '');
+                    setBankAccount(d.bankAccount || '');
+                    setBankOwner(d.bankAccountName || '');
+                    setBankBranch(d.bankBranch || '');
+                }
+            } catch { }
+            setLoading(false);
+        })();
+    }, []);
 
     const toggleNotification = (key: string) => {
         setNotifications(prev => prev.map(n => n.key === key ? { ...n, on: !n.on } : n));
@@ -33,10 +58,23 @@ export default function SellerSettingsPage() {
 
     const handleSave = async () => {
         setSaving(true);
-        await new Promise(r => setTimeout(r, 1200));
+        try {
+            const res = await fetch('/api/v1/seller/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    name: shopName, description: shopDesc, phone, logoUrl,
+                    bankName, bankAccount, bankAccountName: bankOwner, bankBranch,
+                }),
+            });
+            const data = await res.json();
+            if (data.success) showToast('✅ Đã lưu cài đặt thành công');
+            else showToast(`❌ ${data.message}`);
+        } catch { showToast('❌ Lỗi kết nối'); }
         setSaving(false);
-        showToast('✅ Đã lưu cài đặt thành công');
     };
+
+    if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-brand-primary" /></div>;
 
     return (
         <div className="space-y-6">
@@ -45,22 +83,63 @@ export default function SellerSettingsPage() {
                 <p className="text-sm text-brand-text-muted">Quản lý thông tin shop, cài đặt thanh toán và thông báo.</p>
             </div>
 
-            {/* Shop Info */}
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
                     <Store className="w-4 h-4 text-brand-primary" /> Thông tin shop
                 </h3>
                 <div className="space-y-5">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-brand-border flex items-center justify-center relative">
-                            <Store className="w-8 h-8 text-brand-primary" />
-                            <button className="absolute -bottom-2 -right-2 w-7 h-7 rounded-full bg-brand-primary flex items-center justify-center text-white hover:bg-brand-primary/90 transition-all">
-                                <Upload className="w-3 h-3" />
-                            </button>
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border-2 border-dashed border-brand-border flex items-center justify-center relative overflow-hidden group">
+                            {logoUrl ? (
+                                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                            ) : (
+                                <Store className="w-8 h-8 text-brand-primary" />
+                            )}
+                            <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                <Upload className="w-5 h-5 text-white" />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        if (file.size > 2 * 1024 * 1024) { showToast('❌ Ảnh tối đa 2MB'); return; }
+                                        // Upload to server as file
+                                        const formData = new FormData();
+                                        formData.append('file', file);
+                                        formData.append('type', 'shop-logo');
+                                        try {
+                                            const res = await fetch('/api/v1/upload', {
+                                                method: 'POST',
+                                                headers: { Authorization: `Bearer ${token}` },
+                                                body: formData,
+                                            });
+                                            const data = await res.json();
+                                            if (data.success && data.url) {
+                                                setLogoUrl(data.url);
+                                                showToast('✅ Đã upload logo. Bấm Lưu để cập nhật.');
+                                            } else {
+                                                // Fallback: use base64
+                                                const reader = new FileReader();
+                                                reader.onload = () => setLogoUrl(reader.result as string);
+                                                reader.readAsDataURL(file);
+                                                showToast('✅ Đã chọn logo. Bấm Lưu để cập nhật.');
+                                            }
+                                        } catch {
+                                            const reader = new FileReader();
+                                            reader.onload = () => setLogoUrl(reader.result as string);
+                                            reader.readAsDataURL(file);
+                                            showToast('✅ Đã chọn logo. Bấm Lưu để cập nhật.');
+                                        }
+                                    }}
+                                />
+                            </label>
                         </div>
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-brand-text-primary mb-2">Tên shop</label>
                             <input type="text" value={shopName} onChange={e => setShopName(e.target.value)} className="input-field" />
+                            <p className="text-[10px] text-brand-text-muted mt-1">Di chuột vào logo → bấm để đổi ảnh (tối đa 2MB)</p>
                         </div>
                     </div>
                     <div>
@@ -70,7 +149,7 @@ export default function SellerSettingsPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-brand-text-primary mb-2">Email liên hệ</label>
-                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="input-field" />
+                            <input type="email" value={email} disabled className="input-field opacity-60" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-brand-text-primary mb-2">Số điện thoại</label>
@@ -80,7 +159,6 @@ export default function SellerSettingsPage() {
                 </div>
             </div>
 
-            {/* Payment Settings */}
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-brand-primary" /> Thông tin thanh toán
@@ -89,9 +167,8 @@ export default function SellerSettingsPage() {
                     <div>
                         <label className="block text-sm font-medium text-brand-text-primary mb-2">Ngân hàng</label>
                         <select value={bankName} onChange={e => setBankName(e.target.value)} className="input-field">
-                            {VIETNAMESE_BANKS.map(b => (
-                                <option key={b.code} value={b.name}>{b.name}</option>
-                            ))}
+                            <option value="">— Chọn ngân hàng —</option>
+                            {VIETNAMESE_BANKS.map(b => (<option key={b.code} value={b.name}>{b.name}</option>))}
                         </select>
                     </div>
                     <div>
@@ -109,7 +186,6 @@ export default function SellerSettingsPage() {
                 </div>
             </div>
 
-            {/* Notification Settings */}
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
                     <Bell className="w-4 h-4 text-brand-primary" /> Cài đặt thông báo
@@ -129,7 +205,6 @@ export default function SellerSettingsPage() {
                 </div>
             </div>
 
-            {/* Save */}
             <div className="flex justify-end">
                 <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center gap-2 disabled:opacity-70">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}

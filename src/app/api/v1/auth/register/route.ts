@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { signToken } from '@/lib/auth';
-import { findMockUserByUsername, findMockUserByEmail, createMockUser } from '@/lib/mock-auth';
+import { signToken, hashPassword } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
     try {
@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Check username exists
-        if (findMockUserByUsername(username)) {
+        const existingUsername = await prisma.user.findUnique({ where: { username } });
+        if (existingUsername) {
             return NextResponse.json(
                 { success: false, message: 'Tên đăng nhập đã được sử dụng', errorCode: 'USERNAME_EXISTS' },
                 { status: 409 }
@@ -45,15 +46,32 @@ export async function POST(request: NextRequest) {
         }
 
         // Check email exists
-        if (findMockUserByEmail(email)) {
+        const existingEmail = await prisma.user.findUnique({ where: { email } });
+        if (existingEmail) {
             return NextResponse.json(
                 { success: false, message: 'Email đã được sử dụng', errorCode: 'EMAIL_EXISTS' },
                 { status: 409 }
             );
         }
 
-        // Create user (mock)
-        const user = createMockUser({ username, email, fullName, password });
+        // Create user in Prisma DB
+        const user = await prisma.user.create({
+            data: {
+                username,
+                email,
+                passwordHash: hashPassword(password),
+                fullName,
+                role: 'USER',
+                status: 'ACTIVE',
+                termsVersion: '1.0',
+                termsAcceptedAt: new Date(),
+            },
+        });
+
+        // Create wallet for new user
+        await prisma.wallet.create({
+            data: { userId: user.id },
+        });
 
         // Generate JWT
         const token = await signToken({
@@ -63,7 +81,7 @@ export async function POST(request: NextRequest) {
             role: user.role,
         });
 
-        return NextResponse.json({
+        const response = NextResponse.json({
             success: true,
             message: 'Tạo tài khoản thành công',
             data: {
@@ -74,9 +92,22 @@ export async function POST(request: NextRequest) {
                     email: user.email,
                     fullName: user.fullName,
                     role: user.role,
+                    avatarUrl: null,
+                    walletBalance: 0,
                 },
             },
         }, { status: 201 });
+
+        // Set cookie
+        response.cookies.set('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+            path: '/',
+        });
+
+        return response;
     } catch (error) {
         console.error('Register error:', error);
         return NextResponse.json(

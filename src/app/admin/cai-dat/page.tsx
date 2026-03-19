@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Save, Globe, Shield, Percent, UserCheck, AlertTriangle, Store, CheckCircle, Loader2, DollarSign, CreditCard } from 'lucide-react';
+import { useUI } from '@/components/shared/UIProvider';
 
 interface Settings {
     kycRequired: boolean;
@@ -33,13 +34,14 @@ export default function AdminSettingsPage() {
     const [settings, setSettings] = useState<Settings>({ kycRequired: false, autoApprove: false, autoApproveWhenKycOff: true });
     const [security, setSecurity] = useState({ emailVerification: true, manualProductApproval: false, withdrawalLimit: true });
     const [general, setGeneral] = useState({ name: 'ChoTaiNguyen', email: 'support@chotainguyen.vn', hotline: '1900 6868', status: 'active' });
-    const [fees, setFees] = useState<PlatformFees>({ commissionRate: '5', withdrawalFee: '15000', minWithdraw: '500000', minDeposit: '10000', bankName: 'MB Bank', bankAccount: '0393959643', bankOwner: 'NGUYEN TAI DAT' });
+    const [fees, setFees] = useState<PlatformFees>({ commissionRate: '5', withdrawalFee: '15000', minWithdraw: '500000', minDeposit: '2000', bankName: 'MB Bank', bankAccount: '0393959643', bankOwner: 'NGUYEN TAI DAT' });
     const [stats, setStats] = useState<PlatformStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState('');
     const [saving, setSaving] = useState(false);
+    const { showToast: globalToast, showConfirm } = useUI();
 
-    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 4000); };
+    const showToast = (msg: string) => { globalToast(msg.replace(/^[✅❌] */, ''), msg.startsWith('✅') ? 'success' : msg.startsWith('❌') ? 'error' : 'info'); };
 
     // Load KYC settings
     useEffect(() => {
@@ -126,27 +128,8 @@ export default function AdminSettingsPage() {
                 <p className="text-sm text-brand-text-muted">Cấu hình KYC, phí sàn (hoa hồng), ngân hàng nạp tiền, và thiết lập bảo mật.</p>
             </div>
 
-            {/* Platform Earnings Stats */}
-            {stats && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="card !p-4 border-l-4 border-brand-primary">
-                        <div className="text-xs text-brand-text-muted">Phí sàn hiện tại</div>
-                        <div className="text-2xl font-bold text-brand-primary">{stats.commissionRate}%</div>
-                    </div>
-                    <div className="card !p-4 border-l-4 border-brand-success">
-                        <div className="text-xs text-brand-text-muted">💰 Sàn đã thu</div>
-                        <div className="text-lg font-bold text-brand-success">{fmt(stats.totalPlatformFees)}</div>
-                    </div>
-                    <div className="card !p-4 border-l-4 border-brand-info">
-                        <div className="text-xs text-brand-text-muted">Tổng doanh thu</div>
-                        <div className="text-lg font-bold text-brand-info">{fmt(stats.totalRevenue)}</div>
-                    </div>
-                    <div className="card !p-4 border-l-4 border-brand-warning">
-                        <div className="text-xs text-brand-text-muted">Seller nhận</div>
-                        <div className="text-lg font-bold text-brand-warning">{fmt(stats.totalSellerEarnings)}</div>
-                    </div>
-                </div>
-            )}
+
+
 
             {/* KYC Toggle */}
             <div className="card border-2 border-brand-primary/20 space-y-5">
@@ -235,6 +218,9 @@ export default function AdminSettingsPage() {
                 </div>
             </div>
 
+            {/* Tax Collection */}
+            <TaxSettingsSection />
+
             {/* Bank Config for Deposits */}
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
@@ -320,6 +306,238 @@ export default function AdminSettingsPage() {
                 <div className="fixed bottom-6 right-6 z-50 bg-brand-surface border border-brand-border rounded-xl shadow-card-hover px-5 py-3 animate-slide-up">
                     <span className="text-sm text-brand-text-primary font-medium">{toast}</span>
                 </div>
+            )}
+        </div>
+    );
+}
+
+// ======== Tax Settings Component ========
+interface TaxBracket { minRevenue: number; rate: number; label: string; }
+
+function TaxSettingsSection() {
+    const { showConfirm } = useUI();
+    const [taxSettings, setTaxSettings] = useState<{
+        enabled: boolean; taxRate: number; paymentDay: number;
+        lastCollectionDate: string | null; taxBrackets: TaxBracket[];
+    }>({
+        enabled: false, taxRate: 1, paymentDay: 25, lastCollectionDate: null,
+        taxBrackets: [
+            { minRevenue: 0, rate: 0, label: 'Dưới 100 triệu' },
+            { minRevenue: 100000000, rate: 5, label: '100 triệu - 500 triệu' },
+            { minRevenue: 500000000, rate: 10, label: '500 triệu - 1 tỷ' },
+            { minRevenue: 1000000000, rate: 15, label: 'Trên 1 tỷ' },
+        ],
+    });
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [collecting, setCollecting] = useState(false);
+    const [message, setMessage] = useState('');
+
+    useEffect(() => {
+        fetch('/api/v1/admin/tax').then(r => r.json()).then(d => {
+            if (d.success) setTaxSettings(prev => ({ ...prev, ...d.data }));
+        }).catch(() => {}).finally(() => setLoading(false));
+    }, []);
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            // Save tax-specific settings
+            const res = await fetch('/api/v1/admin/tax', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taxSettings),
+            });
+            const data = await res.json();
+
+            // Also sync taxEnabled + vatRate to platform settings (used by invoice APIs)
+            await fetch('/api/v1/admin/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    taxEnabled: taxSettings.enabled,
+                    vatRate: taxSettings.taxRate || 10,
+                }),
+            });
+
+            setMessage(data.success ? '✅ Đã lưu cài đặt thuế' : '❌ ' + data.message);
+        } catch { setMessage('❌ Lỗi kết nối'); }
+        setSaving(false);
+        setTimeout(() => setMessage(''), 3000);
+    };
+
+    const handleCollect = async () => {
+        showConfirm({
+            title: 'Thu thuế',
+            message: 'Xác nhận thu thuế tháng này từ tất cả seller?',
+            confirmText: 'Thu thuế',
+            variant: 'warning',
+            onConfirm: async () => {
+                setCollecting(true);
+                try {
+                    const res = await fetch('/api/v1/admin/tax', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({}),
+                    });
+                    const data = await res.json();
+                    setMessage(data.success ? `✅ ${data.message}` : '❌ ' + data.message);
+                    if (data.success) {
+                        setTaxSettings(prev => ({ ...prev, lastCollectionDate: new Date().toISOString() }));
+                    }
+                } catch { setMessage('❌ Lỗi kết nối'); }
+                setCollecting(false);
+                setTimeout(() => setMessage(''), 5000);
+            }
+        });
+    };
+
+    const updateBracket = (idx: number, field: keyof TaxBracket, value: string | number) => {
+        setTaxSettings(prev => {
+            const brackets = [...prev.taxBrackets];
+            brackets[idx] = { ...brackets[idx], [field]: field === 'label' ? value : Number(value) };
+            return { ...prev, taxBrackets: brackets };
+        });
+    };
+
+    const addBracket = () => {
+        setTaxSettings(prev => ({
+            ...prev,
+            taxBrackets: [...prev.taxBrackets, { minRevenue: 0, rate: 0, label: 'Mốc mới' }],
+        }));
+    };
+
+    const removeBracket = (idx: number) => {
+        setTaxSettings(prev => ({
+            ...prev,
+            taxBrackets: prev.taxBrackets.filter((_, i) => i !== idx),
+        }));
+    };
+
+    const fmtVND = (n: number) => n >= 1000000000 ? `${(n / 1000000000).toFixed(1)} tỷ` : n >= 1000000 ? `${(n / 1000000).toFixed(0)} triệu` : n.toLocaleString('vi-VN') + 'đ';
+
+    if (loading) return null;
+
+    return (
+        <div className="card border-2 border-brand-warning/20">
+            <h3 className="text-sm font-semibold text-brand-text-primary mb-4 flex items-center gap-2">
+                📋 Thu thuế Seller
+            </h3>
+            <div className="bg-brand-warning/5 rounded-xl p-4 mb-4">
+                <div className="text-xs text-brand-text-muted">Thu thuế trên doanh thu bán hàng của seller theo tháng. Tiền sẽ bị trừ thẳng từ ví seller — nếu không đủ sẽ trừ <strong>âm</strong> và bù lại khi có tiền. Thuế suất tính theo <strong>mốc doanh thu lũy tiến</strong> bên dưới.</div>
+            </div>
+
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-brand-text-primary">Bật thu thuế</span>
+                    {taxSettings.enabled ? (
+                        <span className="badge badge-success text-[10px]">ĐANG BẬT</span>
+                    ) : (
+                        <span className="badge badge-neutral text-[10px]">ĐANG TẮT</span>
+                    )}
+                </div>
+                <button
+                    onClick={() => setTaxSettings(prev => ({ ...prev, enabled: !prev.enabled }))}
+                    className={`w-12 h-6 rounded-full transition-colors relative ${taxSettings.enabled ? 'bg-brand-success' : 'bg-brand-text-muted/30'}`}
+                >
+                    <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${taxSettings.enabled ? 'left-6' : 'left-0.5'}`} />
+                </button>
+            </div>
+
+            {/* Tax Brackets Editor */}
+            <div className="mb-5">
+                <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-medium text-brand-text-primary">📊 Mốc doanh thu → Thuế suất</label>
+                    <button onClick={addBracket} className="text-xs text-brand-primary hover:underline">+ Thêm mốc</button>
+                </div>
+                <div className="bg-brand-surface-2 rounded-xl overflow-hidden">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b border-brand-border/50 text-left">
+                                <th className="px-3 py-2 text-[10px] uppercase text-brand-text-muted font-medium">Doanh thu từ (VNĐ)</th>
+                                <th className="px-3 py-2 text-[10px] uppercase text-brand-text-muted font-medium">Thuế suất (%)</th>
+                                <th className="px-3 py-2 text-[10px] uppercase text-brand-text-muted font-medium">Mô tả</th>
+                                <th className="px-3 py-2 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {taxSettings.taxBrackets.sort((a, b) => a.minRevenue - b.minRevenue).map((bracket, idx) => (
+                                <tr key={idx} className="border-b border-brand-border/20 hover:bg-brand-surface">
+                                    <td className="px-3 py-2">
+                                        <input
+                                            type="number"
+                                            value={bracket.minRevenue}
+                                            onChange={e => updateBracket(idx, 'minRevenue', e.target.value)}
+                                            className="input-field !py-1 !px-2 text-xs w-full"
+                                            min="0"
+                                            step="1000000"
+                                        />
+                                        <div className="text-[10px] text-brand-text-muted mt-0.5">{fmtVND(bracket.minRevenue)}</div>
+                                    </td>
+                                    <td className="px-3 py-2">
+                                        <input
+                                            type="number"
+                                            value={bracket.rate}
+                                            onChange={e => updateBracket(idx, 'rate', e.target.value)}
+                                            className="input-field !py-1 !px-2 text-xs w-20"
+                                            min="0"
+                                            max="50"
+                                            step="0.5"
+                                        />
+                                    </td>
+                                    <td className="px-3 py-2">
+                                        <input
+                                            type="text"
+                                            value={bracket.label}
+                                            onChange={e => updateBracket(idx, 'label', e.target.value)}
+                                            className="input-field !py-1 !px-2 text-xs w-full"
+                                        />
+                                    </td>
+                                    <td className="px-3 py-2">
+                                        <button onClick={() => removeBracket(idx)} className="text-brand-danger hover:text-brand-danger/80 text-xs">✕</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="text-[10px] text-brand-text-muted mt-2">Hệ thống sẽ áp dụng mốc cao nhất mà doanh thu seller đạt được. VD: DT 200 triệu → áp mốc &quot;100 triệu&quot; = thuế 5%.</div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label className="block text-sm font-medium text-brand-text-primary mb-1">Thuế mặc định (%)</label>
+                    <input type="number" value={taxSettings.taxRate} onChange={e => setTaxSettings(prev => ({ ...prev, taxRate: Number(e.target.value) }))} className="input-field" min="0" max="30" step="0.5" />
+                    <div className="text-[10px] text-brand-text-muted mt-1">Dùng khi không khớp mốc nào</div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-brand-text-primary mb-1">Ngày thu thuế</label>
+                    <input type="number" value={taxSettings.paymentDay} onChange={e => setTaxSettings(prev => ({ ...prev, paymentDay: Number(e.target.value) }))} className="input-field" min="1" max="28" />
+                    <div className="text-[10px] text-brand-text-muted mt-1">Ngày 1-28 hàng tháng</div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-brand-text-primary mb-1">Lần thu gần nhất</label>
+                    <div className="input-field bg-brand-surface-2 text-brand-text-muted text-sm">
+                        {taxSettings.lastCollectionDate ? new Date(taxSettings.lastCollectionDate).toLocaleDateString('vi-VN') : 'Chưa thu lần nào'}
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex gap-3">
+                <button onClick={handleSave} disabled={saving} className="btn-primary !py-2 !px-6 text-sm flex items-center gap-2">
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Lưu cài đặt thuế
+                </button>
+                {taxSettings.enabled && (
+                    <button onClick={handleCollect} disabled={collecting} className="btn-secondary !py-2 !px-6 text-sm flex items-center gap-2 border-brand-warning text-brand-warning hover:bg-brand-warning/10">
+                        {collecting ? <Loader2 className="w-4 h-4 animate-spin" /> : '💰'}
+                        {collecting ? 'Đang thu thuế...' : 'Thu thuế tháng này'}
+                    </button>
+                )}
+            </div>
+
+            {message && (
+                <div className="mt-3 text-sm text-brand-text-primary bg-brand-surface-2 rounded-lg px-4 py-2">{message}</div>
             )}
         </div>
     );

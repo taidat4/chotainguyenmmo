@@ -21,6 +21,8 @@ export interface MockUser {
 
 interface StoredUser extends MockUser {
     passwordHash: string;
+    twoFactorEnabled?: boolean;
+    twoFactorSecret?: string | null;
 }
 
 // ==================== FILE PERSISTENCE ====================
@@ -153,6 +155,29 @@ export function deleteMockUser(userId: string): boolean {
     // Don't allow deleting the admin
     if (serverUsers[idx].role === 'SUPER_ADMIN') return false;
     serverUsers.splice(idx, 1);
+    saveUsers();
+    return true;
+}
+
+export function updateMockUserPassword(userId: string, newPassword: string): boolean {
+    const user = serverUsers.find(u => u.id === userId);
+    if (!user) return false;
+    user.passwordHash = hashPw(newPassword);
+    saveUsers();
+    return true;
+}
+
+export function getMockUser2FA(userId: string): { enabled: boolean; secret: string | null } {
+    const user = serverUsers.find(u => u.id === userId);
+    if (!user) return { enabled: false, secret: null };
+    return { enabled: !!user.twoFactorEnabled, secret: user.twoFactorSecret || null };
+}
+
+export function updateMockUser2FA(userId: string, data: { enabled?: boolean; secret?: string | null }): boolean {
+    const user = serverUsers.find(u => u.id === userId);
+    if (!user) return false;
+    if (data.enabled !== undefined) user.twoFactorEnabled = data.enabled;
+    if (data.secret !== undefined) user.twoFactorSecret = data.secret;
     saveUsers();
     return true;
 }

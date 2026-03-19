@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import {
     Search, Menu, X, Bell, Wallet, Store, User, ChevronDown,
-    LogIn, UserPlus, Settings, LogOut,
+    LogIn, UserPlus, Settings, LogOut, MessageSquare,
     LayoutDashboard, Package, Heart, Shield, PlusCircle, Clock, CheckCircle, AlertTriangle
 } from 'lucide-react';
 
@@ -28,8 +28,10 @@ export default function Header() {
     const [searchQuery, setSearchQuery] = useState('');
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
+    const dropdownTimeout = useRef<NodeJS.Timeout | null>(null);
 
     // Close menus when clicking outside
     useEffect(() => {
@@ -44,6 +46,14 @@ export default function Header() {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const handleDropdownEnter = (key: string) => {
+        if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
+        setActiveDropdown(key);
+    };
+    const handleDropdownLeave = () => {
+        dropdownTimeout.current = setTimeout(() => setActiveDropdown(null), 150);
+    };
 
     const handleLogout = () => {
         logout();
@@ -71,6 +81,43 @@ export default function Header() {
 
     const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.read).length;
 
+    // Navigation items with optional dropdowns
+    const navItems: { label: string; href: string; dropdown?: { label: string; href: string; icon: string }[] }[] = [
+        { label: 'Trang chủ', href: '/' },
+        {
+            label: 'Danh mục', href: '/danh-muc',
+            dropdown: [
+                { label: 'Tài khoản Premium', href: '/danh-muc/tai-khoan-premium', icon: '👑' },
+                { label: 'Key & License', href: '/danh-muc/key-license', icon: '🔑' },
+                { label: 'Phần mềm', href: '/danh-muc/phan-mem', icon: '💻' },
+                { label: 'Game', href: '/danh-muc/game', icon: '🎮' },
+                { label: 'Social Media', href: '/danh-muc/social-media', icon: '📱' },
+                { label: 'AI & Tools', href: '/danh-muc/ai-tools', icon: '🤖' },
+                { label: 'Xem tất cả →', href: '/danh-muc', icon: '📦' },
+            ],
+        },
+        {
+            label: 'Sản phẩm', href: '/san-pham-noi-bat',
+            dropdown: [
+                { label: 'Sản phẩm nổi bật', href: '/san-pham-noi-bat', icon: '⭐' },
+                { label: 'Mới nhất', href: '/san-pham?sort=newest', icon: '🆕' },
+                { label: 'Bán chạy nhất', href: '/san-pham?sort=best-selling', icon: '🔥' },
+                { label: 'Giá tốt nhất', href: '/san-pham?sort=price-low', icon: '💰' },
+            ],
+        },
+        { label: 'Gian hàng', href: '/gian-hang' },
+        { label: 'Nạp tiền', href: '/dashboard/nap-tien' },
+        {
+            label: 'Hỗ trợ', href: '/ho-tro',
+            dropdown: [
+                { label: 'Hướng dẫn mua hàng', href: '/huong-dan', icon: '📖' },
+                { label: 'Câu hỏi thường gặp', href: '/faqs', icon: '❓' },
+                { label: 'Liên hệ hỗ trợ', href: '/ho-tro', icon: '💬' },
+                { label: 'Chính sách bảo hành', href: '/chinh-sach', icon: '🛡️' },
+            ],
+        },
+    ];
+
     return (
         <header className="sticky top-0 z-50 bg-brand-bg/95 backdrop-blur-xl border-b border-brand-border">
             {/* Announcement Bar */}
@@ -81,22 +128,11 @@ export default function Header() {
             </div>
 
             {/* Main Header */}
-            <div className="max-w-container mx-auto px-4 py-3">
-                <div className="flex items-center gap-4">
+            <div className="max-w-container mx-auto px-4 py-2">
+                <div className="header-main-row flex items-center gap-4">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 shrink-0">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center shadow-md">
-                            <svg viewBox="0 0 32 32" fill="none" className="w-6 h-6">
-                                <path d="M8 6L16 2L24 6V18L16 22L8 18V6Z" fill="white" fillOpacity="0.9" />
-                                <path d="M16 2L24 6V18L16 22V10L8 6L16 2Z" fill="white" fillOpacity="0.7" />
-                                <path d="M12 12L16 10L20 12V18L16 20L12 18V12Z" fill="rgba(59,130,246,0.6)" />
-                                <circle cx="16" cy="15" r="2.5" fill="white" />
-                            </svg>
-                        </div>
-                        <div className="hidden sm:block">
-                            <div className="text-lg font-bold text-brand-text-primary leading-tight">ChoTaiNguyen</div>
-                            <div className="text-[10px] text-brand-text-muted leading-tight">Chợ Tài Nguyên</div>
-                        </div>
+                    <Link href="/" className="flex items-center shrink-0">
+                        <img src="/logokhongnen.png" alt="ChoTaiNguyen" style={{ height: '100px', width: 'auto' }} />
                     </Link>
 
                     {/* Search */}
@@ -119,22 +155,25 @@ export default function Header() {
                     </form>
 
                     {/* Desktop Actions */}
-                    <div className="hidden lg:flex items-center gap-1">
+                    <div className="header-actions hidden lg:flex items-center gap-1">
                         <Link href="/seller" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-all">
                             <Store className="w-4 h-4" />
                             <span>Seller Center</span>
                         </Link>
 
+                        {/* Fixed-width container for auth actions to prevent horizontal shift */}
+                        <div className="flex items-center gap-1 justify-end" style={{ minWidth: '220px' }}>
                         {!isLoading && user ? (
                             <>
-                                <Link href="/dashboard/vi" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm bg-brand-success/10 border border-brand-success/20 hover:bg-brand-success/20 transition-all">
-                                    <Wallet className="w-4 h-4 text-brand-success" />
-                                    <span className="text-brand-success font-semibold">
-                                        {(user.walletBalance || 0).toLocaleString('vi-VN')}đ
-                                    </span>
+                                {/* Messaging Icon — prominent */}
+                                <Link href="/dashboard/tin-nhan" className="relative p-2.5 rounded-xl bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-all" title="Tin nhắn">
+                                    <MessageSquare className="w-5 h-5" />
+                                    <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] bg-brand-danger text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">3</span>
                                 </Link>
-                                <Link href="/dashboard/nap-tien" className="flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold bg-brand-primary text-white hover:bg-brand-primary/90 transition-all shadow-sm">
-                                    <PlusCircle className="w-3.5 h-3.5" /> Nạp tiền
+
+                                <Link href="/dashboard/nap-tien" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-brand-primary/10 to-brand-success/10 border border-brand-primary/20 text-brand-primary hover:from-brand-primary/20 hover:to-brand-success/20 transition-all" title="Ví tiền">
+                                    <Wallet className="w-4 h-4" />
+                                    <span>{(user?.walletBalance || 0).toLocaleString('vi-VN')}đ</span>
                                 </Link>
 
                                 {/* Notification Bell */}
@@ -164,14 +203,12 @@ export default function Header() {
                                                                 <notif.icon className="w-4 h-4" />
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className="text-sm font-medium text-brand-text-primary">{notif.title}</span>
-                                                                    {!notif.read && <span className="w-2 h-2 bg-brand-primary rounded-full shrink-0" />}
-                                                                </div>
+                                                                <p className="text-sm font-medium text-brand-text-primary">{notif.title}</p>
                                                                 <p className="text-xs text-brand-text-muted mt-0.5 line-clamp-2">{notif.desc}</p>
-                                                                <span className="text-[10px] text-brand-text-muted mt-1 flex items-center gap-1">
-                                                                    <Clock className="w-3 h-3" /> {notif.time}
-                                                                </span>
+                                                                <div className="flex items-center gap-1 mt-1">
+                                                                    <Clock className="w-3 h-3 text-brand-text-muted" />
+                                                                    <span className="text-[10px] text-brand-text-muted">{notif.time}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -216,11 +253,13 @@ export default function Header() {
                                             <Link href={getDashboardLink()} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2">
                                                 <LayoutDashboard className="w-4 h-4" /> Bảng điều khiển
                                             </Link>
-                                            <Link href="/dashboard/don-hang" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2">
-                                                <Package className="w-4 h-4" /> Đơn hàng
+                                            <Link href="/dashboard/vi" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2">
+                                                <Wallet className="w-4 h-4 text-brand-success" />
+                                                <span>Ví của tôi</span>
+                                                <span className="ml-auto text-xs font-semibold text-brand-success">{(user.walletBalance || 0).toLocaleString('vi-VN')}đ</span>
                                             </Link>
-                                            <Link href="/dashboard/yeu-thich" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2">
-                                                <Heart className="w-4 h-4" /> Yêu thích
+                                            <Link href="/dashboard/don-hang" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2">
+                                                <Package className="w-4 h-4" /> Lịch sử mua hàng
                                             </Link>
                                             <Link href="/dashboard/ho-so" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2">
                                                 <Settings className="w-4 h-4" /> Hồ sơ
@@ -242,7 +281,16 @@ export default function Header() {
                                     <UserPlus className="w-4 h-4" /> Đăng ký
                                 </Link>
                             </div>
-                        ) : null}
+                        ) : (
+                            /* Skeleton that matches logged-in user menu dimensions */
+                            <>
+                                <div className="w-10 h-10 rounded-xl bg-brand-surface-2 animate-pulse" />
+                                <div className="w-20 h-8 rounded-xl bg-brand-surface-2 animate-pulse" />
+                                <div className="w-9 h-9 rounded-xl bg-brand-surface-2 animate-pulse" />
+                                <div className="w-8 h-8 rounded-full bg-brand-surface-2 animate-pulse" />
+                            </>
+                        )}
+                        </div>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -254,21 +302,46 @@ export default function Header() {
                     </button>
                 </div>
 
-                {/* Category Navigation */}
-                <nav className="hidden lg:flex items-center gap-1 mt-2 -mx-2">
-                    {[
-                        { label: 'Trang chủ', href: '/' },
-                        { label: 'Danh mục', href: '/danh-muc' },
-                        { label: 'Sản phẩm nổi bật', href: '/san-pham-noi-bat' },
-                        { label: 'Gian hàng', href: '/gian-hang' },
-                        { label: 'Hướng dẫn', href: '/huong-dan' },
-                        { label: 'Hỗ trợ', href: '/ho-tro' },
-                    ].map((item, i) => {
+                {/* Category Navigation with Dropdowns */}
+                <nav className="header-nav-row hidden lg:flex items-center gap-1 mt-2 -mx-2">
+                    {navItems.map((item, i) => {
                         const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+                        const hasDropdown = item.dropdown && item.dropdown.length > 0;
+
                         return (
-                            <Link key={i} href={item.href} className={`px-3 py-1.5 text-sm rounded-lg transition-all ${isActive ? 'text-brand-primary font-semibold bg-brand-primary/10' : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2'}`}>
-                                {item.label}
-                            </Link>
+                            <div
+                                key={i}
+                                className="relative"
+                                onMouseEnter={() => hasDropdown && handleDropdownEnter(item.label)}
+                                onMouseLeave={handleDropdownLeave}
+                            >
+                                <Link
+                                    href={item.href}
+                                    className={`px-3 py-1.5 text-sm rounded-lg transition-all flex items-center gap-1 ${isActive ? 'text-brand-primary font-semibold bg-brand-primary/10' : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2'}`}
+                                >
+                                    {item.label}
+                                    {hasDropdown && <ChevronDown className={`w-3 h-3 transition-transform ${activeDropdown === item.label ? 'rotate-180' : ''}`} />}
+                                </Link>
+
+                                {/* Dropdown Menu */}
+                                {hasDropdown && activeDropdown === item.label && (
+                                    <div className="absolute left-0 top-full pt-1 z-50" style={{ minWidth: '220px' }}>
+                                        <div className="bg-brand-surface border border-brand-border rounded-xl shadow-card-hover py-1.5 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                                            {item.dropdown!.map((sub, j) => (
+                                                <Link
+                                                    key={j}
+                                                    href={sub.href}
+                                                    onClick={() => setActiveDropdown(null)}
+                                                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-colors"
+                                                >
+                                                    <span className="text-base">{sub.icon}</span>
+                                                    <span>{sub.label}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         );
                     })}
                 </nav>
@@ -278,22 +351,31 @@ export default function Header() {
             {mobileMenuOpen && (
                 <div className="lg:hidden bg-brand-surface border-t border-brand-border">
                     <div className="px-4 py-3 space-y-1">
-                        {[
-                            { label: 'Trang chủ', href: '/' },
-                            { label: 'Danh mục', href: '/danh-muc' },
-                            { label: 'Sản phẩm nổi bật', href: '/san-pham-noi-bat' },
-                            { label: 'Gian hàng', href: '/gian-hang' },
-                            { label: 'Hướng dẫn', href: '/huong-dan' },
-                            { label: 'Hỗ trợ', href: '/ho-tro' },
-                        ].map((item, i) => (
-                            <Link
-                                key={i}
-                                href={item.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="block py-2 text-brand-text-secondary hover:text-brand-text-primary"
-                            >
-                                {item.label}
-                            </Link>
+                        {navItems.map((item, i) => (
+                            <div key={i}>
+                                <Link
+                                    href={item.href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block py-2 text-brand-text-secondary hover:text-brand-text-primary font-medium"
+                                >
+                                    {item.label}
+                                </Link>
+                                {item.dropdown && (
+                                    <div className="pl-4 space-y-0.5">
+                                        {item.dropdown.map((sub, j) => (
+                                            <Link
+                                                key={j}
+                                                href={sub.href}
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="flex items-center gap-2 py-1.5 text-sm text-brand-text-muted hover:text-brand-text-primary"
+                                            >
+                                                <span>{sub.icon}</span>
+                                                <span>{sub.label}</span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>

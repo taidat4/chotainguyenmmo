@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
-import { getUserOrders, getUserTransactions, getUserBalance } from '@/lib/mock-order-store';
+import prisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
     try {
@@ -21,15 +21,32 @@ export async function GET(request: NextRequest) {
         const type = searchParams.get('type'); // 'orders' | 'transactions' | 'balance'
 
         if (type === 'transactions') {
-            return NextResponse.json({ success: true, data: getUserTransactions(userId) });
+            const wallet = await prisma.wallet.findUnique({ where: { userId } });
+            if (!wallet) return NextResponse.json({ success: true, data: [] });
+            const txns = await prisma.walletTransaction.findMany({
+                where: { walletId: wallet.id },
+                orderBy: { createdAt: 'desc' },
+                take: 50,
+            });
+            return NextResponse.json({ success: true, data: txns });
         }
 
         if (type === 'balance') {
-            return NextResponse.json({ success: true, data: { balance: getUserBalance(userId) } });
+            const wallet = await prisma.wallet.findUnique({ where: { userId } });
+            return NextResponse.json({ success: true, data: { balance: wallet?.availableBalance || 0 } });
         }
 
         // Default: return orders
-        return NextResponse.json({ success: true, data: getUserOrders(userId) });
+        const orders = await prisma.order.findMany({
+            where: { buyerId: userId },
+            orderBy: { createdAt: 'desc' },
+            take: 50,
+            include: {
+                items: { include: { product: { select: { name: true, slug: true } } } },
+                shop: { select: { name: true, slug: true } },
+            },
+        });
+        return NextResponse.json({ success: true, data: orders });
     } catch (error) {
         console.error('User data error:', error);
         return NextResponse.json({ success: false, message: 'Có lỗi xảy ra' }, { status: 500 });

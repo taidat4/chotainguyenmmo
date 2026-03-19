@@ -6,6 +6,7 @@ import {
     FileSpreadsheet, Plus, Trash2, CheckCircle2, Settings, RefreshCw,
     Link2, AlertTriangle, Package, ArrowRight, Eye, Save, Table2, Shield, HelpCircle
 } from 'lucide-react';
+import { useUI } from '@/components/shared/UIProvider';
 
 interface TabMapping {
     productId: string;
@@ -37,13 +38,7 @@ interface SheetConfig {
     stockSummary?: { productId: string; productName: string; sheetTabName: string; total: number; available: number; sold: number; doNotPull: number }[];
 }
 
-// Demo products list (would come from API in production)
-const demoProducts = [
-    { id: 'prod-1', name: 'Netflix Premium 1 Tháng' },
-    { id: 'prod-2', name: 'Spotify Premium 3 Tháng' },
-    { id: 'prod-3', name: 'Canva Pro Lifetime' },
-    { id: 'prod-4', name: 'ChatGPT Plus Key' },
-];
+
 
 export default function SellerSheetsPage() {
     const { user } = useAuth();
@@ -51,7 +46,9 @@ export default function SellerSheetsPage() {
     const [defaults, setDefaults] = useState<{ statusConfig: StatusConfig } | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [testing, setTesting] = useState(false);
     const [toast, setToast] = useState('');
+    const [sellerProducts, setSellerProducts] = useState<{id: string; name: string}[]>([]);
 
     // Form state
     const [sheetUrl, setSheetUrl] = useState('');
@@ -68,9 +65,23 @@ export default function SellerSheetsPage() {
     const [newStatusCol, setNewStatusCol] = useState('D');
     const [newStartRow, setNewStartRow] = useState(2);
 
-    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 4000); };
+    const { showToast: globalToast, showConfirm } = useUI();
 
-    useEffect(() => { loadConfig(); }, []);
+    const showToast = (msg: string) => { globalToast(msg.replace(/^[✅❌] */, ''), msg.startsWith('✅') ? 'success' : msg.startsWith('❌') ? 'error' : 'info'); };
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
+
+    useEffect(() => {
+        loadConfig();
+        // Load real products from seller API
+        (async () => {
+            try {
+                const res = await fetch('/api/v1/seller/products', { headers: { Authorization: `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) setSellerProducts(data.data.products.map((p: {id: string; name: string}) => ({ id: p.id, name: p.name })));
+            } catch { }
+        })();
+    }, []);
 
     const loadConfig = async () => {
         setLoading(true);
@@ -136,7 +147,7 @@ export default function SellerSheetsPage() {
             return;
         }
         try {
-            const product = demoProducts.find(p => p.id === newProductId);
+            const product = sellerProducts.find(p => p.id === newProductId);
             const res = await fetch('/api/v1/sheets', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -168,15 +179,44 @@ export default function SellerSheetsPage() {
     };
 
     const handleRemoveMapping = async (productId: string) => {
-        if (!confirm('Xóa liên kết này?')) return;
+        showConfirm({
+            title: 'Xóa liên kết',
+            message: 'Xóa liên kết này?',
+            confirmText: 'Xóa',
+            variant: 'danger',
+            onConfirm: async () => {
+                try {
+                    const res = await fetch(`/api/v1/sheets?sellerId=${user?.id}&productId=${productId}`, { method: 'DELETE' });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('✅ Đã xóa');
+                        loadConfig();
+                    }
+                } catch { showToast('❌ Lỗi'); }
+            }
+        });
+    };
+
+    const handleTestApi = async () => {
+        if (!sheetUrl.includes('docs.google.com/spreadsheets')) {
+            showToast('❌ Vui lòng nhập URL Google Sheet trước');
+            return;
+        }
+        setTesting(true);
         try {
-            const res = await fetch(`/api/v1/sheets?sellerId=${user?.id}&productId=${productId}`, { method: 'DELETE' });
+            const res = await fetch('/api/v1/sheets/test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ googleSheetUrl: sheetUrl }),
+            });
             const data = await res.json();
             if (data.success) {
-                showToast('✅ Đã xóa');
-                loadConfig();
+                showToast(`✅ Kết nối thành công! Tìm thấy ${data.data?.sheetCount || 0} sheet tabs`);
+            } else {
+                showToast(`❌ ${data.message}`);
             }
-        } catch { showToast('❌ Lỗi'); }
+        } catch { showToast('❌ Lỗi kết nối API'); }
+        setTesting(false);
     };
 
     if (loading) {
@@ -204,7 +244,6 @@ export default function SellerSheetsPage() {
                 )}
             </div>
 
-            {/* Step 1: Google Sheet URL */}
             <div className="card space-y-4">
                 <h3 className="text-sm font-semibold text-brand-text-primary flex items-center gap-2">
                     <Link2 className="w-4 h-4 text-brand-primary" /> Bước 1: Kết nối Google Sheet
@@ -214,9 +253,16 @@ export default function SellerSheetsPage() {
                     <input value={sheetUrl} onChange={e => setSheetUrl(e.target.value)}
                         placeholder="https://docs.google.com/spreadsheets/d/1abc.../edit" className="input-field w-full text-sm" />
                 </div>
+                <div className="flex gap-2">
+                    <button onClick={handleTestApi} disabled={testing || !sheetUrl}
+                        className="btn-secondary flex items-center gap-2 !py-2 text-xs disabled:opacity-50">
+                        {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Settings className="w-3.5 h-3.5" />}
+                        {testing ? 'Đang test...' : '🔌 Test API Connection'}
+                    </button>
+                </div>
                 <div className="bg-brand-info/5 border border-brand-info/20 rounded-xl p-3">
                     <p className="text-xs text-brand-text-secondary">
-                        <strong>📋 Hướng dẫn:</strong> Share Google Sheet với <code className="text-brand-primary font-medium bg-brand-primary/5 px-1 rounded">service@chotainguyen.iam.gserviceaccount.com</code> (quyền Viewer)
+                        <strong>📋 Hướng dẫn:</strong> Share Google Sheet với <code className="text-brand-primary font-medium bg-brand-primary/5 px-1 rounded">service@chotainguyen.iam.gserviceaccount.com</code> (quyền <strong>Người chỉnh sửa / Editor</strong>)
                     </p>
                 </div>
             </div>
@@ -299,7 +345,7 @@ export default function SellerSheetsPage() {
                                 <label className="text-xs text-brand-text-muted mb-1 block">Sản phẩm trên web *</label>
                                 <select value={newProductId} onChange={e => setNewProductId(e.target.value)} className="input-field w-full text-sm">
                                     <option value="">— Chọn sản phẩm —</option>
-                                    {demoProducts.map(p => (
+                                    {sellerProducts.map(p => (
                                         <option key={p.id} value={p.id}>{p.name}</option>
                                     ))}
                                 </select>
@@ -451,11 +497,7 @@ export default function SellerSheetsPage() {
                 </div>
             </div>
 
-            {toast && (
-                <div className="fixed bottom-6 right-6 z-50 bg-brand-surface border border-brand-border rounded-xl shadow-card-hover px-5 py-3 animate-slide-up">
-                    <span className="text-sm text-brand-text-primary font-medium">{toast}</span>
-                </div>
-            )}
+
         </div>
     );
 }

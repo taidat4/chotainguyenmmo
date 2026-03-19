@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { signToken } from '@/lib/auth';
-import { findMockUserByUsername, verifyMockPassword } from '@/lib/mock-auth';
+import { signToken, hashPassword } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
     try {
@@ -14,7 +14,19 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const user = findMockUserByUsername(username);
+        // Find user by username or email
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { username: username },
+                    { email: username },
+                ],
+            },
+            include: {
+                wallet: { select: { availableBalance: true } },
+            },
+        });
+
         if (!user) {
             return NextResponse.json(
                 { success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng', errorCode: 'INVALID_CREDENTIALS' },
@@ -22,10 +34,27 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (!verifyMockPassword(username, password)) {
+        // Verify password
+        const passwordHashInput = hashPassword(password);
+        if (passwordHashInput !== user.passwordHash) {
             return NextResponse.json(
                 { success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng', errorCode: 'INVALID_CREDENTIALS' },
                 { status: 401 }
+            );
+        }
+
+        // Check if banned
+        if (user.status === 'BANNED') {
+            return NextResponse.json(
+                { success: false, message: 'Tài khoản đã bị khóa. Liên hệ admin để được hỗ trợ.', errorCode: 'ACCOUNT_BANNED' },
+                { status: 403 }
+            );
+        }
+
+        if (user.status === 'SUSPENDED') {
+            return NextResponse.json(
+                { success: false, message: 'Tài khoản đang bị tạm khóa. Liên hệ admin.', errorCode: 'ACCOUNT_SUSPENDED' },
+                { status: 403 }
             );
         }
 
@@ -35,6 +64,12 @@ export async function POST(request: NextRequest) {
             email: user.email,
             role: user.role,
         });
+
+        // Update last login
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+        }).catch(() => {}); // Non-critical, don't fail login
 
         const response = NextResponse.json({
             success: true,
@@ -47,8 +82,8 @@ export async function POST(request: NextRequest) {
                     email: user.email,
                     fullName: user.fullName,
                     role: user.role,
-                    avatarUrl: null,
-                    walletBalance: user.walletBalance,
+                    avatarUrl: user.avatarUrl,
+                    walletBalance: user.wallet?.availableBalance || 0,
                 },
             },
         });

@@ -1,79 +1,120 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Eye, Ban, Users, UserCheck, UserX, PlusCircle, MinusCircle, History, Shield, X, Lock, Unlock, Trash2 } from 'lucide-react';
-
-const initialUsers: { id: number; name: string; username: string; email: string; role: string; status: string; balance: number; orders: number; joined: string; history: { type: string; amount: number; date: string; desc: string }[] }[] = [];
+import { useState, useEffect } from 'react';
+import { Search, Eye, Ban, Users, UserCheck, UserX, PlusCircle, MinusCircle, History, Shield, X, Lock, Unlock, Trash2, Loader2 } from 'lucide-react';
 
 type ModalType = 'balance' | 'history' | 'ban' | 'delete' | null;
 type BalanceAction = 'add' | 'subtract';
+interface UserItem { id: string; name: string; username: string; email: string; role: string; status: string; balance: number; orders: number; deposits: number; joined: string; }
 
 export default function AdminUsersPage() {
-    const [users, setUsers] = useState(initialUsers);
+    const [users, setUsers] = useState<UserItem[]>([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [modal, setModal] = useState<{ type: ModalType; userId: number | null }>({ type: null, userId: null });
+    const [modal, setModal] = useState<{ type: ModalType; userId: string | null }>({ type: null, userId: null });
     const [balanceAction, setBalanceAction] = useState<BalanceAction>('add');
     const [balanceAmount, setBalanceAmount] = useState('');
     const [balanceNote, setBalanceNote] = useState('');
     const [toast, setToast] = useState('');
+    const [actionLoading, setActionLoading] = useState(false);
 
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
+    const getAdminToken = () => {
+        const adminToken = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('token');
+        return adminToken || token || '';
+    };
+
+    const handleAuthError = (status: number, msg: string) => {
+        if (status === 401 || status === 403) {
+            showToast(`❌ ${msg} — Đang chuyển hướng xác thực lại...`);
+            sessionStorage.removeItem('admin_verified');
+            setTimeout(() => window.location.reload(), 1500);
+            return true;
+        }
+        return false;
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const token = getAdminToken();
+            console.log('[Admin] Fetching users, token exists:', !!token, 'length:', token.length);
+            const res = await fetch('/api/v1/admin/users', { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (data.success) {
+                setUsers(data.data);
+                console.log('[Admin] Loaded', data.data.length, 'users');
+            } else {
+                console.error('[Admin] Fetch users failed:', res.status, data.message);
+                handleAuthError(res.status, data.message);
+            }
+        } catch (err) {
+            console.error('[Admin] Fetch users error:', err);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => { fetchUsers(); }, []);
+
+    const apiAction = async (action: string, userId: string, extra?: any) => {
+        setActionLoading(true);
+        try {
+            const token = getAdminToken();
+            console.log('[Admin] Action:', action, 'userId:', userId, 'token exists:', !!token);
+            const res = await fetch('/api/v1/admin/users', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ userId, action, ...extra }),
+            });
+            const data = await res.json();
+            console.log('[Admin] Action response:', res.status, data);
+            if (data.success) {
+                showToast('✅ ' + data.message);
+                await fetchUsers();
+            } else {
+                if (!handleAuthError(res.status, data.message)) {
+                    showToast(`❌ [${res.status}] ${data.message}`);
+                }
+            }
+        } catch (err) {
+            console.error('[Admin] Action error:', err);
+            showToast('❌ Lỗi kết nối server');
+        }
+        setActionLoading(false);
+        setModal({ type: null, userId: null });
+    };
+
+    const handleBalanceChange = () => {
+        if (!balanceAmount || !modal.userId) return;
+        apiAction(balanceAction === 'add' ? 'add_balance' : 'subtract_balance', modal.userId, { amount: balanceAmount, note: balanceNote });
+        setBalanceAmount(''); setBalanceNote('');
+    };
+
     const filtered = users.filter(u => {
         const matchSearch = !searchTerm || u.name.toLowerCase().includes(searchTerm.toLowerCase()) || u.email.toLowerCase().includes(searchTerm.toLowerCase()) || u.username.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchStatus = statusFilter === 'all' || u.status === statusFilter;
+        const matchStatus = statusFilter === 'all' || u.status.toLowerCase() === statusFilter;
         return matchSearch && matchStatus;
     });
 
-    const handleBalanceChange = () => {
-        const amount = parseInt(balanceAmount);
-        if (!amount || !modal.userId) return;
-        setUsers(prev => prev.map(u => {
-            if (u.id === modal.userId) {
-                const newBalance = balanceAction === 'add' ? u.balance + amount : Math.max(0, u.balance - amount);
-                return { ...u, balance: newBalance };
-            }
-            return u;
-        }));
-        setModal({ type: null, userId: null });
-        setBalanceAmount('');
-        setBalanceNote('');
-        showToast(`✅ Đã ${balanceAction === 'add' ? 'cộng' : 'trừ'} ${amount.toLocaleString('vi-VN')}đ`);
-    };
-
-    const handleBan = (userId: number, action: 'suspend' | 'ban' | 'unban') => {
-        setUsers(prev => prev.map(u => {
-            if (u.id === userId) {
-                return { ...u, status: action === 'unban' ? 'active' : action === 'ban' ? 'banned' : 'suspended' };
-            }
-            return u;
-        }));
-        setModal({ type: null, userId: null });
-        showToast(action === 'unban' ? '✅ Đã mở khóa' : action === 'ban' ? '🚫 Đã ban vĩnh viễn' : '🔒 Đã tạm khóa');
-    };
-
-    const handleDelete = (userId: number) => {
-        setUsers(prev => prev.filter(u => u.id !== userId));
-        setModal({ type: null, userId: null });
-        showToast('🗑️ Đã xóa người dùng');
-    };
-
     const selectedUser = modal.userId ? users.find(u => u.id === modal.userId) : null;
+
+    if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-brand-primary" /></div>;
 
     return (
         <div className="space-y-6">
             <div>
                 <h1 className="text-xl font-bold text-brand-text-primary mb-1">Quản lý người dùng</h1>
-                <p className="text-sm text-brand-text-muted">Xem, tìm kiếm, cộng/trừ tiền, khóa tạm hoặc ban vĩnh viễn người dùng.</p>
+                <p className="text-sm text-brand-text-muted">Xem, tìm kiếm, cộng/trừ tiền, khóa tạm hoặc ban vĩnh viễn người dùng. Dữ liệu thời gian thực từ DB.</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
                     { label: 'Tổng users', value: users.length, icon: Users, color: 'text-brand-primary' },
-                    { label: 'Active', value: users.filter(u => u.status === 'active').length, icon: UserCheck, color: 'text-brand-success' },
-                    { label: 'Suspended', value: users.filter(u => u.status === 'suspended').length, icon: UserX, color: 'text-brand-warning' },
-                    { label: 'Banned', value: users.filter(u => u.status === 'banned').length, icon: Shield, color: 'text-brand-danger' },
+                    { label: 'Active', value: users.filter(u => u.status.toLowerCase() === 'active').length, icon: UserCheck, color: 'text-brand-success' },
+                    { label: 'Suspended', value: users.filter(u => u.status.toLowerCase() === 'suspended').length, icon: UserX, color: 'text-brand-warning' },
+                    { label: 'Banned', value: users.filter(u => u.status.toLowerCase() === 'banned').length, icon: Shield, color: 'text-brand-danger' },
                 ].map((s, i) => (
                     <div key={i} className="card !p-4">
                         <div className="flex items-center gap-2 mb-2">
@@ -85,7 +126,6 @@ export default function AdminUsersPage() {
                 ))}
             </div>
 
-            {/* Search & Filter */}
             <div className="card !p-4 flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
                     <Search className="w-4 h-4 text-brand-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
@@ -99,28 +139,36 @@ export default function AdminUsersPage() {
                 </select>
             </div>
 
-            {/* Table */}
             <div className="card !p-0 overflow-hidden">
                 <table className="w-full text-sm">
                     <thead><tr className="bg-brand-surface-2/50">
                         <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Người dùng</th>
                         <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Số dư</th>
                         <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Đơn hàng</th>
+                        <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Vai trò</th>
                         <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Trạng thái</th>
                         <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
                     </tr></thead>
                     <tbody>
-                        {filtered.map(u => (
+                        {filtered.length === 0 ? (
+                            <tr><td colSpan={6} className="text-center py-8 text-sm text-brand-text-muted">Không tìm thấy người dùng nào</td></tr>
+                        ) : filtered.map(u => (
                             <tr key={u.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30">
                                 <td className="py-3 px-4">
                                     <div className="text-sm font-medium text-brand-text-primary">{u.name}</div>
                                     <div className="text-xs text-brand-text-muted">@{u.username} · {u.email}</div>
+                                    <div className="text-[10px] text-brand-text-muted">Tham gia: {new Date(u.joined).toLocaleDateString('vi-VN')}</div>
                                 </td>
                                 <td className="py-3 px-4 text-right text-brand-text-primary font-semibold">{u.balance.toLocaleString('vi-VN')}đ</td>
                                 <td className="py-3 px-4 text-center text-brand-text-secondary">{u.orders}</td>
                                 <td className="py-3 px-4 text-center">
-                                    <span className={`badge text-[10px] ${u.status === 'active' ? 'badge-success' : u.status === 'suspended' ? 'badge-warning' : 'badge-danger'}`}>
-                                        {u.status === 'active' ? 'Active' : u.status === 'suspended' ? 'Tạm khóa' : 'Banned'}
+                                    <span className={`badge text-[10px] ${u.role === 'ADMIN' || u.role === 'SUPER_ADMIN' ? 'badge-danger' : u.role === 'SELLER' ? 'badge-info' : 'badge-default'}`}>
+                                        {u.role}
+                                    </span>
+                                </td>
+                                <td className="py-3 px-4 text-center">
+                                    <span className={`badge text-[10px] ${u.status.toLowerCase() === 'active' ? 'badge-success' : u.status.toLowerCase() === 'suspended' ? 'badge-warning' : u.status.toLowerCase() === 'banned' ? 'badge-danger' : 'badge-default'}`}>
+                                        {u.status}
                                     </span>
                                 </td>
                                 <td className="py-3 px-4">
@@ -128,15 +176,12 @@ export default function AdminUsersPage() {
                                         <button onClick={() => setModal({ type: 'balance', userId: u.id })} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-success hover:bg-brand-success/10 transition-colors" title="Cộng/Trừ tiền">
                                             <PlusCircle className="w-4 h-4" />
                                         </button>
-                                        <button onClick={() => setModal({ type: 'history', userId: u.id })} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-primary hover:bg-brand-primary/10 transition-colors" title="Lịch sử">
-                                            <History className="w-4 h-4" />
-                                        </button>
-                                        {u.status === 'active' ? (
+                                        {u.status.toLowerCase() === 'active' ? (
                                             <button onClick={() => setModal({ type: 'ban', userId: u.id })} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-colors" title="Khóa/Ban">
                                                 <Lock className="w-4 h-4" />
                                             </button>
                                         ) : (
-                                            <button onClick={() => handleBan(u.id, 'unban')} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-success hover:bg-brand-success/10 transition-colors" title="Mở khóa">
+                                            <button onClick={() => apiAction('unban', u.id)} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-success hover:bg-brand-success/10 transition-colors" title="Mở khóa">
                                                 <Unlock className="w-4 h-4" />
                                             </button>
                                         )}
@@ -172,42 +217,10 @@ export default function AdminUsersPage() {
                         <input type="text" value={balanceNote} onChange={e => setBalanceNote(e.target.value)} placeholder="Ghi chú (tùy chọn)..." className="input-field w-full text-sm mb-4" />
                         <div className="flex gap-3">
                             <button onClick={() => setModal({ type: null, userId: null })} className="btn-secondary flex-1 text-sm">Hủy</button>
-                            <button onClick={handleBalanceChange} className={`flex-1 py-2 rounded-xl text-sm font-medium text-white transition-all ${balanceAction === 'add' ? 'bg-brand-success hover:brightness-110' : 'bg-brand-danger hover:brightness-110'}`}>
-                                Xác nhận {balanceAction === 'add' ? 'cộng' : 'trừ'} tiền
+                            <button onClick={handleBalanceChange} disabled={actionLoading} className={`flex-1 py-2 rounded-xl text-sm font-medium text-white transition-all ${balanceAction === 'add' ? 'bg-brand-success hover:brightness-110' : 'bg-brand-danger hover:brightness-110'} disabled:opacity-50`}>
+                                {actionLoading ? 'Đang xử lý...' : `Xác nhận ${balanceAction === 'add' ? 'cộng' : 'trừ'} tiền`}
                             </button>
                         </div>
-                    </div>
-                </div>
-            )}
-
-            {/* History Modal */}
-            {modal.type === 'history' && selectedUser && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-brand-surface rounded-2xl p-6 w-[500px] shadow-card-hover border border-brand-border max-h-[80vh] overflow-y-auto">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-brand-text-primary">Lịch sử - {selectedUser.name}</h3>
-                            <button onClick={() => setModal({ type: null, userId: null })} className="p-1 rounded-lg hover:bg-brand-surface-2"><X className="w-4 h-4" /></button>
-                        </div>
-                        {selectedUser.history.length > 0 ? (
-                            <div className="space-y-3">
-                                {selectedUser.history.map((h, i) => (
-                                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-brand-surface-2/50">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${h.amount > 0 ? 'bg-brand-success/15' : 'bg-brand-danger/15'}`}>
-                                            {h.amount > 0 ? <PlusCircle className="w-4 h-4 text-brand-success" /> : <MinusCircle className="w-4 h-4 text-brand-danger" />}
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="text-sm text-brand-text-primary">{h.desc}</div>
-                                            <div className="text-xs text-brand-text-muted">{h.date}</div>
-                                        </div>
-                                        <div className={`text-sm font-semibold ${h.amount > 0 ? 'text-brand-success' : 'text-brand-danger'}`}>
-                                            {h.amount > 0 ? '+' : ''}{h.amount.toLocaleString('vi-VN')}đ
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-brand-text-muted text-center py-8">Chưa có lịch sử giao dịch</p>
-                        )}
                     </div>
                 </div>
             )}
@@ -222,14 +235,14 @@ export default function AdminUsersPage() {
                         </div>
                         <p className="text-sm text-brand-text-muted mb-4">Chọn hình thức xử lý cho <span className="font-semibold text-brand-text-primary">{selectedUser.name}</span>:</p>
                         <div className="space-y-3">
-                            <button onClick={() => handleBan(selectedUser.id, 'suspend')} className="w-full flex items-center gap-3 p-3 rounded-xl border border-brand-warning/30 bg-brand-warning/5 hover:bg-brand-warning/10 transition-colors">
+                            <button onClick={() => apiAction('suspend', selectedUser.id)} disabled={actionLoading} className="w-full flex items-center gap-3 p-3 rounded-xl border border-brand-warning/30 bg-brand-warning/5 hover:bg-brand-warning/10 transition-colors disabled:opacity-50">
                                 <Lock className="w-5 h-5 text-brand-warning" />
                                 <div className="text-left">
                                     <div className="text-sm font-medium text-brand-warning">Tạm khóa</div>
                                     <div className="text-xs text-brand-text-muted">Khóa tạm thời, có thể mở lại sau</div>
                                 </div>
                             </button>
-                            <button onClick={() => handleBan(selectedUser.id, 'ban')} className="w-full flex items-center gap-3 p-3 rounded-xl border border-brand-danger/30 bg-brand-danger/5 hover:bg-brand-danger/10 transition-colors">
+                            <button onClick={() => apiAction('ban', selectedUser.id)} disabled={actionLoading} className="w-full flex items-center gap-3 p-3 rounded-xl border border-brand-danger/30 bg-brand-danger/5 hover:bg-brand-danger/10 transition-colors disabled:opacity-50">
                                 <Ban className="w-5 h-5 text-brand-danger" />
                                 <div className="text-left">
                                     <div className="text-sm font-medium text-brand-danger">Ban vĩnh viễn</div>
@@ -242,7 +255,7 @@ export default function AdminUsersPage() {
                 </div>
             )}
 
-            {/* Delete Confirmation Modal */}
+            {/* Delete Modal */}
             {modal.type === 'delete' && selectedUser && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
                     <div className="bg-brand-surface rounded-2xl p-6 w-[420px] shadow-card-hover border border-brand-border">
@@ -258,7 +271,7 @@ export default function AdminUsersPage() {
                         <p className="text-xs text-brand-danger mb-4 text-center">⚠️ Hành động này không thể hoàn tác!</p>
                         <div className="flex gap-3">
                             <button onClick={() => setModal({ type: null, userId: null })} className="btn-secondary flex-1 text-sm">Hủy</button>
-                            <button onClick={() => handleDelete(selectedUser.id)} className="flex-1 py-2.5 bg-brand-danger hover:bg-brand-danger/90 text-white rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-1.5">
+                            <button onClick={() => apiAction('delete', selectedUser.id)} disabled={actionLoading} className="flex-1 py-2.5 bg-brand-danger hover:bg-brand-danger/90 text-white rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50">
                                 <Trash2 className="w-4 h-4" /> Xóa vĩnh viễn
                             </button>
                         </div>

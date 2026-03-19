@@ -3,23 +3,50 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { formatCurrency } from '@/lib/utils';
-import { adminDashboardData } from '@/lib/mock-data';
 import {
     Users, Store, DollarSign, ShoppingBag, AlertTriangle,
     ArrowDownCircle, ArrowUpCircle, ArrowRight, TrendingUp,
-    Package, Clock, CheckCircle, XCircle
+    Package, Clock, CheckCircle, XCircle, Loader2
 } from 'lucide-react';
 
+interface DashStats {
+    totalUsers: number;
+    totalShops: number;
+    totalOrders: number;
+    ordersToday: number;
+    totalRevenue: number;
+    totalOrderRevenue: number;
+    commissionRevenue: number;
+    sellerPaidOut: number;
+    pendingDeposits: number;
+    pendingWithdrawals: number;
+    openComplaints: number;
+    recentUsers: { name: string; username: string; date: string }[];
+    recentSellers: { name: string; owner: string; date: string }[];
+}
+
 export default function AdminDashboard() {
-    const d = adminDashboardData;
-    const [stats, setStats] = useState({ totalPlatformFees: 0, totalRevenue: 0, totalOrders: 0, commissionRate: 5, totalSellerEarnings: 0 });
+    const [stats, setStats] = useState<DashStats | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/v1/admin/settings')
-            .then(r => r.json())
-            .then(data => { if (data.success) setStats(data.data.stats); })
-            .catch(() => {});
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token') || '';
+        fetch('/api/v1/admin/stats', {
+            headers: { Authorization: `Bearer ${token}` },
+        }).then(r => r.json()).then(statsData => {
+            if (statsData.success) setStats(statsData.data);
+        }).catch(() => {}).finally(() => setLoading(false));
     }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+            </div>
+        );
+    }
+
+    const d = stats || { totalUsers: 0, totalShops: 0, totalOrders: 0, ordersToday: 0, totalRevenue: 0, totalOrderRevenue: 0, commissionRevenue: 0, sellerPaidOut: 0, pendingDeposits: 0, pendingWithdrawals: 0, openComplaints: 0, recentUsers: [], recentSellers: [] };
 
     return (
         <div className="space-y-6">
@@ -33,8 +60,8 @@ export default function AdminDashboard() {
                 {[
                     { icon: Users, label: 'Tổng người dùng', value: d.totalUsers.toLocaleString(), color: 'text-brand-primary', bg: 'bg-brand-primary/10' },
                     { icon: Store, label: 'Tổng gian hàng', value: d.totalShops.toString(), color: 'text-brand-secondary', bg: 'bg-brand-secondary/10' },
-                    { icon: DollarSign, label: 'Tổng doanh thu', value: formatCurrency(d.totalRevenue), color: 'text-brand-success', bg: 'bg-brand-success/10' },
-                    { icon: ShoppingBag, label: 'Đơn hàng hôm nay', value: d.ordersToday.toString(), color: 'text-brand-info', bg: 'bg-brand-info/10' },
+                    { icon: DollarSign, label: 'Tổng nạp', value: formatCurrency(d.totalRevenue), color: 'text-brand-success', bg: 'bg-brand-success/10' },
+                    { icon: TrendingUp, label: 'Tổng doanh thu web', value: formatCurrency(d.totalOrderRevenue), color: 'text-brand-danger', bg: 'bg-brand-danger/10' },
                 ].map((m, i) => (
                     <div key={i} className="card">
                         <div className="flex items-center justify-between mb-3">
@@ -51,15 +78,14 @@ export default function AdminDashboard() {
             {/* Cash Flow Overview */}
             <div className="card">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-semibold text-brand-text-primary">Dòng tiền tháng này</h3>
-                    <span className="text-xs text-brand-text-muted">Tháng 3, 2026</span>
+                    <h3 className="text-sm font-semibold text-brand-text-primary">Dòng tiền</h3>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                        { label: 'Tiền vào (Nạp)', value: '0đ', icon: ArrowDownCircle, color: 'text-brand-success', bg: 'bg-brand-success/10' },
-                        { label: 'Tiền ra (Rút)', value: '0đ', icon: ArrowUpCircle, color: 'text-brand-danger', bg: 'bg-brand-danger/10' },
-                        { label: 'Doanh thu ròng', value: formatCurrency(stats.totalRevenue), icon: TrendingUp, color: 'text-brand-primary', bg: 'bg-brand-primary/10' },
-                        { label: `Hoa hồng sàn (${stats.commissionRate}%)`, value: formatCurrency(stats.totalPlatformFees), icon: DollarSign, color: 'text-brand-info', bg: 'bg-brand-info/10' },
+                        { label: 'Tiền vào (Nạp)', value: formatCurrency(d.totalRevenue), icon: ArrowDownCircle, color: 'text-brand-success', bg: 'bg-brand-success/10' },
+                        { label: 'Hoa hồng sàn', value: formatCurrency(d.commissionRevenue), icon: DollarSign, color: 'text-brand-info', bg: 'bg-brand-info/10' },
+                        { label: 'Tổng đơn hàng', value: d.totalOrders.toString(), icon: Package, color: 'text-brand-primary', bg: 'bg-brand-primary/10' },
+                        { label: 'Seller nhận', value: formatCurrency(d.sellerPaidOut), icon: TrendingUp, color: 'text-brand-warning', bg: 'bg-brand-warning/10' },
                     ].map((item, i) => (
                         <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-brand-surface-2/50">
                             <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center shrink-0`}>
@@ -105,87 +131,39 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-6">
-                {/* Revenue Chart */}
-                <div className="lg:col-span-2 card">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-sm font-semibold text-brand-text-primary">Doanh thu 6 tháng gần đây</h3>
-                        <span className="flex items-center gap-1 text-xs text-brand-success">
-                            <TrendingUp className="w-3 h-3" /> +16.5%
-                        </span>
-                    </div>
-                    <div className="flex items-end gap-3 h-52">
-                        {d.revenueChart.map((item, i) => {
-                            const maxRev = Math.max(...d.revenueChart.map(r => r.revenue));
-                            const height = (item.revenue / maxRev) * 100;
-                            return (
-                                <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                                    <div className="text-[10px] text-brand-text-muted">{(item.revenue / 1000000).toFixed(0)}M</div>
-                                    <div className="w-full relative group cursor-pointer">
-                                        <div
-                                            className="w-full rounded-t-xl bg-gradient-to-t from-brand-primary/50 to-brand-primary hover:from-brand-primary/70 hover:to-brand-primary transition-all"
-                                            style={{ height: `${height * 1.8}px` }}
-                                        />
-                                    </div>
-                                    <div className="text-[10px] text-brand-text-muted font-medium">{item.month}</div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Quick Actions / Activity */}
-                <div className="card">
-                    <h3 className="text-sm font-semibold text-brand-text-primary mb-4">Hoạt động gần đây</h3>
-                    <div className="space-y-3">
-                        {([] as { icon: typeof CheckCircle; text: string; time: string; color: string }[]).map((activity, i) => (
-                            <div key={i} className="flex items-start gap-3 text-xs">
-                                <activity.icon className={`w-4 h-4 ${activity.color} shrink-0 mt-0.5`} />
-                                <div className="flex-1">
-                                    <div className="text-brand-text-secondary">{activity.text}</div>
-                                    <div className="text-brand-text-muted mt-0.5">{activity.time}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
             {/* Recent Items */}
             <div className="grid lg:grid-cols-2 gap-6">
-                {/* Pending Products */}
+                {/* Recent Users */}
                 <div className="card">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-semibold text-brand-text-primary">Sản phẩm chờ duyệt</h3>
-                        <Link href="/admin/san-pham" className="text-xs text-brand-primary hover:underline">Xem tất cả</Link>
+                        <h3 className="text-sm font-semibold text-brand-text-primary">Người dùng mới</h3>
+                        <Link href="/admin/nguoi-dung" className="text-xs text-brand-primary hover:underline">Xem tất cả</Link>
                     </div>
                     <div className="space-y-3">
-                        {([] as { name: string; shop: string; price: number }[]).map((product, i) => (
+                        {d.recentUsers.length > 0 ? d.recentUsers.map((u, i) => (
                             <div key={i} className="flex items-center gap-3 bg-brand-surface-2 rounded-xl p-3">
-                                <div className="w-9 h-9 rounded-lg bg-brand-warning/10 flex items-center justify-center shrink-0">
-                                    <Clock className="w-4 h-4 text-brand-warning" />
+                                <div className="w-9 h-9 rounded-lg bg-brand-primary/10 flex items-center justify-center shrink-0">
+                                    <Users className="w-4 h-4 text-brand-primary" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-medium text-brand-text-primary truncate">{product.name}</div>
-                                    <div className="text-xs text-brand-text-muted">{product.shop}</div>
-                                </div>
-                                <div className="flex gap-1.5 shrink-0">
-                                    <button className="px-2.5 py-1 rounded-lg bg-brand-success/10 text-brand-success text-xs font-medium hover:bg-brand-success/20 transition-all">Duyệt</button>
-                                    <button className="px-2.5 py-1 rounded-lg bg-brand-danger/10 text-brand-danger text-xs font-medium hover:bg-brand-danger/20 transition-all">Từ chối</button>
+                                    <div className="text-sm font-medium text-brand-text-primary truncate">{u.name}</div>
+                                    <div className="text-xs text-brand-text-muted">@{u.username} • {u.date}</div>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-xs text-brand-text-muted text-center py-4">Chưa có người dùng</p>
+                        )}
                     </div>
                 </div>
 
-                {/* New Sellers */}
+                {/* Pending Sellers */}
                 <div className="card">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-semibold text-brand-text-primary">Gian hàng mới đăng ký</h3>
+                        <h3 className="text-sm font-semibold text-brand-text-primary">Gian hàng chờ duyệt</h3>
                         <Link href="/admin/nguoi-ban" className="text-xs text-brand-primary hover:underline">Xem tất cả</Link>
                     </div>
                     <div className="space-y-3">
-                        {([] as { name: string; owner: string; date: string }[]).map((seller, i) => (
+                        {d.recentSellers.length > 0 ? d.recentSellers.map((seller, i) => (
                             <div key={i} className="flex items-center gap-3 bg-brand-surface-2 rounded-xl p-3">
                                 <div className="w-9 h-9 rounded-lg bg-brand-secondary/10 flex items-center justify-center shrink-0">
                                     <Store className="w-4 h-4 text-brand-secondary" />
@@ -199,7 +177,9 @@ export default function AdminDashboard() {
                                     <button className="px-2.5 py-1 rounded-lg bg-brand-surface-3 text-brand-text-muted text-xs font-medium hover:bg-brand-surface-2 transition-all">Chi tiết</button>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-xs text-brand-text-muted text-center py-4">Không có gian hàng chờ duyệt</p>
+                        )}
                     </div>
                 </div>
             </div>

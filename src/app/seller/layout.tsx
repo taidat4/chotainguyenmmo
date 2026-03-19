@@ -6,22 +6,23 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import {
     LayoutDashboard, Package, Database, ShoppingBag, AlertTriangle,
-    TrendingUp, Wallet, Settings, LogOut, ChevronLeft, Bell, Store, Menu, X, FileSpreadsheet, Clock
+    TrendingUp, Wallet, Settings, LogOut, ChevronLeft, Bell, Store, Menu, X, FileSpreadsheet, Clock, Megaphone, MessageSquare, FileText
 } from 'lucide-react';
 
 const sellerMenuItems = [
     { icon: LayoutDashboard, label: 'Tổng quan', href: '/seller' },
     { icon: Package, label: 'Sản phẩm', href: '/seller/san-pham' },
-    { icon: Database, label: 'Tồn kho', href: '/seller/ton-kho' },
-    { icon: FileSpreadsheet, label: 'Google Sheets', href: '/seller/google-sheets' },
     { icon: ShoppingBag, label: 'Đơn hàng', href: '/seller/don-hang' },
+    { icon: MessageSquare, label: 'Tin nhắn', href: '/seller/tin-nhan' },
     { icon: AlertTriangle, label: 'Khiếu nại', href: '/seller/khieu-nai' },
     { icon: TrendingUp, label: 'Doanh thu', href: '/seller/doanh-thu' },
+    { icon: FileText, label: 'Hóa đơn', href: '/seller/hoa-don' },
     { icon: Wallet, label: 'Rút tiền', href: '/seller/rut-tien' },
+    { icon: Megaphone, label: 'Quảng cáo', href: '/seller/quang-cao' },
     { icon: Settings, label: 'Cài đặt shop', href: '/seller/cai-dat' },
 ];
 
-function SidebarContent({ pathname, user, onClose, onLogout }: { pathname: string; user: { fullName: string; username: string } | null; onClose?: () => void; onLogout: () => void }) {
+function SidebarContent({ pathname, user, onClose, onLogout, unreadCount }: { pathname: string; user: { fullName: string; username: string } | null; onClose?: () => void; onLogout: () => void; unreadCount: number }) {
     return (
         <>
             <div className="p-5 border-b border-brand-border flex items-center justify-between">
@@ -54,20 +55,31 @@ function SidebarContent({ pathname, user, onClose, onLogout }: { pathname: strin
             <nav className="flex-1 p-3 overflow-y-auto">
                 <div className="space-y-1">
                     {sellerMenuItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive = pathname === item.href || (item.href !== '/seller' && pathname.startsWith(item.href));
+                        const isChat = item.href === '/seller/tin-nhan';
                         return (
                             <Link key={item.href} href={item.href} onClick={onClose}
                                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20' : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2'
                                     }`}>
                                 <item.icon className="w-5 h-5" />
-                                {item.label}
+                                <span className="flex-1">{item.label}</span>
+                                {isChat && unreadCount > 0 && (
+                                    <span className="min-w-[20px] h-[20px] rounded-full bg-brand-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}
                 </div>
             </nav>
-            <div className="p-3 border-t border-brand-border">
-                <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-brand-text-muted hover:text-brand-text-primary hover:bg-brand-surface-2 transition-all">
+            <div className="p-3 border-t border-brand-border space-y-2">
+                <div className="bg-brand-danger/5 border border-brand-danger/20 rounded-lg px-3 py-2">
+                    <p className="text-[10px] text-brand-danger leading-relaxed">
+                        ⛔ Tuyệt đối không lôi kéo khách ra ngoài sàn. Vi phạm = khóa vĩnh viễn shop + không rút được tiền.
+                    </p>
+                </div>
+                <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-brand-primary hover:text-white hover:bg-brand-primary transition-all">
                     <ChevronLeft className="w-4 h-4" /> Về trang chủ
                 </Link>
                 <button onClick={onLogout} className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-brand-danger hover:bg-brand-surface-2 transition-all w-full">
@@ -84,8 +96,30 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
     const { user, logout, isLoading } = useAuth();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [sellerStatus, setSellerStatus] = useState<'loading' | 'active' | 'pending' | 'none' | 'kyc_required'>('loading');
+    const [sellerRevenue, setSellerRevenue] = useState(0);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const handleLogout = () => { logout(); router.push('/dang-nhap'); };
+
+    // Fetch unread message count
+    useEffect(() => {
+        if (sellerStatus !== 'active') return;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
+        const fetchUnread = () => {
+            fetch('/api/v1/conversations', { headers: { Authorization: `Bearer ${token}` } })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success && d.data) {
+                        const total = d.data.reduce((sum: number, c: any) => sum + (c.unread || 0), 0);
+                        setUnreadCount(total);
+                    }
+                })
+                .catch(() => {});
+        };
+        fetchUnread();
+        const interval = setInterval(fetchUnread, 5000);
+        return () => clearInterval(interval);
+    }, [sellerStatus]);
 
     // Server-side verification of seller status
     useEffect(() => {
@@ -116,6 +150,16 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                 setSellerStatus(user.role === 'SELLER' ? 'active' : 'none');
             });
     }, [user, isLoading]);
+
+    // Fetch seller revenue
+    useEffect(() => {
+        if (sellerStatus !== 'active') return;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
+        fetch('/api/v1/seller/stats', { headers: { Authorization: `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(d => { if (d.success) setSellerRevenue(d.data.revenueMonth || 0); })
+            .catch(() => {});
+    }, [sellerStatus]);
 
     // Loading state
     if (isLoading || sellerStatus === 'loading') {
@@ -194,7 +238,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                     <p className="text-sm text-brand-text-muted">
                         Tạo gian hàng chỉ trong 1 phút — nhập tên shop và tài khoản ngân hàng, chờ admin duyệt!
                     </p>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         <Link href="/dang-ky-ban-hang" className="btn-primary w-full flex items-center justify-center gap-2">
                             <Store className="w-4 h-4" /> Đăng ký mở shop
                         </Link>
@@ -210,14 +254,14 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
     return (
         <div className="min-h-screen bg-brand-bg flex">
             <aside className="hidden lg:flex w-[270px] bg-brand-surface border-r border-brand-border flex-col shrink-0 sticky top-0 h-screen">
-                <SidebarContent pathname={pathname} user={user} onLogout={handleLogout} />
+                <SidebarContent pathname={pathname} user={user} onLogout={handleLogout} unreadCount={unreadCount} />
             </aside>
 
             {drawerOpen && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
                     <aside className="absolute left-0 top-0 h-full w-[280px] bg-brand-surface border-r border-brand-border flex flex-col shadow-card-hover">
-                        <SidebarContent pathname={pathname} user={user} onClose={() => setDrawerOpen(false)} onLogout={handleLogout} />
+                        <SidebarContent pathname={pathname} user={user} onClose={() => setDrawerOpen(false)} onLogout={handleLogout} unreadCount={unreadCount} />
                     </aside>
                 </div>
             )}
@@ -233,8 +277,8 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="bg-brand-surface-2 border border-brand-border rounded-xl px-3 py-1.5 text-sm">
-                                <span className="text-brand-text-muted">Số dư: </span>
-                                <span className="text-brand-success font-semibold">{(user?.walletBalance || 0).toLocaleString('vi-VN')}đ</span>
+                                <span className="text-brand-text-muted">Doanh thu: </span>
+                                <span className="text-brand-success font-semibold">{sellerRevenue.toLocaleString('vi-VN')}đ</span>
                             </div>
                             <button className="relative p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2">
                                 <Bell className="w-5 h-5" />
