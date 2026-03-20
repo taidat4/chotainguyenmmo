@@ -27,9 +27,7 @@ function SidebarContent({ pathname, user, onClose, onLogout, unreadCount }: { pa
         <>
             <div className="p-5 border-b border-brand-border flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">CT</span>
-                    </div>
+                    <img src="/logokhongnen.png" alt="ChoTaiNguyen" className="h-9 w-auto" />
                     <div>
                         <div className="text-base font-bold text-brand-text-primary">Seller Center</div>
                         <div className="text-[10px] text-brand-text-muted">ChoTaiNguyen</div>

@@ -55,9 +55,7 @@ function SidebarContent({ pathname, user, onClose, onLogout }: { pathname: strin
         <>
             <div className="p-5 border-b border-brand-border flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-danger to-brand-warning flex items-center justify-center">
-                        <Shield className="w-5 h-5 text-white" />
-                    </div>
+                    <img src="/logokhongnen.png" alt="ChoTaiNguyen" className="h-9 w-auto" />
                     <div>
                         <div className="text-base font-bold text-brand-text-primary">Admin Panel</div>
                         <div className="text-[10px] text-brand-text-muted">ChoTaiNguyen</div>

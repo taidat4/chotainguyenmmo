@@ -101,22 +101,13 @@ export default function AdminDashboard() {
             </div>
 
             {/* Alerts Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="card border-brand-danger/30 !bg-brand-danger/5">
                     <div className="flex items-center gap-3">
                         <AlertTriangle className="w-5 h-5 text-brand-danger" />
                         <div>
                             <div className="text-sm font-semibold text-brand-text-primary">{d.openComplaints} khiếu nại đang mở</div>
                             <Link href="/admin/khieu-nai" className="text-xs text-brand-danger hover:underline">Xem ngay →</Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="card border-brand-warning/30 !bg-brand-warning/5">
-                    <div className="flex items-center gap-3">
-                        <ArrowDownCircle className="w-5 h-5 text-brand-warning" />
-                        <div>
-                            <div className="text-sm font-semibold text-brand-text-primary">{d.pendingDeposits} yêu cầu nạp chờ duyệt</div>
-                            <Link href="/admin/nap-tien" className="text-xs text-brand-warning hover:underline">Xem ngay →</Link>
                         </div>
                     </div>
                 </div>

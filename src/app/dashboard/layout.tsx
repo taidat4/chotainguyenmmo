@@ -40,14 +40,7 @@ function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string;
             {/* Brand */}
             <div className="p-5 border-b border-brand-border flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center shadow-md">
-                        <svg viewBox="0 0 32 32" fill="none" className="w-6 h-6">
-                            <path d="M8 6L16 2L24 6V18L16 22L8 18V6Z" fill="white" fillOpacity="0.9" />
-                            <path d="M16 2L24 6V18L16 22V10L8 6L16 2Z" fill="white" fillOpacity="0.7" />
-                            <path d="M12 12L16 10L20 12V18L16 20L12 18V12Z" fill="rgba(59,130,246,0.6)" />
-                            <circle cx="16" cy="15" r="2.5" fill="white" />
-                        </svg>
-                    </div>
+                    <img src="/logokhongnen.png" alt="ChoTaiNguyen" className="h-9 w-auto" />
                     <div>
                         <div className="text-base font-bold text-brand-text-primary">ChoTaiNguyen</div>
                         <div className="text-[10px] text-brand-text-muted">Bảng điều khiển</div>
@@ -206,12 +199,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <Menu className="w-5 h-5" />
                             </button>
                             <Link href="/" className="lg:hidden flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                                    <svg viewBox="0 0 32 32" fill="none" className="w-4 h-4">
-                                        <path d="M8 6L16 2L24 6V18L16 22L8 18V6Z" fill="white" fillOpacity="0.9" />
-                                        <circle cx="16" cy="15" r="2.5" fill="white" />
-                                    </svg>
-                                </div>
+                                <img src="/logokhongnen.png" alt="ChoTaiNguyen" className="h-7 w-auto" />
                                 <span className="text-sm font-bold text-brand-text-primary">ChoTaiNguyen</span>
                             </Link>
                         </div>
