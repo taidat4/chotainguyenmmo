@@ -267,17 +267,18 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
             )}
 
             <div className="flex-1 min-w-0">
-                <header className="sticky top-0 z-30 bg-brand-bg/95 backdrop-blur-xl border-b border-brand-border px-6 py-3">
+                <header className="sticky top-0 z-30 bg-brand-bg/95 backdrop-blur-xl border-b border-brand-border px-4 md:px-6 py-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <button onClick={() => setDrawerOpen(true)} className="lg:hidden p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2 transition-all">
                                 <Menu className="w-5 h-5" />
                             </button>
                             <h2 className="text-lg font-semibold text-brand-text-primary hidden lg:block">Bảng điều khiển người bán</h2>
+                            <span className="text-sm font-semibold text-brand-text-primary lg:hidden">Seller</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <div className="bg-brand-surface-2 border border-brand-border rounded-xl px-3 py-1.5 text-sm">
-                                <span className="text-brand-text-muted">Doanh thu: </span>
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <div className="bg-brand-surface-2 border border-brand-border rounded-xl px-2 md:px-3 py-1.5 text-xs md:text-sm">
+                                <span className="text-brand-text-muted hidden md:inline">Doanh thu: </span>
                                 <span className="text-brand-success font-semibold">{sellerRevenue.toLocaleString('vi-VN')}đ</span>
                             </div>
                             <button className="relative p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2">
@@ -287,7 +288,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                         </div>
                     </div>
                 </header>
-                <main className="p-6">{children}</main>
+                <main className="p-4 md:p-6">{children}</main>
             </div>
         </div>
     );

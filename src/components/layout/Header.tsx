@@ -132,11 +132,11 @@ export default function Header() {
                 <div className="header-main-row flex items-center gap-4">
                     {/* Logo */}
                     <Link href="/" className="flex items-center shrink-0">
-                        <img src="/logokhongnen.png" alt="ChoTaiNguyen" style={{ height: '100px', width: 'auto' }} />
+                        <img src="/logokhongnen.png" alt="ChoTaiNguyen" className="h-[100px] w-auto max-sm:h-[48px]" />
                     </Link>
 
-                    {/* Search */}
-                    <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto relative">
+                    {/* Search — hidden on mobile, shown on md+ */}
+                    <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-auto relative hidden md:block">
                         <div className={`flex items-center bg-brand-surface-2 border rounded-xl transition-all duration-200 ${searchFocused ? 'border-brand-primary ring-1 ring-brand-primary/30' : 'border-brand-border'}`}>
                             <Search className="w-4 h-4 text-brand-text-muted ml-4" />
                             <input
@@ -153,6 +153,26 @@ export default function Header() {
                             </button>
                         </div>
                     </form>
+
+                    {/* Mobile Quick Actions — visible on small screens only */}
+                    <div className="flex items-center gap-1 md:hidden ml-auto">
+                        {!isLoading && user ? (
+                            <>
+                                <Link href="/dashboard/tin-nhan" className="relative p-2 rounded-xl text-brand-primary" title="Tin nhắn">
+                                    <MessageSquare className="w-5 h-5" />
+                                    <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] bg-brand-danger text-white text-[8px] font-bold rounded-full flex items-center justify-center">3</span>
+                                </Link>
+                                <Link href="/dashboard/nap-tien" className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-bold bg-brand-primary/10 text-brand-primary" title="Ví tiền">
+                                    <Wallet className="w-3.5 h-3.5" />
+                                    <span>{(user?.walletBalance || 0).toLocaleString('vi-VN')}đ</span>
+                                </Link>
+                            </>
+                        ) : !isLoading ? (
+                            <Link href="/dang-nhap" className="btn-primary !px-3 !py-1.5 text-xs flex items-center gap-1">
+                                <LogIn className="w-3.5 h-3.5" /> Đăng nhập
+                            </Link>
+                        ) : null}
+                    </div>
 
                     {/* Desktop Actions */}
                     <div className="header-actions hidden lg:flex items-center gap-1">
@@ -301,6 +321,25 @@ export default function Header() {
                         {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                     </button>
                 </div>
+
+                {/* Mobile Search Row — visible on small screens only */}
+                <form onSubmit={handleSearch} className="md:hidden mt-2 px-0">
+                    <div className={`flex items-center bg-brand-surface-2 border rounded-xl transition-all duration-200 ${searchFocused ? 'border-brand-primary ring-1 ring-brand-primary/30' : 'border-brand-border'}`}>
+                        <Search className="w-4 h-4 text-brand-text-muted ml-3" />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Tìm kiếm sản phẩm..."
+                            className="flex-1 bg-transparent border-none outline-none px-2 py-2 text-sm text-brand-text-primary placeholder:text-brand-text-muted"
+                            onFocus={() => setSearchFocused(true)}
+                            onBlur={() => setSearchFocused(false)}
+                        />
+                        <button type="submit" className="bg-brand-primary text-white text-xs font-medium px-3 py-1 rounded-lg mr-1 hover:brightness-110 transition-all">
+                            Tìm
+                        </button>
+                    </div>
+                </form>
 
                 {/* Category Navigation with Dropdowns */}
                 <nav className="header-nav-row hidden lg:flex items-center gap-1 mt-2 -mx-2">

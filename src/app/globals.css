@@ -175,3 +175,222 @@
     overflow: hidden;
   }
 }
+
+/* ============================================================
+   MOBILE-ONLY STYLES — phones ≤767px
+   iPad (768px+) and desktop are UNTOUCHED
+   ============================================================ */
+@media (max-width: 767px) {
+  /* ── Header ── */
+  .header-main-row {
+    height: auto !important;
+    min-height: 48px;
+    gap: 8px !important;
+    flex-wrap: wrap;
+  }
+
+  /* ── Global overflow protection ── */
+  body {
+    overflow-x: hidden;
+  }
+
+  main {
+    overflow-x: hidden;
+  }
+
+  /* ── Container padding ── */
+  .max-w-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* ── Dashboard & Seller layout padding ── */
+  main.p-6,
+  main > .p-6 {
+    padding: 12px !important;
+  }
+
+  /* Reduce all p-6 containers on mobile */
+  .p-6 {
+    padding: 12px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .card h1,
+  .card h2,
+  .card h3 {
+    font-size: 0.875rem;
+  }
+
+  /* ── Stat metric grids ── */
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 .card {
+    padding: 10px !important;
+  }
+
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 .text-2xl {
+    font-size: 1.125rem;
+  }
+
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 .w-9 {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* ── Product grids — force 2 columns ── */
+  .grid.grid-cols-2.sm\:grid-cols-3.lg\:grid-cols-4,
+  .grid.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4,
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3.xl\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* ── Product Card compact on phone ── */
+  .group.bg-brand-surface .p-4 {
+    padding: 10px !important;
+  }
+
+  .group.bg-brand-surface .h-40 {
+    height: 120px;
+  }
+
+  .group.bg-brand-surface .text-lg {
+    font-size: 0.875rem;
+  }
+
+  /* ── Tables — horizontal scroll ── */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  table thead,
+  table tbody,
+  table tr {
+    display: table;
+    width: 100%;
+    table-layout: auto;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-success {
+    padding: 10px 16px !important;
+    font-size: 0.813rem !important;
+  }
+
+  /* ── Section padding ── */
+  .section-padding {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  /* ── Hero Section ── */
+  .text-3xl {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .text-4xl,
+  .text-5xl {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* ── Footer ── */
+  footer .grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* ── Dashboard tab bar ── */
+  .flex.gap-1.overflow-x-auto {
+    gap: 4px;
+  }
+
+  .flex.gap-1.overflow-x-auto a {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* ── Sidebar layouts: seller header bar ── */
+  header .flex.items-center.justify-between {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  header .bg-brand-surface-2.border.border-brand-border.rounded-xl {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+
+  /* ── Modal / dropdown overflow ── */
+  .absolute.right-0.top-full {
+    max-width: calc(100vw - 16px);
+    right: -8px;
+  }
+
+  /* ── Announcement bar — smaller text ── */
+  .bg-gradient-to-r.from-brand-primary\/10 .text-xs {
+    font-size: 0.625rem;
+  }
+
+  /* ── Mobile menu styles ── */
+  .lg\:hidden.bg-brand-surface {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  /* ── Chat messages area ── */
+  .space-y-6 {
+    gap: 12px;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 12px;
+  }
+
+  /* ── Grid layout for dashboard 3-col ── */
+  .grid.lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .lg\:col-span-2 {
+    grid-column: span 1 !important;
+  }
+
+  /* ── Input fields ── */
+  .input-field {
+    padding: 10px 12px !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* ── Announcement popup width ── */
+  .fixed.inset-0 .max-w-md,
+  .fixed.inset-0 .max-w-lg {
+    max-width: calc(100vw - 24px) !important;
+    margin: 0 12px;
+  }
+}
+
+/* ── Scrollbar hide utility (used in tabs/categories) ── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
