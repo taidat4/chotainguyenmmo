@@ -59,10 +59,11 @@ export async function POST(request: NextRequest) {
         const orderCode = generateOrderCode();
         const isAutoDelivery = product.deliveryType === 'AUTO';
 
-        // Pre-fetch wallets OUTSIDE transaction
-        const [buyerWallet, sellerWallet] = await Promise.all([
+        // Pre-fetch wallets + buyer info OUTSIDE transaction
+        const [buyerWallet, sellerWallet, buyerInfo] = await Promise.all([
             prisma.wallet.findUnique({ where: { userId: user.userId } }),
             prisma.wallet.findUnique({ where: { userId: product.shop.ownerId } }),
+            prisma.user.findUnique({ where: { id: user.userId }, select: { fullName: true, username: true, email: true } }),
         ]);
 
         if (!buyerWallet || buyerWallet.availableBalance < totalAmount) {
@@ -173,6 +174,35 @@ export async function POST(request: NextRequest) {
                 );
             }
             await Promise.all(parallelOps);
+
+            // 6. Auto-generate invoice
+            const invoiceNumber = `HD-${new Date().getFullYear().toString().slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+            const vatRate = 10;
+            const invoiceSubtotal = Math.round(totalAmount / (1 + vatRate / 100));
+            const vatAmount = totalAmount - invoiceSubtotal;
+
+            await tx.invoice.create({
+                data: {
+                    invoiceNumber,
+                    orderId: order.id,
+                    orderCode: order.orderCode,
+                    buyerId: user.userId,
+                    buyerName: buyerInfo?.fullName || buyerInfo?.username || 'Khách hàng',
+                    buyerEmail: buyerInfo?.email,
+                    sellerName: product.shop.name,
+                    subtotal: invoiceSubtotal,
+                    vatRate,
+                    vatAmount,
+                    feeAmount,
+                    totalAmount,
+                    items: JSON.stringify([{
+                        name: product.name + (selectedVariantName ? ` (${selectedVariantName})` : ''),
+                        quantity,
+                        unitPrice,
+                        total: totalAmount,
+                    }]),
+                },
+            });
 
             return { orderCode: order.orderCode, status: order.status, newBalance: updatedBuyerWallet.availableBalance };
         }, { maxWait: 10000, timeout: 15000 });

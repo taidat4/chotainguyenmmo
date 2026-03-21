@@ -320,6 +320,34 @@ model OrderItem {
   @@index([productId])
 }
 
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  orderId       String
+  orderCode     String
+  buyerId       String
+  buyerName     String
+  buyerEmail    String?
+  sellerName    String
+  subtotal      Int
+  vatRate       Int      @default(10)
+  vatAmount     Int      @default(0)
+  feeAmount     Int      @default(0)
+  totalAmount   Int
+  items         String   // JSON array of line items
+  status        String   @default("issued")
+  issuedAt      DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  order         Order    @relation(fields: [orderId], references: [id])
+  user          User     @relation(fields: [buyerId], references: [id])
+
+  @@index([orderId])
+  @@index([buyerId])
+  @@index([orderCode])
+  @@index([issuedAt])
+}
+
 model Delivery {
   id        String         @id @default(cuid())
   orderId   String
