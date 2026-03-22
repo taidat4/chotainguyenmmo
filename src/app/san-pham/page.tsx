@@ -5,11 +5,13 @@ import { Suspense, useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/shared/ProductCard';
+import { useI18n } from '@/lib/i18n';
 import type { Product } from '@/lib/mock-data';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
 function SearchResults() {
     const searchParams = useSearchParams();
+    const { t } = useI18n();
     const query = searchParams.get('q') || '';
     const categorySlug = searchParams.get('category') || '';
 
@@ -72,11 +74,11 @@ function SearchResults() {
     }, [query, categorySlug, sort]);
 
     const sortOptions = [
-        { key: 'rating', label: 'Phổ biến' },
-        { key: 'newest', label: 'Mới nhất' },
-        { key: 'price_asc', label: 'Giá thấp' },
-        { key: 'price_desc', label: 'Giá cao' },
-        { key: 'bestselling', label: 'Bán chạy' },
+        { key: 'rating', label: t('searchPopular') },
+        { key: 'newest', label: t('searchNewest') },
+        { key: 'price_asc', label: t('searchPriceLow') },
+        { key: 'price_desc', label: t('searchPriceHigh') },
+        { key: 'bestselling', label: t('searchBestselling') },
     ];
 
     return (
@@ -89,11 +91,11 @@ function SearchResults() {
                         <div className="flex items-center gap-3 mb-2">
                             <Search className="w-6 h-6 text-brand-primary" />
                             <h1 className="text-2xl font-bold text-brand-text-primary">
-                                {query ? `Kết quả tìm kiếm: "${query}"` : 'Tất cả sản phẩm'}
+                                {query ? `${t('searchResults')}: "${query}"` : t('searchAllProducts')}
                             </h1>
                         </div>
                         <p className="text-sm text-brand-text-muted">
-                            Tìm thấy <span className="font-semibold text-brand-primary">{total}</span> sản phẩm
+                            {t('searchFound')} <span className="font-semibold text-brand-primary">{total}</span> {t('searchProductsUnit')}
                         </p>
                     </div>
 
@@ -101,7 +103,7 @@ function SearchResults() {
                     <div className="flex items-center gap-3 mb-6 flex-wrap">
                         <div className="flex items-center gap-2 text-sm text-brand-text-muted">
                             <SlidersHorizontal className="w-4 h-4" />
-                            <span>Sắp xếp:</span>
+                            <span>{t('searchSort')}:</span>
                         </div>
                         {sortOptions.map((opt) => (
                             <button
@@ -132,9 +134,9 @@ function SearchResults() {
                     ) : (
                         <div className="text-center py-20">
                             <Search className="w-16 h-16 text-brand-text-muted/30 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-brand-text-primary mb-2">Không tìm thấy sản phẩm</h3>
+                            <h3 className="text-lg font-semibold text-brand-text-primary mb-2">{t('searchNoResults')}</h3>
                             <p className="text-sm text-brand-text-muted">
-                                Thử tìm kiếm với từ khóa khác hoặc <a href="/san-pham" className="text-brand-primary hover:underline">xem tất cả sản phẩm</a>.
+                                {t('searchNoResultsDesc')} <a href="/san-pham" className="text-brand-primary hover:underline">{t('searchViewAll')}</a>.
                             </p>
                         </div>
                     )}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { User, Mail, Lock, AtSign, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
@@ -11,6 +12,7 @@ import { User, Mail, Lock, AtSign, AlertCircle, CheckCircle2, Loader2 } from 'lu
 export default function RegisterPage() {
     const router = useRouter();
     const { login } = useAuth();
+    const { t } = useI18n();
     const [agreed, setAgreed] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -35,27 +37,27 @@ export default function RegisterPage() {
         setSuccess('');
 
         if (!agreed) {
-            setError('Bạn phải đồng ý với điều khoản sử dụng để đăng ký tài khoản.');
+            setError(t('regTermsError'));
             return;
         }
 
         if (!form.fullName || !form.username || !form.email || !form.password) {
-            setError('Vui lòng điền đầy đủ thông tin.');
+            setError(t('regFieldsError'));
             return;
         }
 
         if (!/^[a-zA-Z0-9_.]{3,30}$/.test(form.username)) {
-            setError('Tên đăng nhập chỉ chứa chữ, số, dấu chấm và gạch dưới (3–30 ký tự).');
+            setError(t('regUsernameError'));
             return;
         }
 
         if (form.password.length < 8) {
-            setError('Mật khẩu phải có ít nhất 8 ký tự.');
+            setError(t('regPasswordLengthError'));
             return;
         }
 
         if (form.password !== form.confirmPassword) {
-            setError('Mật khẩu xác nhận không khớp.');
+            setError(t('regPasswordMatchError'));
             return;
         }
 
@@ -77,22 +79,21 @@ export default function RegisterPage() {
             const data = await res.json();
 
             if (!res.ok || !data.success) {
-                setError(data.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+                setError(data.message || t('regFailed'));
                 setLoading(false);
                 return;
             }
 
-            // Save to auth context
             if (data.data?.token) {
                 login(data.data.token, data.data.user);
             }
 
-            setSuccess('🎉 Tạo tài khoản thành công! Đang chuyển hướng...');
+            setSuccess(t('regSuccess'));
             setTimeout(() => {
                 router.push('/');
             }, 1500);
         } catch {
-            setError('Không thể kết nối đến server. Vui lòng kiểm tra lại.');
+            setError(t('regConnectError'));
             setLoading(false);
         }
     };
@@ -110,9 +111,9 @@ export default function RegisterPage() {
                             <span className="text-lg font-bold text-brand-text-primary">ChoTaiNguyen</span>
                         </div>
 
-                        <h1 className="text-xl font-bold text-brand-text-primary mb-2 text-center">Tạo tài khoản mới</h1>
+                        <h1 className="text-xl font-bold text-brand-text-primary mb-2 text-center">{t('regTitle')}</h1>
                         <p className="text-sm text-brand-text-secondary mb-8 text-center">
-                            Bắt đầu sử dụng ChoTaiNguyen để tìm kiếm, mua bán và quản lý tài nguyên số trên một nền tảng duy nhất.
+                            {t('regDesc')}
                         </p>
 
                         {error && (
@@ -131,41 +132,41 @@ export default function RegisterPage() {
 
                         <form className="space-y-5" onSubmit={handleSubmit}>
                             <div>
-                                <label className="block text-sm font-medium text-brand-text-primary mb-2">Họ và tên</label>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('regFullName')}</label>
                                 <div className="relative">
                                     <User className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                    <input type="text" name="fullName" value={form.fullName} onChange={handleChange} placeholder="Nhập họ và tên" className="input-field !pl-11" required />
+                                    <input type="text" name="fullName" value={form.fullName} onChange={handleChange} placeholder={t('regFullNamePlaceholder')} className="input-field !pl-11" required />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-brand-text-primary mb-2">
-                                    Tên đăng nhập <span className="text-brand-danger">*</span>
+                                    {t('regUsername')} <span className="text-brand-danger">*</span>
                                 </label>
                                 <div className="relative">
                                     <AtSign className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                    <input type="text" name="username" value={form.username} onChange={handleChange} placeholder="Nhập tên đăng nhập (VD: nguyenvana)" className="input-field !pl-11" required minLength={3} maxLength={30} />
+                                    <input type="text" name="username" value={form.username} onChange={handleChange} placeholder={t('regUsernamePlaceholder')} className="input-field !pl-11" required minLength={3} maxLength={30} />
                                 </div>
-                                <p className="text-xs text-brand-text-muted mt-1.5">Chỉ chứa chữ cái, số, dấu chấm (.) và dấu gạch dưới (_). Dùng để đăng nhập.</p>
+                                <p className="text-xs text-brand-text-muted mt-1.5">{t('regUsernameHint')}</p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-brand-text-primary mb-2">Email</label>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('regEmail')}</label>
                                 <div className="relative">
                                     <Mail className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                    <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Nhập email của bạn" className="input-field !pl-11" required />
+                                    <input type="email" name="email" value={form.email} onChange={handleChange} placeholder={t('regEmailPlaceholder')} className="input-field !pl-11" required />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-brand-text-primary mb-2">Mật khẩu</label>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('regPassword')}</label>
                                 <div className="relative">
                                     <Lock className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                    <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)" className="input-field !pl-11" required minLength={8} />
+                                    <input type="password" name="password" value={form.password} onChange={handleChange} placeholder={t('regPasswordPlaceholder')} className="input-field !pl-11" required minLength={8} />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-brand-text-primary mb-2">Xác nhận mật khẩu</label>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('regConfirmPassword')}</label>
                                 <div className="relative">
                                     <Lock className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                    <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Nhập lại mật khẩu" className="input-field !pl-11" required />
+                                    <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder={t('regConfirmPlaceholder')} className="input-field !pl-11" required />
                                 </div>
                             </div>
 
@@ -179,10 +180,11 @@ export default function RegisterPage() {
                                         className="rounded border-brand-border bg-brand-surface mt-0.5 w-4 h-4 accent-brand-primary shrink-0"
                                     />
                                     <span>
-                                        Tôi đã đọc và đồng ý với{' '}
-                                        <Link href="/chinh-sach" className="text-brand-primary hover:underline font-medium">Điều khoản sử dụng</Link>,{' '}
-                                        <Link href="/chinh-sach" className="text-brand-primary hover:underline font-medium">Chính sách giao dịch</Link> và{' '}
-                                        <Link href="/chinh-sach" className="text-brand-primary hover:underline font-medium">Chính sách bảo mật</Link> của ChoTaiNguyen.
+                                        {t('regAgreeTerms')}{' '}
+                                        <Link href="/chinh-sach" className="text-brand-primary hover:underline font-medium">{t('regTermsOfUse')}</Link>,{' '}
+                                        <Link href="/chinh-sach" className="text-brand-primary hover:underline font-medium">{t('regTransactionPolicy')}</Link>{' & '}
+                                        <Link href="/chinh-sach" className="text-brand-primary hover:underline font-medium">{t('regPrivacyPolicy')}</Link>{' '}
+                                        {t('regOfPlatform')}
                                     </span>
                                 </label>
                                 <label className="flex items-start gap-2.5 text-sm text-brand-text-secondary cursor-pointer">
@@ -192,7 +194,7 @@ export default function RegisterPage() {
                                         className="rounded border-brand-border bg-brand-surface mt-0.5 w-4 h-4 accent-brand-primary shrink-0"
                                     />
                                     <span>
-                                        Tôi xác nhận mọi thông tin tôi cung cấp là đúng sự thật và tôi chịu trách nhiệm đối với hoạt động sử dụng tài khoản của mình.
+                                        {t('regConfirmInfo')}
                                     </span>
                                 </label>
                             </div>
@@ -203,14 +205,14 @@ export default function RegisterPage() {
                                 className={`btn-primary w-full !py-3.5 flex items-center justify-center gap-2 ${(!agreed || loading) ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                                {loading ? 'Đang xử lý...' : 'Đăng ký'}
+                                {loading ? t('regProcessing') : t('regSubmit')}
                             </button>
                         </form>
 
                         <p className="text-center text-sm text-brand-text-muted mt-6">
-                            Đã có tài khoản?{' '}
+                            {t('regHasAccount')}{' '}
                             <Link href="/dang-nhap" className="text-brand-primary font-medium hover:underline">
-                                Đăng nhập
+                                {t('regLoginLink')}
                             </Link>
                         </p>
                     </div>

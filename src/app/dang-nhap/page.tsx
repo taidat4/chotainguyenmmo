@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Lock, ArrowRight, Eye, EyeOff, AtSign, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
@@ -11,6 +12,7 @@ import { Lock, ArrowRight, Eye, EyeOff, AtSign, AlertCircle, CheckCircle2, Loade
 export default function LoginPage() {
     const router = useRouter();
     const { login } = useAuth();
+    const { t } = useI18n();
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -28,7 +30,7 @@ export default function LoginPage() {
         setSuccess('');
 
         if (!form.username || !form.password) {
-            setError('Vui lòng nhập tên đăng nhập và mật khẩu.');
+            setError(t('loginFieldsRequired'));
             return;
         }
 
@@ -44,23 +46,19 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (!res.ok || !data.success) {
-                setError(data.message || 'Đăng nhập thất bại.');
+                setError(data.message || t('loginFailed'));
                 setLoading(false);
                 return;
             }
 
-            // Save to auth context (updates Header immediately)
             if (data.data?.token) {
                 login(data.data.token, data.data.user);
             }
 
-            setSuccess('✅ Đăng nhập thành công! Đang chuyển hướng...');
+            setSuccess(t('loginSuccess'));
 
-            // Check for redirect param first
             const params = new URLSearchParams(window.location.search);
             const redirectTo = params.get('redirect');
-
-            // Redirect based on role or redirect param
             const role = data.data?.user?.role;
             setTimeout(() => {
                 if (redirectTo) {
@@ -72,7 +70,7 @@ export default function LoginPage() {
                 }
             }, 1000);
         } catch {
-            setError('Không thể kết nối đến server.');
+            setError(t('loginConnectError'));
             setLoading(false);
         }
     };
@@ -95,14 +93,14 @@ export default function LoginPage() {
                                 </div>
                             </div>
                             <h2 className="text-3xl font-bold text-brand-text-primary mb-4">
-                                Chợ tài nguyên số,<br />
-                                <span className="gradient-text">giao dịch nhanh và an toàn</span>
+                                {t('loginBrandTitle')}<br />
+                                <span className="gradient-text">{t('loginBrandHighlight')}</span>
                             </h2>
                             <p className="text-brand-text-secondary leading-relaxed mb-8">
-                                Mua bán tài nguyên số tự động, minh bạch, tiện lợi. Quản lý ví, đơn hàng và giao dịch trên một nền tảng duy nhất.
+                                {t('loginBrandDesc')}
                             </p>
                             <div className="space-y-3">
-                                {['Giao dịch nhanh, nhận hàng tự động', 'Ví nội bộ quản lý chi tiêu', 'Hệ thống minh bạch, dễ theo dõi'].map((item, i) => (
+                                {[t('loginBenefit1'), t('loginBenefit2'), t('loginBenefit3')].map((item, i) => (
                                     <div key={i} className="flex items-center gap-3 text-sm text-brand-text-secondary">
                                         <div className="w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
                                             <ArrowRight className="w-3 h-3 text-brand-primary" />
@@ -122,9 +120,9 @@ export default function LoginPage() {
                                 <span className="text-lg font-bold text-brand-text-primary">ChoTaiNguyen</span>
                             </div>
 
-                            <h1 className="text-xl font-bold text-brand-text-primary mb-2">Chào mừng quay lại</h1>
+                            <h1 className="text-xl font-bold text-brand-text-primary mb-2">{t('loginWelcome')}</h1>
                             <p className="text-sm text-brand-text-secondary mb-8">
-                                Đăng nhập để quản lý ví, đơn hàng, thông báo và toàn bộ hoạt động trên hệ thống.
+                                {t('loginDesc')}
                             </p>
 
                             {error && (
@@ -143,17 +141,17 @@ export default function LoginPage() {
 
                             <form className="space-y-5" onSubmit={handleSubmit}>
                                 <div>
-                                    <label className="block text-sm font-medium text-brand-text-primary mb-2">Tên đăng nhập</label>
+                                    <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('loginUsername')}</label>
                                     <div className="relative">
                                         <AtSign className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                        <input type="text" name="username" value={form.username} onChange={handleChange} placeholder="Nhập tên đăng nhập của bạn" className="input-field !pl-11" required />
+                                        <input type="text" name="username" value={form.username} onChange={handleChange} placeholder={t('loginUsernamePlaceholder')} className="input-field !pl-11" required />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-brand-text-primary mb-2">Mật khẩu</label>
+                                    <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('loginPassword')}</label>
                                     <div className="relative">
                                         <Lock className="w-4 h-4 text-brand-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-                                        <input type={showPassword ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder="Nhập mật khẩu" className="input-field !pl-11 !pr-11" required />
+                                        <input type={showPassword ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder={t('loginPasswordPlaceholder')} className="input-field !pl-11 !pr-11" required />
                                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-text-muted hover:text-brand-text-primary">
                                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                         </button>
@@ -162,10 +160,10 @@ export default function LoginPage() {
                                 <div className="flex items-center justify-between flex-wrap gap-2">
                                     <label className="flex items-center gap-2 text-sm text-brand-text-secondary cursor-pointer">
                                         <input type="checkbox" className="rounded border-brand-border bg-brand-surface-2" />
-                                        Ghi nhớ đăng nhập
+                                        {t('loginRemember')}
                                     </label>
                                     <Link href="/quen-mat-khau" className="text-sm text-brand-primary hover:underline">
-                                        Quên mật khẩu?
+                                        {t('loginForgot')}
                                     </Link>
                                 </div>
                                 <button
@@ -174,15 +172,14 @@ export default function LoginPage() {
                                     className={`btn-primary w-full !py-3.5 flex items-center justify-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
                                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                                    {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+                                    {loading ? t('loginProcessing') : t('loginSubmit')}
                                 </button>
                             </form>
 
-
                             <p className="text-center text-sm text-brand-text-muted mt-4">
-                                Chưa có tài khoản?{' '}
+                                {t('loginNoAccount')}{' '}
                                 <Link href="/dang-ky" className="text-brand-primary font-medium hover:underline">
-                                    Đăng ký ngay
+                                    {t('loginRegisterNow')}
                                 </Link>
                             </p>
                         </div>

@@ -272,22 +272,22 @@ export default function Header() {
                                                 )}
                                             </div>
                                             <Link href={getDashboardLink()} onClick={() => setMobileProfileOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-colors">
-                                                <LayoutDashboard className="w-4 h-4" /> Bảng điều khiển
+                                                <LayoutDashboard className="w-4 h-4" /> {t('dashboard')}
                                             </Link>
                                             <Link href="/dashboard/nap-tien" onClick={() => setMobileProfileOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-colors">
                                                 <Wallet className="w-4 h-4 text-brand-primary" />
-                                                <span>Nạp tiền</span>
+                                                <span>{t('deposit')}</span>
                                                 <span className="ml-auto text-xs font-semibold text-brand-success">{formatVnd(user.walletBalance || 0)}</span>
                                             </Link>
                                             <Link href="/dashboard/don-hang" onClick={() => setMobileProfileOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-colors">
-                                                <Package className="w-4 h-4" /> Lịch sử mua hàng
+                                                <Package className="w-4 h-4" /> {t('orderHistory')}
                                             </Link>
                                             <Link href="/dashboard/ho-so" onClick={() => setMobileProfileOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-colors">
-                                                <Settings className="w-4 h-4" /> Hồ sơ
+                                                <Settings className="w-4 h-4" /> {t('profile')}
                                             </Link>
                                             <div className="border-t border-brand-border my-1" />
                                             <button onClick={() => { setMobileProfileOpen(false); handleLogout(); }} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-brand-danger hover:bg-brand-surface-2 w-full transition-colors">
-                                                <LogOut className="w-4 h-4" /> Đăng xuất
+                                                <LogOut className="w-4 h-4" /> {t('logout')}
                                             </button>
                                         </div>
                                     )}
@@ -295,7 +295,7 @@ export default function Header() {
                             </>
                         ) : !isLoading ? (
                             <Link href="/dang-nhap" className="btn-primary !px-3 !py-1.5 text-xs flex items-center gap-1">
-                                <LogIn className="w-3.5 h-3.5" /> Đăng nhập
+                                <LogIn className="w-3.5 h-3.5" /> {t('login')}
                             </Link>
                         ) : null}
                     </div>

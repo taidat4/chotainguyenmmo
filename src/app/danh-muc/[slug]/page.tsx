@@ -5,6 +5,7 @@ import { use } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { useI18n } from '@/lib/i18n';
 import { ShoppingCart, Star, Zap, Eye, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
@@ -35,6 +36,7 @@ interface ApiProduct {
 
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
+    const { t, tCat } = useI18n();
     const [sortBy, setSortBy] = useState('bestselling');
     const [categories, setCategories] = useState<ApiCategory[]>([]);
     const [products, setProducts] = useState<ApiProduct[]>([]);
@@ -104,13 +106,13 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                 <div className="max-w-container mx-auto px-4 py-6">
                     {/* Breadcrumb */}
                     <nav className="flex items-center gap-2 text-sm text-brand-text-muted mb-6">
-                        <Link href="/" className="hover:text-brand-primary transition-colors">Trang chủ</Link>
+                        <Link href="/" className="hover:text-brand-primary transition-colors">{t('home')}</Link>
                         <span>/</span>
-                        <Link href="/danh-muc" className="hover:text-brand-primary transition-colors">Danh mục</Link>
+                        <Link href="/danh-muc" className="hover:text-brand-primary transition-colors">{t('catSidebar')}</Link>
                         {currentCategory && (
                             <>
                                 <span>/</span>
-                                <span className="text-brand-text-primary">{currentCategory.name}</span>
+                                <span className="text-brand-text-primary">{tCat(currentCategory.slug, currentCategory.name)}</span>
                             </>
                         )}
                     </nav>
@@ -119,7 +121,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                         {/* Filter Sidebar - Categories from API */}
                         <aside className="hidden lg:block w-72 shrink-0">
                             <div className="card sticky top-32 space-y-6">
-                                <h3 className="text-sm font-semibold text-brand-text-primary">Danh mục</h3>
+                                <h3 className="text-sm font-semibold text-brand-text-primary">{t('catSidebar')}</h3>
                                 <div className="space-y-1">
                                     {categories.map(cat => (
                                         <Link
@@ -130,7 +132,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                                                 : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2'
                                                 }`}
                                         >
-                                            <span>{cat.name}</span>
+                                            <span>{tCat(cat.slug, cat.name)}</span>
                                             <span className="text-xs text-brand-text-muted bg-brand-surface-2 px-1.5 py-0.5 rounded-full">{cat._count?.products || 0}</span>
                                         </Link>
                                     ))}
@@ -144,10 +146,10 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
                                 <div>
                                     <h1 className="text-xl font-bold text-brand-text-primary">
-                                        {currentCategory ? currentCategory.name : 'Tất cả sản phẩm'}
+                                        {currentCategory ? tCat(currentCategory.slug, currentCategory.name) : t('catAllProductsLabel')}
                                     </h1>
                                     <p className="text-sm text-brand-text-muted mt-1">
-                                        {total} sản phẩm
+                                        {total} {t('catProductsCount')}
                                     </p>
                                 </div>
 
@@ -158,11 +160,11 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                                         onChange={(e) => setSortBy(e.target.value)}
                                         className="input-field !py-2 text-sm pr-8 appearance-none cursor-pointer min-w-[160px]"
                                     >
-                                        <option value="bestselling">Bán chạy</option>
-                                        <option value="newest">Mới nhất</option>
-                                        <option value="price_asc">Giá thấp → cao</option>
-                                        <option value="price_desc">Giá cao → thấp</option>
-                                        <option value="rating">Đánh giá cao</option>
+                                        <option value="bestselling">{t('catSortBestselling')}</option>
+                                        <option value="newest">{t('catSortNewest')}</option>
+                                        <option value="price_asc">{t('catSortPriceAsc')}</option>
+                                        <option value="price_desc">{t('catSortPriceDesc')}</option>
+                                        <option value="rating">{t('catSortRating')}</option>
                                     </select>
                                     <ChevronDown className="w-4 h-4 text-brand-text-muted absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                                 </div>
@@ -172,7 +174,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                             {loading ? (
                                 <div className="text-center py-16">
                                     <div className="w-8 h-8 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin mx-auto mb-3" />
-                                    <p className="text-sm text-brand-text-muted">Đang tải sản phẩm...</p>
+                                    <p className="text-sm text-brand-text-muted">{t('catLoading')}</p>
                                 </div>
                             ) : products.length > 0 ? (
                                 <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-5">
@@ -187,11 +189,11 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                                                     </div>
                                                 )}
                                                 {p.isFeatured && (
-                                                    <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-brand-primary/90">Nổi bật</span>
+                                                    <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-brand-primary/90">{t('catFeatured')}</span>
                                                 )}
                                                 <div className="absolute inset-0 bg-brand-bg/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                                                     <Link href={`/san-pham/${p.slug}`} className="flex items-center gap-1.5 bg-brand-primary text-white text-sm font-medium px-4 py-2 rounded-xl hover:brightness-110 transition-all">
-                                                        <Eye className="w-4 h-4" /> Xem chi tiết
+                                                        <Eye className="w-4 h-4" /> {t('catViewDetail')}
                                                     </Link>
                                                 </div>
                                             </div>
@@ -213,18 +215,18 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                                                     <span className="text-lg font-bold text-brand-primary">{formatCurrency(p.price)}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between text-[11px] text-brand-text-muted mb-3">
-                                                    <span>Đã bán {p.soldCount}</span>
+                                                    <span>{t('catSoldCount')} {p.soldCount}</span>
                                                     <span className="flex items-center gap-1">
                                                         {p.deliveryType === 'AUTO' ? (
-                                                            <><Zap className="w-3 h-3 text-brand-info" /><span className="text-brand-info">Tự động</span></>
+                                                            <><Zap className="w-3 h-3 text-brand-info" /><span className="text-brand-info">{t('catAuto')}</span></>
                                                         ) : (
-                                                            <span>Thủ công</span>
+                                                            <span>{t('catManual')}</span>
                                                         )}
                                                     </span>
-                                                    <span>Kho: {p.stockCountCached || 0}</span>
+                                                    <span>{t('catStock')}: {p.stockCountCached || 0}</span>
                                                 </div>
                                                 <Link href={`/san-pham/${p.slug}`} className="block w-full text-center bg-brand-primary/10 text-brand-primary text-sm font-medium py-2 rounded-xl hover:bg-brand-primary hover:text-white transition-all">
-                                                    Mua ngay
+                                                    {t('catBuyNow')}
                                                 </Link>
                                             </div>
                                         </div>
@@ -233,8 +235,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                             ) : (
                                 <div className="card text-center py-16">
                                     <div className="text-4xl mb-4">📦</div>
-                                    <h3 className="text-lg font-semibold text-brand-text-primary mb-2">Chưa có sản phẩm</h3>
-                                    <p className="text-sm text-brand-text-secondary">Danh mục này chưa có sản phẩm nào. Các seller sẽ sớm đăng bán tại đây.</p>
+                                    <h3 className="text-lg font-semibold text-brand-text-primary mb-2">{t('catNoProducts')}</h3>
+                                    <p className="text-sm text-brand-text-secondary">{t('catNoProductsDesc')}</p>
                                 </div>
                             )}
 

@@ -3,18 +3,13 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { useI18n } from '@/lib/i18n';
 import { Phone, MessageSquare, Clock, HelpCircle, ChevronDown, Send } from 'lucide-react';
 
-const faqs = [
-    { q: 'Sản phẩm được giao như thế nào?', a: 'Sau khi thanh toán, sản phẩm số được giao tự động qua hệ thống. Bạn có thể xem thông tin sản phẩm trong mục Đơn hàng.' },
-    { q: 'Tôi có thể hoàn tiền không?', a: 'Có. Nếu sản phẩm không đúng mô tả hoặc không hoạt động, bạn có thể tạo khiếu nại trong vòng 24-48 giờ để được hoàn tiền.' },
-    { q: 'Nạp tiền mất bao lâu?', a: 'MoMo và VNPay: ngay lập tức. Chuyển khoản ngân hàng: 1-5 phút (giờ hành chính) hoặc tối đa 24 giờ.' },
-    { q: 'Làm sao để trở thành seller?', a: 'Đăng ký tài khoản → Vào trang "Đăng ký bán hàng" → Điền thông tin shop → Chờ admin duyệt (1-2 ngày).' },
-    { q: 'Phí giao dịch trên sàn là bao nhiêu?', a: 'Người mua: 0% phí (không mất phí khi mua hàng). Người bán (Seller): Sàn thu phí trên doanh thu mỗi đơn hàng thành công (mặc định 5%, admin có thể điều chỉnh). Phí rút tiền: 15.000đ/lần (cố định, chỉ thu seller).' },
-    { q: 'Tài khoản bị khóa thì sao?', a: 'Liên hệ support qua Telegram hoặc hotline để được hỗ trợ giải quyết. Cung cấp thông tin tài khoản khi liên hệ.' },
-];
+const faqKeys = ['faq1', 'faq2', 'faq3', 'faq4', 'faq5', 'faq6'] as const;
 
 export default function SupportPage() {
+    const { t } = useI18n();
     const [hotline, setHotline] = useState('1900 6868');
     const [telegramAdmins, setTelegramAdmins] = useState<{ name: string; link: string }[]>([]);
     const [showTelegramPopup, setShowTelegramPopup] = useState(false);
@@ -42,8 +37,8 @@ export default function SupportPage() {
             <main className="min-h-screen bg-brand-bg py-12">
                 <div className="max-w-4xl mx-auto px-6">
                     <div className="text-center mb-12">
-                        <h1 className="text-3xl font-bold text-brand-text-primary mb-2">Trung tâm hỗ trợ</h1>
-                        <p className="text-brand-text-secondary">Chúng tôi luôn sẵn sàng hỗ trợ bạn. Liên hệ qua các kênh bên dưới.</p>
+                        <h1 className="text-3xl font-bold text-brand-text-primary mb-2">{t('supportTitle')}</h1>
+                        <p className="text-brand-text-secondary">{t('supportSubtitle')}</p>
                     </div>
 
                     {/* Contact Cards — Telegram + Hotline + Live Chat */}
@@ -58,9 +53,9 @@ export default function SupportPage() {
                                     <Send className="w-7 h-7 text-blue-500" />
                                 </div>
                                 <h3 className="text-base font-semibold text-brand-text-primary">Telegram</h3>
-                                <p className="text-sm text-blue-500 font-medium mt-1">Hỗ trợ 24/7</p>
+                                <p className="text-sm text-blue-500 font-medium mt-1">{t('supportTelegram')}</p>
                                 <p className="text-xs text-brand-text-muted mt-1">
-                                    {telegramAdmins.length > 0 ? `${telegramAdmins.length} admin online` : 'Liên hệ nhanh'}
+                                    {telegramAdmins.length > 0 ? `${telegramAdmins.length} admin online` : t('supportQuickContact')}
                                 </p>
                             </button>
 
@@ -110,7 +105,7 @@ export default function SupportPage() {
                                                 })
                                             ) : (
                                                 <div className="text-center py-4">
-                                                    <p className="text-sm text-brand-text-muted">Đang cập nhật...</p>
+                                                    <p className="text-sm text-brand-text-muted">{t('supportUpdating')}</p>
                                                 </div>
                                             )}
                                         </div>
@@ -125,15 +120,15 @@ export default function SupportPage() {
                             </div>
                             <h3 className="text-base font-semibold text-brand-text-primary">Hotline</h3>
                             <p className="text-sm text-brand-primary font-medium mt-1">{hotline}</p>
-                            <p className="text-xs text-brand-text-muted mt-1">Thứ 2-7, 8:00-22:00</p>
+                            <p className="text-xs text-brand-text-muted mt-1">{t('supportHotlineHours')}</p>
                         </a>
                         <a href="/dashboard/tin-nhan" className="card-hover text-center block">
                             <div className="w-14 h-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center mx-auto mb-4">
                                 <MessageSquare className="w-7 h-7 text-brand-primary" />
                             </div>
                             <h3 className="text-base font-semibold text-brand-text-primary">Live Chat</h3>
-                            <p className="text-sm text-brand-primary font-medium mt-1">Chat trực tuyến</p>
-                            <p className="text-xs text-brand-text-muted mt-1">Hỗ trợ ngay lập tức</p>
+                            <p className="text-sm text-brand-primary font-medium mt-1">{t('supportLiveChat')}</p>
+                            <p className="text-xs text-brand-text-muted mt-1">{t('supportLiveChatDesc')}</p>
                         </a>
                     </div>
 
@@ -141,16 +136,16 @@ export default function SupportPage() {
                     <div>
                         <div className="flex items-center gap-2 mb-6">
                             <HelpCircle className="w-5 h-5 text-brand-primary" />
-                            <h2 className="text-xl font-bold text-brand-text-primary">Câu hỏi thường gặp</h2>
+                            <h2 className="text-xl font-bold text-brand-text-primary">{t('supportFaqTitle')}</h2>
                         </div>
                         <div className="space-y-3">
-                            {faqs.map((faq, i) => (
+                            {faqKeys.map((key, i) => (
                                 <details key={i} className="card group cursor-pointer">
                                     <summary className="flex items-center justify-between text-sm font-semibold text-brand-text-primary list-none">
-                                        {faq.q}
+                                        {t(`${key}Q` as any)}
                                         <ChevronDown className="w-4 h-4 text-brand-text-muted group-open:rotate-180 transition-transform shrink-0" />
                                     </summary>
-                                    <p className="text-sm text-brand-text-secondary mt-3 pt-3 border-t border-brand-border/50">{faq.a}</p>
+                                    <p className="text-sm text-brand-text-secondary mt-3 pt-3 border-t border-brand-border/50">{t(`${key}A` as any)}</p>
                                 </details>
                             ))}
                         </div>
@@ -161,9 +156,9 @@ export default function SupportPage() {
                         <div className="flex items-start gap-3">
                             <Clock className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
                             <div>
-                                <h3 className="text-sm font-semibold text-brand-text-primary mb-1">Giờ làm việc</h3>
-                                <p className="text-xs text-brand-text-secondary">Thứ 2 - Thứ 7: 08:00 - 22:00 (GMT+7). Chủ nhật &amp; lễ: 09:00 - 18:00.</p>
-                                <p className="text-xs text-brand-text-muted mt-1">Hệ thống giao dịch tự động hoạt động 24/7.</p>
+                                <h3 className="text-sm font-semibold text-brand-text-primary mb-1">{t('supportWorkingHours')}</h3>
+                                <p className="text-xs text-brand-text-secondary">{t('supportWorkingHoursText')}</p>
+                                <p className="text-xs text-brand-text-muted mt-1">{t('supportAutoSystem')}</p>
                             </div>
                         </div>
                     </div>

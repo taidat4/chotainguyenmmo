@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { useAuth } from '@/lib/auth-context';
 import { useCurrency } from '@/lib/currency';
+import { useI18n } from '@/lib/i18n';
 import {
     Star, Heart, ShoppingCart, Zap, Clock, Shield, CheckCircle,
     ChevronRight, Package, MessageSquare, Minus, Plus, Store,
@@ -38,6 +39,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const router = useRouter();
     const { user, updateUser } = useAuth();
     const { formatVnd: formatCurrency } = useCurrency();
+    const { t } = useI18n();
 
     const [product, setProduct] = useState<ProductData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -61,10 +63,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     setProduct(data.data);
                     if (data.data.variants?.length > 0) setSelectedVariant(data.data.variants[0].id);
                 } else {
-                    setError(data.message || 'Không tìm thấy sản phẩm');
+                    setError(data.message || t('pdpNotFound'));
                 }
             } catch {
-                setError('Lỗi tải sản phẩm');
+                setError(t('pdpError'));
             }
             setLoading(false);
         })();
@@ -94,7 +96,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             }
         } catch {
             setShowConfirm(false);
-            setPurchaseResult({ success: false, message: 'Không thể kết nối server' });
+            setPurchaseResult({ success: false, message: t('purchaseConnectError') });
         }
         setPurchasing(false);
     };
@@ -129,9 +131,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <Header />
                 <div className="min-h-screen flex flex-col items-center justify-center gap-4">
                     <AlertCircle className="w-12 h-12 text-brand-danger" />
-                    <h1 className="text-xl font-bold text-brand-text-primary">Không tìm thấy sản phẩm</h1>
+                    <h1 className="text-xl font-bold text-brand-text-primary">{t('pdpNotFound')}</h1>
                     <p className="text-sm text-brand-text-muted">{error}</p>
-                    <Link href="/" className="btn-primary">Về trang chủ</Link>
+                    <Link href="/" className="btn-primary">{t('pdpBackHome')}</Link>
                 </div>
                 <Footer />
             </>
@@ -139,9 +141,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     }
 
     const tabs = [
-        { id: 'description', label: 'Mô tả' },
-        { id: 'reviews', label: 'Đánh giá' },
-        { id: 'policy', label: 'Chính sách' },
+        { id: 'description', label: t('pdpTabDescription') },
+        { id: 'reviews', label: t('pdpTabReviews') },
+        { id: 'policy', label: t('pdpTabPolicy') },
     ];
 
     return (
@@ -151,9 +153,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <div className="max-w-container mx-auto px-4 py-6">
                     {/* Breadcrumb */}
                     <nav className="flex items-center gap-2 text-sm text-brand-text-muted mb-6">
-                        <Link href="/" className="hover:text-brand-primary transition-colors">Trang chủ</Link>
+                        <Link href="/" className="hover:text-brand-primary transition-colors">{t('pdpBreadcrumbHome')}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href="/danh-muc" className="hover:text-brand-primary transition-colors">Danh mục</Link>
+                        <Link href="/danh-muc" className="hover:text-brand-primary transition-colors">{t('pdpBreadcrumbCategories')}</Link>
                         <ChevronRight className="w-3 h-3" />
                         <Link href={`/danh-muc/${product.category.slug}`} className="hover:text-brand-primary transition-colors">{product.category.name}</Link>
                         <ChevronRight className="w-3 h-3" />
@@ -186,9 +188,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             )}
                             {/* Trust Badges — under image */}
                             <div className="flex items-center gap-4 mt-3 text-xs text-brand-text-muted">
-                                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-brand-info" />{product.deliveryType === 'AUTO' ? 'Giao ngay' : 'Xử lý thủ công'}</span>
-                                {currentWarranty > 0 && <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-brand-success" />BH {currentWarranty} ngày</span>}
-                                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-brand-warning" />KN trong 24h</span>
+                                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-brand-info" />{product.deliveryType === 'AUTO' ? t('pdpInstantDelivery') : t('pdpManualProcess')}</span>
+                                {currentWarranty > 0 && <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-brand-success" />{t('pdpWarranty')} {currentWarranty} {t('pdpWarrantyDays')}</span>}
+                                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-brand-warning" />{t('pdpComplaintTime')}</span>
                             </div>
                         </div>
 
@@ -197,8 +199,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             {/* Title + Seller */}
                             <h1 className="text-lg md:text-xl font-bold text-brand-text-primary mb-1">{product.name}</h1>
                             <Link href={`/shop/${product.shop.slug}`} className="inline-flex items-center gap-1.5 mb-3 group">
-                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                                    <span className="text-[9px] text-white font-bold">{product.shop.name.charAt(0)}</span>
+                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center overflow-hidden">
+                                    {product.shop.logoUrl ? (
+                                        <img src={product.shop.logoUrl} alt={product.shop.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-[9px] text-white font-bold">{product.shop.name.charAt(0)}</span>
+                                    )}
                                 </div>
                                 <span className="text-xs text-brand-text-secondary group-hover:text-brand-primary transition-colors">{product.shop.name}</span>
                                 {product.shop.verified && <CheckCircle className="w-3.5 h-3.5 text-brand-primary" />}
@@ -207,7 +213,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             {/* Variants */}
                             {product.variants.length > 0 && (
                                 <div className="mb-3">
-                                    <label className="text-xs text-brand-text-muted mb-1.5 block">Chọn gói</label>
+                                    <label className="text-xs text-brand-text-muted mb-1.5 block">{t('pdpSelectPackage')}</label>
                                     <div className="flex flex-wrap gap-1.5">
                                         {product.variants.filter(v => v.isActive).map(v => (
                                             <button
@@ -218,7 +224,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                                     : 'border-brand-border text-brand-text-secondary hover:border-brand-primary/40'}`}
                                             >
                                                 {v.name} — {formatCurrency(v.price)}
-                                                {v.warrantyDays > 0 && <span className="text-[10px] text-brand-text-muted ml-1">({v.warrantyDays}d BH)</span>}
+                                                {v.warrantyDays > 0 && <span className="text-[10px] text-brand-text-muted ml-1">({v.warrantyDays}d {t('pdpWarrantyShort')})</span>}
                                             </button>
                                         ))}
                                     </div>
@@ -238,10 +244,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
                             {/* Meta inline */}
                             <div className="flex items-center gap-3 text-xs text-brand-text-muted mb-3 flex-wrap">
-                                <span>Đã bán: <b className="text-brand-text-primary">{product.soldCount}</b></span>
-                                <span>Tồn kho: <b className="text-brand-success">{product.stockCountCached}</b></span>
+                                <span>{t('pdpSoldCount')}: <b className="text-brand-text-primary">{product.soldCount}</b></span>
+                                <span>{t('pdpStock')}: <b className="text-brand-success">{product.stockCountCached}</b></span>
                                 <span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-brand-warning fill-brand-warning" /><b className="text-brand-text-primary">{product.ratingAverage || 0}</b></span>
-                                <span className="flex items-center gap-0.5">{product.deliveryType === 'AUTO' ? <><Zap className="w-3 h-3 text-brand-info" /><b className="text-brand-info">Tự động</b></> : <b>Thủ công</b>}</span>
+                                <span className="flex items-center gap-0.5">{product.deliveryType === 'AUTO' ? <><Zap className="w-3 h-3 text-brand-info" /><b className="text-brand-info">{t('pdpAutoDelivery')}</b></> : <b>{t('pdpManualDelivery')}</b>}</span>
                             </div>
 
                             {/* Description */}
@@ -261,13 +267,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     </button>
                                 </div>
                                 <div className="text-sm text-brand-text-muted">
-                                    Tổng: <span className="text-brand-primary font-bold">{formatCurrency(currentPrice * quantity)}</span>
+                                    {t('pdpTotal')}: <span className="text-brand-primary font-bold">{formatCurrency(currentPrice * quantity)}</span>
                                 </div>
                             </div>
 
                             <div className="flex gap-2">
                                 <button onClick={handleBuyClick} className="btn-primary flex-1 flex items-center justify-center gap-2 !py-3">
-                                    <ShoppingCart className="w-4 h-4" /> {user ? 'Mua ngay' : 'Đăng nhập để mua'}
+                                    <ShoppingCart className="w-4 h-4" /> {user ? t('pdpBuyNow') : t('pdpLoginToBuy')}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -304,24 +310,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                         <div className="card">
                             {activeTab === 'description' && (
                                 <div className="prose prose-sm max-w-none text-brand-text-secondary leading-relaxed">
-                                    <p>{product.shortDescription || 'Chưa có mô tả chi tiết.'}</p>
+                                    <p>{product.shortDescription || t('pdpNoDescription')}</p>
                                 </div>
                             )}
 
                             {activeTab === 'reviews' && (
-                                <p className="text-sm text-brand-text-muted text-center py-8">Chưa có đánh giá nào cho sản phẩm này.</p>
+                                <p className="text-sm text-brand-text-muted text-center py-8">{t('pdpNoReviews')}</p>
                             )}
                             {activeTab === 'policy' && (
                                 <div className="space-y-4 text-sm text-brand-text-secondary">
                                     {currentWarranty > 0 && (
                                         <div>
-                                            <h4 className="font-medium text-brand-text-primary mb-1">Bảo hành</h4>
-                                            <p>Sản phẩm được bảo hành {currentWarranty} ngày kể từ ngày mua.</p>
+                                            <h4 className="font-medium text-brand-text-primary mb-1">{t('pdpWarrantyTitle')}</h4>
+                                            <p>{t('pdpWarrantyDesc').replace('{days}', String(currentWarranty))}</p>
                                         </div>
                                     )}
                                     <div>
-                                        <h4 className="font-medium text-brand-text-primary mb-1">Khiếu nại</h4>
-                                        <p>Người dùng có thể gửi khiếu nại trong 24 giờ kể từ khi nhận hàng.</p>
+                                        <h4 className="font-medium text-brand-text-primary mb-1">{t('pdpComplaintTitle')}</h4>
+                                        <p>{t('pdpComplaintDesc')}</p>
                                     </div>
                                 </div>
                             )}
@@ -331,8 +337,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     {/* Seller Info */}
                     <div className="card mb-12">
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center border border-brand-border">
-                                <span className="text-xl font-bold gradient-text">{product.shop.name.charAt(0)}</span>
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center border border-brand-border overflow-hidden">
+                                {product.shop.logoUrl ? (
+                                    <img src={product.shop.logoUrl} alt={product.shop.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-xl font-bold gradient-text">{product.shop.name.charAt(0)}</span>
+                                )}
                             </div>
                             <div className="flex-1">
                                 <div className="flex items-center gap-2">
@@ -340,12 +350,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     {product.shop.verified && <CheckCircle className="w-4 h-4 text-brand-primary" />}
                                 </div>
                                 <div className="flex items-center gap-4 mt-1 text-xs text-brand-text-muted">
-                                    <span>{product.shop.productCount || 0} sản phẩm</span>
+                                    <span>{product.shop.productCount || 0} {t('pdpProducts')}</span>
                                     <span>⭐ {product.shop.ratingAverage || 0}</span>
                                 </div>
                             </div>
                             <Link href={`/shop/${product.shop.slug}`} className="btn-secondary !px-4 !py-2 text-sm flex items-center gap-1.5">
-                                <Store className="w-4 h-4" /> Xem gian hàng
+                                <Store className="w-4 h-4" /> {t('pdpViewShop')}
                             </Link>
                         </div>
                     </div>
@@ -362,7 +372,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             <X className="w-5 h-5 text-brand-text-muted" />
                         </button>
 
-                        <h2 className="text-lg font-bold text-brand-text-primary mb-4">Xác nhận mua hàng</h2>
+                        <h2 className="text-lg font-bold text-brand-text-primary mb-4">{t('purchaseConfirmTitle')}</h2>
 
                         <div className="bg-brand-surface-2 rounded-xl p-4 mb-4">
                             <div className="flex items-center gap-3 mb-3">
@@ -375,33 +385,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                 </div>
                             </div>
                             <div className="flex justify-between text-sm border-t border-brand-border pt-3">
-                                <span className="text-brand-text-muted">Đơn giá</span>
+                                <span className="text-brand-text-muted">{t('purchaseUnitPrice')}</span>
                                 <span className="text-brand-text-primary font-medium">{formatCurrency(currentPrice)}</span>
                             </div>
                             <div className="flex justify-between text-sm mt-1">
-                                <span className="text-brand-text-muted">Số lượng</span>
+                                <span className="text-brand-text-muted">{t('purchaseQuantity')}</span>
                                 <span className="text-brand-text-primary font-medium">x{quantity}</span>
                             </div>
                             <div className="flex justify-between text-sm mt-1">
-                                <span className="text-brand-text-muted">Giao hàng</span>
-                                <span className="text-brand-info font-medium">{product.deliveryType === 'AUTO' ? '⚡ Tự động' : '📦 Thủ công'}</span>
+                                <span className="text-brand-text-muted">{t('purchaseDelivery')}</span>
+                                <span className="text-brand-info font-medium">{product.deliveryType === 'AUTO' ? t('purchaseAutoDelivery') : t('purchaseManualDelivery')}</span>
                             </div>
                             <div className="border-t border-brand-border mt-3 pt-3 flex justify-between">
-                                <span className="text-sm font-semibold text-brand-text-primary">Tổng thanh toán</span>
+                                <span className="text-sm font-semibold text-brand-text-primary">{t('purchaseTotal')}</span>
                                 <span className="text-lg font-bold text-brand-primary">{formatCurrency(currentPrice * quantity)}</span>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between text-sm mb-5 bg-brand-success/5 border border-brand-success/10 rounded-xl px-4 py-2.5">
-                            <span className="text-brand-text-muted">Số dư ví hiện tại</span>
+                            <span className="text-brand-text-muted">{t('purchaseWalletBalance')}</span>
                             <span className="text-brand-success font-bold">{formatCurrency(user?.walletBalance || 0)}</span>
                         </div>
 
                         <div className="flex gap-3">
-                            <button onClick={() => setShowConfirm(false)} disabled={purchasing} className="btn-secondary flex-1 !py-3">Hủy</button>
+                            <button onClick={() => setShowConfirm(false)} disabled={purchasing} className="btn-secondary flex-1 !py-3">{t('purchaseCancel')}</button>
                             <button onClick={handleConfirmPurchase} disabled={purchasing} className="btn-primary flex-1 !py-3 flex items-center justify-center gap-2">
                                 {purchasing ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShoppingCart className="w-4 h-4" />}
-                                {purchasing ? 'Đang xử lý...' : 'Xác nhận mua'}
+                                {purchasing ? t('purchaseProcessing') : t('purchaseConfirm')}
                             </button>
                         </div>
                     </div>
@@ -423,16 +433,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     <div className="w-16 h-16 rounded-full bg-brand-success/10 flex items-center justify-center mx-auto mb-3">
                                         <CheckCircle2 className="w-8 h-8 text-brand-success" />
                                     </div>
-                                    <h2 className="text-xl font-bold text-brand-text-primary">Mua hàng thành công!</h2>
-                                    <p className="text-sm text-brand-text-muted mt-1">Mã đơn: <span className="font-mono font-semibold text-brand-primary">{purchaseResult.order?.orderCode}</span></p>
+                                    <h2 className="text-xl font-bold text-brand-text-primary">{t('purchaseSuccess')}</h2>
+                                    <p className="text-sm text-brand-text-muted mt-1">{t('purchaseOrderCode')}: <span className="font-mono font-semibold text-brand-primary">{purchaseResult.order?.orderCode}</span></p>
                                 </div>
 
                                 {purchaseResult.order?.deliveredContent && (
                                     <div className="bg-brand-surface-2 border border-brand-border rounded-xl p-4 mb-4">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h3 className="text-sm font-semibold text-brand-text-primary">📦 Thông tin sản phẩm</h3>
+                                            <h3 className="text-sm font-semibold text-brand-text-primary">{t('purchaseProductInfo')}</h3>
                                             <button onClick={() => handleCopyContent(purchaseResult.order!.deliveredContent!)} className="flex items-center gap-1 text-xs text-brand-primary hover:underline">
-                                                <Copy className="w-3 h-3" /> {copied ? 'Đã copy!' : 'Copy'}
+                                                <Copy className="w-3 h-3" /> {copied ? t('purchaseCopied') : t('purchaseCopy')}
                                             </button>
                                         </div>
                                         <pre className="text-xs text-brand-text-secondary bg-brand-bg rounded-lg p-3 whitespace-pre-wrap font-mono border border-brand-border/50">
@@ -444,20 +454,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                 {purchaseResult.order?.status === 'paid' && (
                                     <div className="flex items-center gap-2 bg-brand-warning/10 border border-brand-warning/20 text-brand-warning text-sm rounded-xl px-4 py-3 mb-4">
                                         <Clock className="w-4 h-4 shrink-0" />
-                                        Sản phẩm giao thủ công — shop sẽ gửi trong vòng 24 giờ.
+                                        {t('purchaseManualNote')}
                                     </div>
                                 )}
 
                                 <div className="flex items-center justify-between text-sm bg-brand-surface-2 rounded-xl px-4 py-3 mb-5">
-                                    <span className="text-brand-text-muted">Số dư ví còn lại</span>
+                                    <span className="text-brand-text-muted">{t('purchaseRemainingBalance')}</span>
                                     <span className="text-brand-success font-bold">{formatCurrency(purchaseResult.newBalance || 0)}</span>
                                 </div>
 
                                 <div className="flex gap-3">
                                     <Link href="/dashboard/don-hang" className="btn-secondary flex-1 !py-3 text-center flex items-center justify-center gap-2">
-                                        <Package className="w-4 h-4" /> Xem đơn hàng
+                                        <Package className="w-4 h-4" /> {t('purchaseViewOrders')}
                                     </Link>
-                                    <button onClick={() => setPurchaseResult(null)} className="btn-primary flex-1 !py-3">Tiếp tục mua sắm</button>
+                                    <button onClick={() => setPurchaseResult(null)} className="btn-primary flex-1 !py-3">{t('purchaseContinueShopping')}</button>
                                 </div>
                             </>
                         ) : (
@@ -466,12 +476,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     <div className="w-16 h-16 rounded-full bg-brand-danger/10 flex items-center justify-center mx-auto mb-3">
                                         <AlertCircle className="w-8 h-8 text-brand-danger" />
                                     </div>
-                                    <h2 className="text-xl font-bold text-brand-text-primary">Mua hàng thất bại</h2>
+                                    <h2 className="text-xl font-bold text-brand-text-primary">{t('purchaseFailed')}</h2>
                                     <p className="text-sm text-brand-danger mt-2">{purchaseResult.message}</p>
                                 </div>
                                 <div className="flex gap-3">
-                                    <Link href="/dashboard/nap-tien" className="btn-secondary flex-1 !py-3 text-center">Nạp tiền</Link>
-                                    <button onClick={() => setPurchaseResult(null)} className="btn-primary flex-1 !py-3">Thử lại</button>
+                                    <Link href="/dashboard/nap-tien" className="btn-secondary flex-1 !py-3 text-center">{t('purchaseDepositMore')}</Link>
+                                    <button onClick={() => setPurchaseResult(null)} className="btn-primary flex-1 !py-3">{t('purchaseRetry')}</button>
                                 </div>
                             </>
                         )}
