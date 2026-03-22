@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { CheckCircle2, Copy, Loader2, AlertTriangle, Wallet, QrCode, Clock, X, ArrowLeft, CreditCard, Shield, ExternalLink, Zap, Globe, AlertCircle } from 'lucide-react';
 import { useUI } from '@/components/shared/UIProvider';
 import { useCurrency } from '@/lib/currency';
+import { useI18n } from '@/lib/i18n';
 
 const VND_AMOUNTS = [2000, 5000, 10000, 50000, 100000, 200000, 500000, 1000000];
 const USDT_AMOUNTS = [1, 2, 5, 10, 20, 50, 100, 200];
@@ -35,6 +36,7 @@ interface UsdtDepositData {
 export default function DepositPage() {
     const { user, updateUser } = useAuth();
     const { showToast } = useUI();
+    const { t } = useI18n();
     const searchParams = useSearchParams();
     const [step, setStep] = useState<DepositStep>('select');
     const [selectedAmount, setSelectedAmount] = useState<number>(0);
@@ -75,7 +77,7 @@ export default function DepositPage() {
     const copy = (text: string, field: string) => {
         navigator.clipboard.writeText(text);
         setCopied(field);
-        showToast('Đã sao chép!', 'success');
+        showToast(t('depCopied'), 'success');
         setTimeout(() => setCopied(''), 2000);
     };
 
@@ -109,10 +111,10 @@ export default function DepositPage() {
                 setStatus('pending');
                 setCountdown(COUNTDOWN_SECONDS);
             } else {
-                showToast(data.message || 'Lỗi tạo đơn nạp tiền', 'error');
+                showToast(data.message || t('depCreateError'), 'error');
             }
         } catch {
-            showToast('Không thể kết nối server', 'error');
+            showToast(t('depConnectError'), 'error');
         }
         setLoading(false);
     };
@@ -137,10 +139,10 @@ export default function DepositPage() {
                 setUsdtExplorerUrl(null);
                 setStep('usdt_payment');
             } else {
-                showToast(data.message || 'Lỗi tạo thanh toán USDT', 'error');
+                showToast(data.message || t('depCreateError'), 'error');
             }
         } catch {
-            showToast('Không thể kết nối server', 'error');
+            showToast(t('depConnectError'), 'error');
         }
         setUsdtLoading(false);
     };
@@ -294,7 +296,7 @@ export default function DepositPage() {
                     {/* Amount grid */}
                     <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6 shadow-sm">
                         <h2 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                            <CreditCard className="w-4 h-4 text-blue-500" /> Chọn mệnh giá
+                            <CreditCard className="w-4 h-4 text-blue-500" /> {t('depSelectAmount')}
                         </h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                             {displayAmounts.map(a => (
@@ -318,7 +320,7 @@ export default function DepositPage() {
                             ))}
                         </div>
                         <div className="mt-4 pt-4 border-t border-gray-100">
-                            <label className="text-xs font-medium text-gray-500 mb-2 block">Hoặc nhập số tiền khác</label>
+                            <label className="text-xs font-medium text-gray-500 mb-2 block">{t('depCustomAmount')}</label>
                             <div className="relative">
                                 <input type="number" value={customAmount}
                                     onChange={e => { setCustomAmount(e.target.value); setSelectedAmount(0); }}
@@ -336,7 +338,7 @@ export default function DepositPage() {
                                 <Shield className="w-4 h-4 text-green-600" />
                             </div>
                             <div className="text-xs text-gray-500 space-y-1">
-                                <p className="font-semibold text-gray-700 text-sm">Nạp tiền an toàn & tự động</p>
+                                <p className="font-semibold text-gray-700 text-sm">{t('depSafeDeposit')}</p>
                                 <p>• Quét QR hoặc chuyển khoản thủ công đều được</p>
                                 <p>• Hệ thống tự phát hiện giao dịch trong <strong>5 giây</strong></p>
                                 <p>• Hỗ trợ USDT TRC20 & BEP20 thanh toán crypto</p>
@@ -346,7 +348,7 @@ export default function DepositPage() {
 
                     {/* Payment Method Selector */}
                     <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-                        <h2 className="text-sm font-semibold text-gray-700 mb-3">Phương thức thanh toán</h2>
+                        <h2 className="text-sm font-semibold text-gray-700 mb-3">{t('depPaymentMethod')}</h2>
                         <div className="grid grid-cols-2 gap-3">
                             {/* MBBank */}
                             <button onClick={() => { setPaymentMethod('mbbank'); setSelectedAmount(0); setCustomAmount(''); }}
@@ -422,8 +424,8 @@ export default function DepositPage() {
                             <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mb-3">
                                 <span className="text-white font-bold text-2xl">₮</span>
                             </div>
-                            <h2 className="text-lg font-bold text-gray-900">Thanh toán bằng USDT</h2>
-                            <p className="text-sm text-gray-500 mt-1">Chọn mạng blockchain để chuyển USDT</p>
+                            <h2 className="text-lg font-bold text-gray-900">{t('depUsdtSelectNetwork')}</h2>
+                            <p className="text-sm text-gray-500 mt-1">{t('depUsdtSelectDesc')}</p>
                             <p className="text-xs text-emerald-600 font-semibold mt-2">
                                 Số tiền: ${finalAmount} USDT ≈ {estimatedVnd.toLocaleString('vi-VN')}đ
                             </p>
@@ -495,9 +497,9 @@ export default function DepositPage() {
                             <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                                 <CheckCircle2 className="w-10 h-10 text-green-500" />
                             </div>
-                            <h3 className="text-2xl font-bold text-green-700">Nạp tiền thành công!</h3>
+                            <h3 className="text-2xl font-bold text-green-700">{t('depUsdtSuccess')}</h3>
                             <p className="text-gray-500">
-                                <strong className="text-green-600">{usdtData.amountVnd.toLocaleString('vi-VN')}đ</strong> đã được cộng vào ví
+                                <strong className="text-green-600">{usdtData.amountVnd.toLocaleString('vi-VN')}đ</strong> {t('depUsdtSuccessDesc')}
                             </p>
                             {usdtTxHash && (
                                 <div className="bg-green-50 rounded-xl p-3 text-xs">
@@ -506,7 +508,7 @@ export default function DepositPage() {
                                     {usdtExplorerUrl && (
                                         <a href={usdtExplorerUrl} target="_blank" rel="noopener noreferrer"
                                             className="inline-flex items-center gap-1 mt-2 text-green-600 hover:text-green-700">
-                                            <ExternalLink className="w-3 h-3" /> Xem trên blockchain
+                                            <ExternalLink className="w-3 h-3" /> {t('depUsdtViewTx')}
                                         </a>
                                     )}
                                 </div>
@@ -524,9 +526,9 @@ export default function DepositPage() {
                             <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mx-auto">
                                 <AlertTriangle className="w-8 h-8 text-orange-500" />
                             </div>
-                            <h3 className="text-xl font-bold text-orange-700">Hết thời gian thanh toán</h3>
-                            <p className="text-gray-500">Đơn đã hết hạn sau 15 phút. Vui lòng tạo đơn mới.</p>
-                            <p className="text-xs text-gray-400">Nếu bạn đã chuyển tiền sau khi hết hạn, hệ thống sẽ tự phát hiện và xử lý.</p>
+                            <h3 className="text-xl font-bold text-orange-700">{t('depUsdtExpired')}</h3>
+                            <p className="text-gray-500">{t('depExpiredDesc')}</p>
+                            <p className="text-xs text-gray-400">{t('depExpiredNote')}</p>
                             <button onClick={handleCancel} className="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition-all">Tạo đơn mới</button>
                         </div>
                     )}
@@ -570,7 +572,7 @@ export default function DepositPage() {
                                         style={{ width: `${(usdtCountdown / USDT_COUNTDOWN_SECONDS) * 100}%` }} />
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
-                                    <Loader2 className="w-3 h-3 animate-spin" /> Đang chờ thanh toán... hệ thống tự kiểm tra blockchain
+                                    <Loader2 className="w-3 h-3 animate-spin" /> {t('depUsdtWaiting')}
                                 </p>
                             </div>
 
@@ -693,8 +695,8 @@ export default function DepositPage() {
                     {usdtStatus === 'PARTIAL' && (
                         <div className="bg-white rounded-2xl border border-yellow-200 p-6 shadow-sm text-center space-y-3">
                             <AlertTriangle className="w-10 h-10 text-yellow-500 mx-auto" />
-                            <h3 className="text-lg font-bold text-yellow-700">Thanh toán thiếu</h3>
-                            <p className="text-sm text-gray-500">Số tiền nhận được chưa đủ. Vui lòng liên hệ hỗ trợ hoặc chờ hệ thống xử lý.</p>
+                            <h3 className="text-lg font-bold text-yellow-700">{t('depUsdtPartial')}</h3>
+                            <p className="text-sm text-gray-500">{t('depPartialDesc')}</p>
                             <button onClick={handleCancel} className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-semibold text-gray-700 transition-all">Quay lại</button>
                         </div>
                     )}
@@ -713,9 +715,9 @@ export default function DepositPage() {
                             <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                                 <CheckCircle2 className="w-8 h-8 text-green-500" />
                             </div>
-                            <h3 className="text-xl font-bold text-green-700">Nạp tiền thành công!</h3>
+                            <h3 className="text-xl font-bold text-green-700">{t('depUsdtSuccess')}</h3>
                             <p className="text-gray-500">
-                                <strong className="text-green-600">{deposit.amount.toLocaleString('vi-VN')}đ</strong> đã được cộng vào ví
+                                <strong className="text-green-600">{deposit.amount.toLocaleString('vi-VN')}đ</strong> {t('depUsdtSuccessDesc')}
                             </p>
                             <div className="flex gap-3 justify-center pt-2">
                                 <button onClick={handleCancel} className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-semibold text-gray-700 transition-all">Nạp thêm</button>
@@ -729,8 +731,8 @@ export default function DepositPage() {
                             <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mx-auto">
                                 <AlertTriangle className="w-8 h-8 text-orange-500" />
                             </div>
-                            <h3 className="text-xl font-bold text-orange-700">Hết thời gian chờ</h3>
-                            <p className="text-gray-500">Đơn đã hết hạn. Vui lòng tạo đơn mới.</p>
+                            <h3 className="text-xl font-bold text-orange-700">{t('depUsdtExpired')}</h3>
+                            <p className="text-gray-500">{t('depExpiredDesc')}</p>
                             <button onClick={handleCancel} className="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition-all">Tạo đơn mới</button>
                         </div>
                     )}

@@ -6,23 +6,24 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import {
     LayoutDashboard, Package, Database, ShoppingBag, AlertTriangle,
-    TrendingUp, Wallet, Settings, LogOut, ChevronLeft, Bell, Store, Menu, X, FileSpreadsheet, Clock, Megaphone, MessageSquare, FileText
+    TrendingUp, Wallet, Settings, LogOut, ChevronLeft, Bell, Store, Menu, X, FileSpreadsheet, Clock, Megaphone, MessageSquare, FileText, Globe
 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
-const sellerMenuItems = [
-    { icon: LayoutDashboard, label: 'Tổng quan', href: '/seller' },
-    { icon: Package, label: 'Sản phẩm', href: '/seller/san-pham' },
-    { icon: ShoppingBag, label: 'Đơn hàng', href: '/seller/don-hang' },
-    { icon: MessageSquare, label: 'Tin nhắn', href: '/seller/tin-nhan' },
-    { icon: AlertTriangle, label: 'Khiếu nại', href: '/seller/khieu-nai' },
-    { icon: TrendingUp, label: 'Doanh thu', href: '/seller/doanh-thu' },
-    { icon: FileText, label: 'Hóa đơn', href: '/seller/hoa-don' },
-    { icon: Wallet, label: 'Rút tiền', href: '/seller/rut-tien' },
-    { icon: Megaphone, label: 'Quảng cáo', href: '/seller/quang-cao' },
-    { icon: Settings, label: 'Cài đặt shop', href: '/seller/cai-dat' },
+const sellerMenuKeys = [
+    { icon: LayoutDashboard, key: 'sellerOverview' as const, href: '/seller' },
+    { icon: Package, key: 'sellerProducts' as const, href: '/seller/san-pham' },
+    { icon: ShoppingBag, key: 'sellerOrders' as const, href: '/seller/don-hang' },
+    { icon: MessageSquare, key: 'sellerMessages' as const, href: '/seller/tin-nhan' },
+    { icon: AlertTriangle, key: 'sellerComplaints' as const, href: '/seller/khieu-nai' },
+    { icon: TrendingUp, key: 'sellerRevenue' as const, href: '/seller/doanh-thu' },
+    { icon: FileText, key: 'sellerInvoices' as const, href: '/seller/hoa-don' },
+    { icon: Wallet, key: 'sellerWithdraw' as const, href: '/seller/rut-tien' },
+    { icon: Megaphone, key: 'sellerAds' as const, href: '/seller/quang-cao' },
+    { icon: Settings, key: 'sellerSettings' as const, href: '/seller/cai-dat' },
 ];
 
-function SidebarContent({ pathname, user, onClose, onLogout, unreadCount }: { pathname: string; user: { fullName: string; username: string } | null; onClose?: () => void; onLogout: () => void; unreadCount: number }) {
+function SidebarContent({ pathname, user, onClose, onLogout, unreadCount, t }: { pathname: string; user: { fullName: string; username: string } | null; onClose?: () => void; onLogout: () => void; unreadCount: number; t: (k: any) => string }) {
     return (
         <>
             <div className="p-5 border-b border-brand-border flex items-center justify-between">
@@ -46,13 +47,13 @@ function SidebarContent({ pathname, user, onClose, onLogout, unreadCount }: { pa
                     </div>
                     <div>
                         <div className="text-sm font-semibold text-brand-text-primary">{user?.fullName || 'Shop'}</div>
-                        <div className="text-xs text-brand-success flex items-center gap-1">● Đang hoạt động</div>
+                        <div className="text-xs text-brand-success flex items-center gap-1">● {t('sellerActive')}</div>
                     </div>
                 </div>
             </div>
             <nav className="flex-1 p-3 overflow-y-auto">
                 <div className="space-y-1">
-                    {sellerMenuItems.map((item) => {
+                    {sellerMenuKeys.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/seller' && pathname.startsWith(item.href));
                         const isChat = item.href === '/seller/tin-nhan';
                         return (
@@ -60,7 +61,7 @@ function SidebarContent({ pathname, user, onClose, onLogout, unreadCount }: { pa
                                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20' : 'text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2'
                                     }`}>
                                 <item.icon className="w-5 h-5" />
-                                <span className="flex-1">{item.label}</span>
+                                <span className="flex-1">{t(item.key)}</span>
                                 {isChat && unreadCount > 0 && (
                                     <span className="min-w-[20px] h-[20px] rounded-full bg-brand-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5">
                                         {unreadCount > 99 ? '99+' : unreadCount}
@@ -74,14 +75,14 @@ function SidebarContent({ pathname, user, onClose, onLogout, unreadCount }: { pa
             <div className="p-3 border-t border-brand-border space-y-2">
                 <div className="bg-brand-danger/5 border border-brand-danger/20 rounded-lg px-3 py-2">
                     <p className="text-[10px] text-brand-danger leading-relaxed">
-                        ⛔ Tuyệt đối không lôi kéo khách ra ngoài sàn. Vi phạm = khóa vĩnh viễn shop + không rút được tiền.
+                        {t('sellerWarning')}
                     </p>
                 </div>
                 <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-brand-primary hover:text-white hover:bg-brand-primary transition-all">
-                    <ChevronLeft className="w-4 h-4" /> Về trang chủ
+                    <ChevronLeft className="w-4 h-4" /> {t('backHome')}
                 </Link>
                 <button onClick={onLogout} className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-brand-danger hover:bg-brand-surface-2 transition-all w-full">
-                    <LogOut className="w-4 h-4" /> Đăng xuất
+                    <LogOut className="w-4 h-4" /> {t('logout')}
                 </button>
             </div>
         </>
@@ -92,6 +93,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
     const pathname = usePathname();
     const router = useRouter();
     const { user, logout, isLoading } = useAuth();
+    const { t, locale, setLocale } = useI18n();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [sellerStatus, setSellerStatus] = useState<'loading' | 'active' | 'pending' | 'none' | 'kyc_required'>('loading');
     const [sellerRevenue, setSellerRevenue] = useState(0);
@@ -182,16 +184,16 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                     <div className="w-16 h-16 rounded-2xl bg-brand-warning/10 flex items-center justify-center mx-auto">
                         <Clock className="w-8 h-8 text-brand-warning" />
                     </div>
-                    <h1 className="text-xl font-bold text-brand-text-primary">Đang chờ duyệt</h1>
+                    <h1 className="text-xl font-bold text-brand-text-primary">{t('sellerPending')}</h1>
                     <p className="text-sm text-brand-text-muted">
-                        Đơn đăng ký gian hàng của bạn đang được admin xem xét. Bạn sẽ được thông báo khi có kết quả (thường 1-3 ngày).
+                        {t('sellerPendingDesc')}
                     </p>
                     <div className="space-y-3">
                         <Link href="/dang-ky-ban-hang" className="btn-primary w-full flex items-center justify-center gap-2">
-                            <Store className="w-4 h-4" /> Xem trạng thái đơn
+                            <Store className="w-4 h-4" /> {t('sellerViewStatus')}
                         </Link>
                         <Link href="/" className="btn-secondary w-full text-sm">
-                            Quay về trang chủ
+                            {t('backHome')}
                         </Link>
                     </div>
                 </div>
@@ -207,16 +209,16 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                     <div className="w-16 h-16 rounded-2xl bg-brand-warning/10 flex items-center justify-center mx-auto">
                         <Store className="w-8 h-8 text-brand-warning" />
                     </div>
-                    <h1 className="text-xl font-bold text-brand-text-primary">Cần bổ sung KYC</h1>
+                    <h1 className="text-xl font-bold text-brand-text-primary">{t('sellerNeedKyc')}</h1>
                     <p className="text-sm text-brand-text-muted">
-                        Admin đã bật yêu cầu xác minh KYC. Vui lòng bổ sung giấy tờ để tiếp tục sử dụng gian hàng.
+                        {t('sellerNeedKycDesc')}
                     </p>
                     <div className="space-y-3">
                         <Link href="/dang-ky-ban-hang" className="btn-primary w-full flex items-center justify-center gap-2">
-                            <Store className="w-4 h-4" /> Bổ sung KYC
+                            <Store className="w-4 h-4" /> {t('sellerAddKyc')}
                         </Link>
                         <Link href="/" className="btn-secondary w-full text-sm">
-                            Quay về trang chủ
+                            {t('backHome')}
                         </Link>
                     </div>
                 </div>
@@ -232,16 +234,16 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                     <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 flex items-center justify-center mx-auto">
                         <Store className="w-8 h-8 text-brand-primary" />
                     </div>
-                    <h1 className="text-xl font-bold text-brand-text-primary">Bạn chưa có gian hàng</h1>
+                    <h1 className="text-xl font-bold text-brand-text-primary">{t('sellerNoShop')}</h1>
                     <p className="text-sm text-brand-text-muted">
-                        Tạo gian hàng chỉ trong 1 phút — nhập tên shop và tài khoản ngân hàng, chờ admin duyệt!
+                        {t('sellerNoShopDesc')}
                     </p>
                     <div className="space-y-4">
                         <Link href="/dang-ky-ban-hang" className="btn-primary w-full flex items-center justify-center gap-2">
-                            <Store className="w-4 h-4" /> Đăng ký mở shop
+                            <Store className="w-4 h-4" /> {t('sellerRegisterShop')}
                         </Link>
                         <Link href="/" className="btn-secondary w-full text-sm">
-                            Quay về trang chủ
+                            {t('backHome')}
                         </Link>
                     </div>
                 </div>
@@ -252,14 +254,14 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
     return (
         <div className="min-h-screen bg-brand-bg flex">
             <aside className="hidden lg:flex w-[270px] bg-brand-surface border-r border-brand-border flex-col shrink-0 sticky top-0 h-screen">
-                <SidebarContent pathname={pathname} user={user} onLogout={handleLogout} unreadCount={unreadCount} />
+                <SidebarContent pathname={pathname} user={user} onLogout={handleLogout} unreadCount={unreadCount} t={t} />
             </aside>
 
             {drawerOpen && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
                     <aside className="absolute left-0 top-0 h-full w-[280px] bg-brand-surface border-r border-brand-border flex flex-col shadow-card-hover">
-                        <SidebarContent pathname={pathname} user={user} onClose={() => setDrawerOpen(false)} onLogout={handleLogout} unreadCount={unreadCount} />
+                        <SidebarContent pathname={pathname} user={user} onClose={() => setDrawerOpen(false)} onLogout={handleLogout} unreadCount={unreadCount} t={t} />
                     </aside>
                 </div>
             )}
@@ -271,14 +273,21 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
                             <button onClick={() => setDrawerOpen(true)} className="lg:hidden p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2 transition-all">
                                 <Menu className="w-5 h-5" />
                             </button>
-                            <h2 className="text-lg font-semibold text-brand-text-primary hidden lg:block">Bảng điều khiển người bán</h2>
+                            <h2 className="text-lg font-semibold text-brand-text-primary hidden lg:block">{t('sellerDashboard')}</h2>
                             <span className="text-sm font-semibold text-brand-text-primary lg:hidden">Seller</span>
                         </div>
                         <div className="flex items-center gap-2 md:gap-3">
                             <div className="bg-brand-surface-2 border border-brand-border rounded-xl px-2 md:px-3 py-1.5 text-xs md:text-sm">
-                                <span className="text-brand-text-muted hidden md:inline">Doanh thu: </span>
+                                <span className="text-brand-text-muted hidden md:inline">{t('sellerRevenueLabel')}: </span>
                                 <span className="text-brand-success font-semibold">{sellerRevenue.toLocaleString('vi-VN')}đ</span>
                             </div>
+                            <button
+                                onClick={() => setLocale(locale === 'vi' ? 'en' : 'vi')}
+                                className="p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2 transition-all"
+                                title={locale === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
+                            >
+                                <Globe className="w-5 h-5" />
+                            </button>
                             <button className="relative p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2">
                                 <Bell className="w-5 h-5" />
                                 <span className="absolute top-1 right-1 w-2 h-2 bg-brand-danger rounded-full" />

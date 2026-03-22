@@ -8,32 +8,33 @@ import {
     LayoutDashboard, Wallet, ShoppingBag, AlertTriangle, Heart,
     Bell, User, Shield, LogOut, ChevronLeft, ChevronRight, Menu, X,
     Home, Grid3X3, Store, HelpCircle, Search, PlusCircle, Key,
-    Star, BookOpen, MessageSquare, HelpingHand
+    Star, BookOpen, MessageSquare, HelpingHand, Globe
 } from 'lucide-react';
 import { useCurrency } from '@/lib/currency';
+import { useI18n } from '@/lib/i18n';
 
-const userMenuItems = [
-    { icon: LayoutDashboard, label: 'Tổng quan', href: '/dashboard' },
-    { icon: User, label: 'Hồ sơ', href: '/dashboard/ho-so' },
-    { icon: Shield, label: 'Bảo mật', href: '/dashboard/bao-mat' },
-    { icon: ShoppingBag, label: 'Lịch sử mua hàng', href: '/dashboard/don-hang' },
-    { icon: MessageSquare, label: 'Tin nhắn', href: '/dashboard/tin-nhan' },
-    { icon: Key, label: 'API Keys', href: '/dashboard/api-keys' },
+const userMenuKeys = [
+    { icon: LayoutDashboard, key: 'dashOverview' as const, href: '/dashboard' },
+    { icon: User, key: 'dashProfile' as const, href: '/dashboard/ho-so' },
+    { icon: Shield, key: 'dashSecurity' as const, href: '/dashboard/bao-mat' },
+    { icon: ShoppingBag, key: 'dashOrderHistory' as const, href: '/dashboard/don-hang' },
+    { icon: MessageSquare, key: 'dashMessages' as const, href: '/dashboard/tin-nhan' },
+    { icon: Key, key: 'dashApiKeys' as const, href: '/dashboard/api-keys' },
 ];
 
-const sidebarLinks = [
-    { icon: Home, label: 'Trang chủ', href: '/' },
-    { icon: Grid3X3, label: 'Danh mục', href: '/danh-muc' },
-    { icon: Star, label: 'Sản phẩm nổi bật', href: '/san-pham-noi-bat' },
-    { icon: Store, label: 'Gian hàng', href: '/gian-hang' },
-    { icon: BookOpen, label: 'Hướng dẫn', href: '/huong-dan' },
-    { icon: HelpingHand, label: 'FAQs', href: '/faqs' },
-    { icon: HelpCircle, label: 'Hỗ trợ', href: '/ho-tro' },
-    { icon: Search, label: 'Tìm kiếm', href: '/san-pham' },
-    { icon: Store, label: 'Seller Center', href: '/seller' },
+const sidebarLinkKeys = [
+    { icon: Home, key: 'dashHome' as const, href: '/' },
+    { icon: Grid3X3, key: 'dashCategories' as const, href: '/danh-muc' },
+    { icon: Star, key: 'dashFeatured' as const, href: '/san-pham-noi-bat' },
+    { icon: Store, key: 'dashShops' as const, href: '/gian-hang' },
+    { icon: BookOpen, key: 'dashGuide' as const, href: '/huong-dan' },
+    { icon: HelpingHand, key: 'dashFaqs' as const, href: '/faqs' },
+    { icon: HelpCircle, key: 'dashSupport' as const, href: '/ho-tro' },
+    { icon: Search, key: 'dashSearch' as const, href: '/san-pham' },
+    { icon: Store, key: 'dashSellerCenter' as const, href: '/seller' },
 ];
 
-function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string; username: string; email: string } | null; onClose?: () => void; onLogout: () => void }) {
+function SidebarContent({ user, onClose, onLogout, t }: { user: { fullName: string; username: string; email: string } | null; onClose?: () => void; onLogout: () => void; t: (k: any) => string }) {
     const getInitials = (name: string) => name.split(' ').map(n => n[0]).slice(-2).join('').toUpperCase();
 
     return (
@@ -44,7 +45,7 @@ function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string;
                     <img src="/logokhongnen.png" alt="ChoTaiNguyen" className="h-9 w-auto" />
                     <div>
                         <div className="text-base font-bold text-brand-text-primary">ChoTaiNguyen</div>
-                        <div className="text-[10px] text-brand-text-muted">Bảng điều khiển</div>
+                        <div className="text-[10px] text-brand-text-muted">{t('dashPanel')}</div>
                     </div>
                 </Link>
                 {onClose && (
@@ -61,7 +62,7 @@ function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string;
                         <span className="text-white font-semibold text-sm">{user ? getInitials(user.fullName) : '?'}</span>
                     </div>
                     <div>
-                        <div className="text-sm font-semibold text-brand-text-primary">{user?.fullName || 'Khách'}</div>
+                        <div className="text-sm font-semibold text-brand-text-primary">{user?.fullName || t('guest')}</div>
                         <div className="text-xs text-brand-text-muted">@{user?.username || ''}</div>
                     </div>
                 </div>
@@ -70,10 +71,10 @@ function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string;
             {/* Site Navigation - chỉ hiển thị link quay về trang chính */}
             <nav className="flex-1 p-3 overflow-y-auto">
                 <div className="px-4 py-1.5 text-[10px] font-semibold text-brand-text-muted uppercase tracking-wider">
-                    Điều hướng
+                    {t('navigation')}
                 </div>
                 <div className="space-y-0.5">
-                    {sidebarLinks.map((item) => (
+                    {sidebarLinkKeys.map((item) => (
                         <Link
                             key={item.href}
                             href={item.href}
@@ -81,7 +82,7 @@ function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string;
                             className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-brand-text-secondary hover:text-brand-text-primary hover:bg-brand-surface-2 transition-all"
                         >
                             <item.icon className="w-5 h-5" />
-                            {item.label}
+                            {t(item.key)}
                         </Link>
                     ))}
                 </div>
@@ -90,7 +91,7 @@ function SidebarContent({ user, onClose, onLogout }: { user: { fullName: string;
             {/* Bottom */}
             <div className="p-3 border-t border-brand-border">
                 <button onClick={onLogout} className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-brand-danger hover:bg-brand-surface-2 transition-all w-full">
-                    <LogOut className="w-4 h-4" /> Đăng xuất
+                    <LogOut className="w-4 h-4" /> {t('logout')}
                 </button>
             </div>
         </>
@@ -102,6 +103,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const router = useRouter();
     const { user, logout } = useAuth();
     const { formatVnd } = useCurrency();
+    const { t, locale, setLocale } = useI18n();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const tabsRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -174,7 +176,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="min-h-screen bg-brand-bg flex">
             {/* Desktop Sidebar — giờ chỉ chứa điều hướng site */}
             <aside className="hidden lg:flex w-[220px] bg-brand-surface border-r border-brand-border flex-col shrink-0 sticky top-0 h-screen">
-                <SidebarContent user={user} onLogout={handleLogout} />
+                <SidebarContent user={user} onLogout={handleLogout} t={t} />
             </aside>
 
             {/* Mobile Drawer Overlay */}
@@ -182,7 +184,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
                     <aside className="absolute left-0 top-0 h-full w-[260px] bg-brand-surface border-r border-brand-border flex flex-col shadow-card-hover animate-slide-up">
-                        <SidebarContent user={user} onClose={() => setDrawerOpen(false)} onLogout={handleLogout} />
+                        <SidebarContent user={user} onClose={() => setDrawerOpen(false)} onLogout={handleLogout} t={t} />
                     </aside>
                 </div>
             )}
@@ -214,7 +216,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     </span>
                                 </Link>
                                 <Link href="/dashboard/nap-tien" className="flex items-center gap-0.5 bg-brand-primary hover:bg-brand-primary/90 text-white px-2 py-1.5 text-[10px] font-medium transition-all">
-                                    <PlusCircle className="w-3 h-3" /> Nạp
+                                    <PlusCircle className="w-3 h-3" /> {t('topDeposit')}
                                 </Link>
                             </div>
                             <Link href="/dashboard/thong-bao" className="relative p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2 transition-all">
@@ -223,6 +225,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-brand-danger text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">{unreadCount > 99 ? '99+' : unreadCount}</span>
                                 )}
                             </Link>
+                            <button
+                                onClick={() => setLocale(locale === 'vi' ? 'en' : 'vi')}
+                                className="p-2 rounded-xl text-brand-text-secondary hover:bg-brand-surface-2 transition-all"
+                                title={locale === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
+                            >
+                                <Globe className="w-5 h-5" />
+                            </button>
                         </div>
                     </div>
 
@@ -243,7 +252,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             className="flex gap-1 overflow-x-auto scrollbar-hide px-4 lg:px-6 pb-2"
                             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                         >
-                            {userMenuItems.map((item) => {
+                            {userMenuKeys.map((item) => {
                                 const isActive = pathname === item.href;
                                 return (
                                     <Link
@@ -257,7 +266,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         }`}
                                     >
                                     <item.icon className="w-4 h-4" />
-                                        {item.label}
+                                        {t(item.key)}
                                         {item.href === '/dashboard/tin-nhan' && unreadCount > 0 && (
                                             <span className="min-w-[18px] h-[18px] rounded-full bg-brand-danger text-white text-[10px] font-bold flex items-center justify-center px-1">
                                                 {unreadCount > 99 ? '99+' : unreadCount}

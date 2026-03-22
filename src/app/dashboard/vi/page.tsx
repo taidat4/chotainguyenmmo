@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw, Plus, Loader2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n';
 
 interface Transaction {
     id: string;
@@ -18,6 +19,7 @@ interface Transaction {
 
 export default function WalletPage() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
     const balance = user?.walletBalance || 0;
@@ -49,22 +51,22 @@ export default function WalletPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-xl font-bold text-brand-text-primary mb-1">Ví của tôi</h1>
-                <p className="text-sm text-brand-text-muted">Quản lý số dư, xem lịch sử cộng trừ và theo dõi toàn bộ giao dịch trên hệ thống.</p>
+                <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('walletTitle')}</h1>
+                <p className="text-sm text-brand-text-muted">{t('walletSubtitle')}</p>
             </div>
 
             {/* Balance Card */}
             <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-3xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
                 <div className="relative z-10">
-                    <div className="text-sm text-white/70 mb-2">Số dư khả dụng</div>
+                    <div className="text-sm text-white/70 mb-2">{t('walletCurrentBalance')}</div>
                     <div className="text-3xl md:text-4xl font-bold mb-6">{formatCurrency(balance)}</div>
                     <div className="flex flex-wrap gap-3">
                         <Link href="/dashboard/nap-tien" className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                            <Plus className="w-4 h-4" /> Nạp tiền
+                            <Plus className="w-4 h-4" /> {t('walletDepositBtn')}
                         </Link>
                         <button onClick={() => fetchTransactions()} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Làm mới số dư
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> {t('walletRefresh')}
                         </button>
                     </div>
                 </div>
@@ -73,22 +75,22 @@ export default function WalletPage() {
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="card">
-                    <div className="text-xs text-brand-text-muted mb-2">Tổng đã nạp</div>
+                    <div className="text-xs text-brand-text-muted mb-2">{t('walletTotalDeposited')}</div>
                     <div className="text-xl font-bold text-brand-success">{formatCurrency(totalDeposits)}</div>
                 </div>
                 <div className="card">
-                    <div className="text-xs text-brand-text-muted mb-2">Tổng đã chi</div>
+                    <div className="text-xs text-brand-text-muted mb-2">{t('walletTotalSpent')}</div>
                     <div className="text-xl font-bold text-brand-danger">{formatCurrency(totalSpent)}</div>
                 </div>
                 <div className="card">
-                    <div className="text-xs text-brand-text-muted mb-2">Tổng giao dịch</div>
+                    <div className="text-xs text-brand-text-muted mb-2">{t('walletTotalTxn')}</div>
                     <div className="text-xl font-bold text-brand-primary">{totalTxns}</div>
                 </div>
             </div>
 
             {/* Transaction History */}
             <div className="card">
-                <h3 className="text-sm font-semibold text-brand-text-primary mb-4">Lịch sử giao dịch</h3>
+                <h3 className="text-sm font-semibold text-brand-text-primary mb-4">{t('walletHistory')}</h3>
                 {loading ? (
                     <div className="text-center py-10"><Loader2 className="w-6 h-6 text-brand-primary animate-spin mx-auto" /></div>
                 ) : (
@@ -96,10 +98,10 @@ export default function WalletPage() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-brand-border">
-                                    <th className="text-left text-xs text-brand-text-muted font-medium py-2.5 pr-4">Loại</th>
-                                    <th className="text-left text-xs text-brand-text-muted font-medium py-2.5 pr-4">Mô tả</th>
-                                    <th className="text-right text-xs text-brand-text-muted font-medium py-2.5 pr-4">Số tiền</th>
-                                    <th className="text-right text-xs text-brand-text-muted font-medium py-2.5">Số dư sau</th>
+                                    <th className="text-left text-xs text-brand-text-muted font-medium py-2.5 pr-4">{t('walletType')}</th>
+                                    <th className="text-left text-xs text-brand-text-muted font-medium py-2.5 pr-4">{t('walletDesc')}</th>
+                                    <th className="text-right text-xs text-brand-text-muted font-medium py-2.5 pr-4">{t('walletAmount')}</th>
+                                    <th className="text-right text-xs text-brand-text-muted font-medium py-2.5">{t('walletBalanceAfter')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -107,7 +109,7 @@ export default function WalletPage() {
                                     <tr key={txn.id} className="border-b border-brand-border/50 last:border-0">
                                         <td className="py-3 pr-4">
                                             <span className={`badge text-[10px] ${txn.direction === 'credit' ? 'badge-success' : 'badge-warning'}`}>
-                                                {txn.type === 'deposit' ? 'Nạp tiền' : txn.type === 'purchase' ? 'Mua hàng' : 'Thanh toán'}
+                                                {txn.type === 'deposit' ? t('udDeposit') : txn.type === 'purchase' ? t('udPurchase') : t('udPayment')}
                                             </span>
                                         </td>
                                         <td className="py-3 pr-4 text-brand-text-secondary text-xs max-w-[300px] truncate">{txn.description}</td>

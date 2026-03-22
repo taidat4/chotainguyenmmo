@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { formatCurrency } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n';
 import {
     TrendingUp, ShoppingBag, Package, AlertTriangle, Wallet, DollarSign,
     ArrowUpRight, Loader2
@@ -19,6 +20,7 @@ interface DashData {
 
 export default function SellerDashboard() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const [data, setData] = useState<DashData | null>(null);
     const [loading, setLoading] = useState(true);
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
@@ -41,18 +43,18 @@ export default function SellerDashboard() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-xl font-bold text-brand-text-primary mb-1">Bảng điều khiển người bán</h1>
-                <p className="text-sm text-brand-text-muted">Theo dõi doanh thu, đơn hàng, tồn kho, khiếu nại và hiệu suất gian hàng.</p>
+                <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('sdTitle')}</h1>
+                <p className="text-sm text-brand-text-muted">{t('sdSubtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { icon: DollarSign, label: 'Doanh thu hôm nay (sau phí)', value: formatCurrency(d.revenueToday), color: 'text-brand-success', bg: 'bg-brand-success/10', href: '/seller/doanh-thu' },
-                    { icon: TrendingUp, label: 'Doanh thu tháng (sau phí)', value: formatCurrency(d.revenueMonth), color: 'text-brand-primary', bg: 'bg-brand-primary/10', href: '/seller/doanh-thu' },
-                    { icon: ShoppingBag, label: 'Đơn hàng mới', value: String(d.newOrders), color: 'text-brand-info', bg: 'bg-brand-info/10', href: '/seller/don-hang' },
-                    { icon: Wallet, label: 'Đang tạm giữ (7 ngày)', value: formatCurrency(d.heldBalance), color: 'text-brand-warning', bg: 'bg-brand-warning/10', href: '/seller/rut-tien' },
-                    { icon: Package, label: 'Sản phẩm đang bán', value: String(d.activeProducts), color: 'text-brand-text-primary', bg: 'bg-brand-surface-2', href: '/seller/san-pham' },
-                    { icon: AlertTriangle, label: 'Khiếu nại cần xử lý', value: String(d.openComplaints), color: 'text-brand-danger', bg: 'bg-brand-danger/10', href: '/seller/khieu-nai' },
+                    { icon: DollarSign, label: t('sdRevenueToday'), value: formatCurrency(d.revenueToday), color: 'text-brand-success', bg: 'bg-brand-success/10', href: '/seller/doanh-thu' },
+                    { icon: TrendingUp, label: t('sdRevenueMonth'), value: formatCurrency(d.revenueMonth), color: 'text-brand-primary', bg: 'bg-brand-primary/10', href: '/seller/doanh-thu' },
+                    { icon: ShoppingBag, label: t('sdNewOrders'), value: String(d.newOrders), color: 'text-brand-info', bg: 'bg-brand-info/10', href: '/seller/don-hang' },
+                    { icon: Wallet, label: t('sdHeldBalance'), value: formatCurrency(d.heldBalance), color: 'text-brand-warning', bg: 'bg-brand-warning/10', href: '/seller/rut-tien' },
+                    { icon: Package, label: t('sdActiveProducts'), value: String(d.activeProducts), color: 'text-brand-text-primary', bg: 'bg-brand-surface-2', href: '/seller/san-pham' },
+                    { icon: AlertTriangle, label: t('sdOpenComplaints'), value: String(d.openComplaints), color: 'text-brand-danger', bg: 'bg-brand-danger/10', href: '/seller/khieu-nai' },
                 ].map((m, i) => (
                     <Link key={i} href={m.href} className="card hover:border-brand-primary/30 hover:shadow-md transition-all cursor-pointer">
                         <div className="flex items-center justify-between mb-3">
@@ -73,20 +75,20 @@ export default function SellerDashboard() {
                         <DollarSign className="w-4 h-4 text-brand-warning" />
                     </div>
                     <div className="flex-1">
-                        <span className="font-medium text-brand-text-primary">Phí sàn: {d.commissionRate}%</span>
-                        <span className="text-brand-text-muted ml-2">• Phí tháng này: <strong className="text-brand-danger">{formatCurrency(d.feesMonth)}</strong></span>
-                        <span className="text-brand-text-muted ml-2">• Số dư khả dụng: <strong className="text-brand-success">{formatCurrency(d.availableBalance)}</strong></span>
+                        <span className="font-medium text-brand-text-primary">{t('sdPlatformFee')}: {d.commissionRate}%</span>
+                        <span className="text-brand-text-muted ml-2">• {t('sdFeeMonth')}: <strong className="text-brand-danger">{formatCurrency(d.feesMonth)}</strong></span>
+                        <span className="text-brand-text-muted ml-2">• {t('sdAvailableBalance')}: <strong className="text-brand-success">{formatCurrency(d.availableBalance)}</strong></span>
                     </div>
                 </div>
             </div>
 
             {/* Tax Info Banner */}
-            <TaxInfoCard revenueMonth={d.revenueMonth} />
+            <TaxInfoCard revenueMonth={d.revenueMonth} t={t} />
             <div className="card">
-                <h3 className="text-sm font-semibold text-brand-text-primary mb-4">Đơn hàng mới nhất</h3>
+                <h3 className="text-sm font-semibold text-brand-text-primary mb-4">{t('sdRecentOrders')}</h3>
                 <div className="space-y-3">
                     {d.recentOrders.length === 0 ? (
-                        <p className="text-sm text-brand-text-muted text-center py-6">Chưa có đơn hàng nào.</p>
+                        <p className="text-sm text-brand-text-muted text-center py-6">{t('sdNoOrders')}</p>
                     ) : d.recentOrders.map((order) => (
                         <div key={order.id} className="flex items-center gap-4 bg-brand-surface-2 rounded-xl p-3">
                             <div className="w-9 h-9 rounded-lg bg-brand-primary/10 flex items-center justify-center shrink-0">
@@ -99,10 +101,10 @@ export default function SellerDashboard() {
                             <div className="text-right">
                                 <div className="text-sm font-semibold text-brand-text-primary">{formatCurrency(order.sellerEarning || order.totalAmount)}</div>
                                 {order.feeAmount > 0 && (
-                                    <div className="text-[10px] text-brand-text-muted">Phí: -{formatCurrency(order.feeAmount)}</div>
+                                    <div className="text-[10px] text-brand-text-muted">{t('sdFee')}: -{formatCurrency(order.feeAmount)}</div>
                                 )}
                                 <span className={`badge text-[10px] ${order.status === 'completed' ? 'badge-success' : order.status === 'paid' ? 'badge-info' : order.status === 'disputed' ? 'badge-danger' : 'badge-primary'}`}>
-                                    {order.status === 'completed' ? 'Hoàn tất' : order.status === 'paid' ? 'Đã thanh toán' : order.status}
+                                    {order.status === 'completed' ? t('sdCompleted') : order.status === 'paid' ? t('sdPaid') : order.status}
                                 </span>
                             </div>
                         </div>
@@ -114,7 +116,7 @@ export default function SellerDashboard() {
 }
 
 // ======== Tax Info Card ========
-function TaxInfoCard({ revenueMonth }: { revenueMonth: number }) {
+function TaxInfoCard({ revenueMonth, t }: { revenueMonth: number; t: (k: any) => string }) {
     const [tax, setTax] = useState<{ enabled: boolean; taxRate: number; paymentDay: number } | null>(null);
 
     useEffect(() => {
@@ -134,19 +136,19 @@ function TaxInfoCard({ revenueMonth }: { revenueMonth: number }) {
                     📋
                 </div>
                 <div className="flex-1">
-                    <span className="font-medium text-brand-text-primary">Đóng thuế: </span>
+                    <span className="font-medium text-brand-text-primary">{t('sdTax')}: </span>
                     {tax.enabled ? (
                         <>
-                            <span className="badge badge-danger text-[10px] mr-2">BẬT</span>
-                            <span className="text-brand-text-muted">Thuế suất: <strong>{tax.taxRate}%</strong></span>
-                            <span className="text-brand-text-muted ml-2">• Thu ngày: <strong>{tax.paymentDay}</strong> hàng tháng</span>
-                            <span className="text-brand-text-muted ml-2">• Ước tính tháng này: <strong className="text-brand-danger">{formatCurrency(estimatedTax)}</strong></span>
+                            <span className="badge badge-danger text-[10px] mr-2">{t('sdTaxOn')}</span>
+                            <span className="text-brand-text-muted">{t('sdTaxRate')}: <strong>{tax.taxRate}%</strong></span>
+                            <span className="text-brand-text-muted ml-2">• {t('sdTaxDay')}: <strong>{tax.paymentDay}</strong> {t('sdTaxMonthly')}</span>
+                            <span className="text-brand-text-muted ml-2">• {t('sdTaxEstimate')}: <strong className="text-brand-danger">{formatCurrency(estimatedTax)}</strong></span>
                         </>
                     ) : (
-                        <span className="badge badge-neutral text-[10px]">TẮT — Chưa thu thuế</span>
+                        <span className="badge badge-neutral text-[10px]">{t('sdTaxOff')}</span>
                     )}
                 </div>
-                <Link href="/seller/hoa-don" className="text-xs text-brand-primary hover:underline shrink-0">Xem hóa đơn →</Link>
+                <Link href="/seller/hoa-don" className="text-xs text-brand-primary hover:underline shrink-0">{t('sdViewInvoices')}</Link>
             </div>
         </div>
     );
