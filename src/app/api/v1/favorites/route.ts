@@ -6,11 +6,10 @@ import { requireAuth } from '@/lib/auth';
 export async function GET(request: NextRequest) {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
-    const user = authResult as any;
 
     try {
         const favorites = await prisma.favorite.findMany({
-            where: { userId: user.id },
+            where: { userId: authResult.userId },
             orderBy: { createdAt: 'desc' },
             include: {
                 product: {
@@ -51,7 +50,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
-    const user = authResult as any;
 
     try {
         const { productId } = await request.json();
@@ -62,7 +60,7 @@ export async function POST(request: NextRequest) {
 
         // Check if already favorited
         const existing = await prisma.favorite.findUnique({
-            where: { userId_productId: { userId: user.id, productId } },
+            where: { userId_productId: { userId: authResult.userId, productId } },
         });
 
         if (existing) {
@@ -72,7 +70,7 @@ export async function POST(request: NextRequest) {
         } else {
             // Add favorite
             await prisma.favorite.create({
-                data: { userId: user.id, productId },
+                data: { userId: authResult.userId, productId },
             });
             return NextResponse.json({ success: true, favorited: true, message: 'Đã thêm vào yêu thích' });
         }
@@ -86,7 +84,6 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
-    const user = authResult as any;
 
     try {
         const { searchParams } = new URL(request.url);
@@ -97,7 +94,7 @@ export async function DELETE(request: NextRequest) {
         }
 
         await prisma.favorite.deleteMany({
-            where: { userId: user.id, productId },
+            where: { userId: authResult.userId, productId },
         });
 
         return NextResponse.json({ success: true, message: 'Đã bỏ yêu thích' });
@@ -106,3 +103,4 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ success: false, message: 'Lỗi hệ thống' }, { status: 500 });
     }
 }
+

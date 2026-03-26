@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/auth';
 // GET /api/v1/admin/sellers/[shopId] — Detailed seller profile for admin
 export async function GET(
     request: NextRequest,
-    { params }: { params: { shopId: string } }
+    { params }: { params: Promise<{ shopId: string }> }
 ) {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
@@ -13,7 +13,7 @@ export async function GET(
         return NextResponse.json({ success: false, message: 'Không có quyền' }, { status: 403 });
     }
 
-    const { shopId } = params;
+    const { shopId } = await params;
 
     try {
         const shop = await prisma.shop.findUnique({
