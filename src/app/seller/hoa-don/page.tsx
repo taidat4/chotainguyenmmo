@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { FileText, Download, Eye, X, Loader2, Search, Image as ImageIcon, FileSpreadsheet, File } from 'lucide-react';
 import { useUI } from '@/components/shared/UIProvider';
+import { useI18n } from '@/lib/i18n';
 
 interface Invoice {
     id: string;
@@ -22,6 +23,7 @@ interface Invoice {
 }
 
 export default function SellerInvoicePage() {
+    const { t } = useI18n();
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<Invoice | null>(null);
@@ -227,13 +229,13 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
         <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">Hóa đơn bán hàng</h1>
-                    <p className="text-sm text-brand-text-muted">Hóa đơn điện tử tự động tạo cho mỗi đơn hàng. Theo Thông tư 78/2021/TT-BTC.</p>
+                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('sinvTitle')}</h1>
+                    <p className="text-sm text-brand-text-muted">{t('sinvSubtitle')}</p>
                 </div>
                 {/* Bulk export */}
                 <button onClick={exportExcel} disabled={invoices.length === 0}
                     className="flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-xl border border-brand-border text-brand-text-secondary hover:bg-brand-surface-2 transition-all disabled:opacity-40">
-                    <FileSpreadsheet className="w-4 h-4" /> Xuất Excel tổng
+                    <FileSpreadsheet className="w-4 h-4" /> {t('sinvExportExcel')}
                 </button>
             </div>
 
@@ -241,26 +243,26 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="card !p-4">
                     <div className="text-xl font-bold text-brand-primary">{invoices.length}</div>
-                    <div className="text-xs text-brand-text-muted mt-1">Tổng hóa đơn</div>
+                    <div className="text-xs text-brand-text-muted mt-1">{t('sinvTotalInvoices')}</div>
                 </div>
                 <div className="card !p-4">
                     <div className="text-xl font-bold text-brand-success">{fmt(totalRevenue)}</div>
-                    <div className="text-xs text-brand-text-muted mt-1">Doanh thu (sau phí + thuế)</div>
+                    <div className="text-xs text-brand-text-muted mt-1">{t('sinvRevenueAfterFee')}</div>
                 </div>
                 <div className="card !p-4">
                     <div className="text-xl font-bold text-brand-danger">{fmt(totalFees)}</div>
-                    <div className="text-xs text-brand-text-muted mt-1">Phí sàn đã trừ</div>
+                    <div className="text-xs text-brand-text-muted mt-1">{t('sinvFeeDeducted')}</div>
                 </div>
                 <div className="card !p-4">
                     <div className="text-xl font-bold text-brand-warning">{fmt(totalVat)}</div>
-                    <div className="text-xs text-brand-text-muted mt-1">Thuế GTGT</div>
+                    <div className="text-xs text-brand-text-muted mt-1">{t('sinvVat')}</div>
                 </div>
             </div>
 
             {/* Search */}
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-muted" />
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm theo số HD, mã đơn, tên người mua..." className="input-field !pl-10 w-full" />
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('sinvSearchPlaceholder')} className="input-field !pl-10 w-full" />
             </div>
 
             {/* Invoice List */}
@@ -269,7 +271,7 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
             ) : filtered.length === 0 ? (
                 <div className="card text-center py-16">
                     <FileText className="w-12 h-12 text-brand-text-muted/30 mx-auto mb-3" />
-                    <p className="text-sm text-brand-text-muted">{search ? 'Không tìm thấy hóa đơn phù hợp' : 'Chưa có hóa đơn nào. Hóa đơn tạo tự động khi khách mua hàng.'}</p>
+                    <p className="text-sm text-brand-text-muted">{search ? t('sinvNoMatch') : t('sinvEmpty')}</p>
                 </div>
             ) : (
                 <div className="space-y-3">
@@ -283,13 +285,13 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                                     <span className="text-xs font-mono font-bold text-brand-primary">{inv.invoiceNumber}</span>
                                     <span className="text-[10px] text-brand-text-muted">• {inv.orderCode}</span>
                                 </div>
-                                <div className="text-xs text-brand-text-muted">Người mua: <strong className="text-brand-text-primary">{inv.buyerName}</strong> • {fmtDate(inv.issuedAt)}</div>
+                                <div className="text-xs text-brand-text-muted">{t('sinvBuyer')}: <strong className="text-brand-text-primary">{inv.buyerName}</strong> • {fmtDate(inv.issuedAt)}</div>
                             </div>
                             <div className="text-right shrink-0">
                                 <div className="text-sm font-bold text-brand-success">{fmt(inv.totalAmount - inv.feeAmount - inv.vatAmount)}</div>
                                 <div className="text-[10px] text-brand-text-muted">
-                                    Phí: -{fmt(inv.feeAmount)}
-                                    {inv.taxEnabled && inv.vatAmount > 0 && <> • Thuế: -{fmt(inv.vatAmount)}</>}
+                                    {t('sinvFee')}: -{fmt(inv.feeAmount)}
+                                    {inv.taxEnabled && inv.vatAmount > 0 && <> • {t('sinvTax')}: -{fmt(inv.vatAmount)}</>}
                                 </div>
                             </div>
                         </div>
@@ -305,7 +307,7 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <FileText className="w-5 h-5 text-brand-primary" />
-                                    <h3 className="text-lg font-bold text-brand-text-primary">HÓA ĐƠN ĐIỆN TỬ</h3>
+                                    <h3 className="text-lg font-bold text-brand-text-primary">{t('sinvElectronicInvoice')}</h3>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     {/* Export buttons */}
@@ -325,7 +327,7 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                             <div className="text-center">
                                 <div className="text-xs text-brand-text-muted mb-1">(Theo Thông tư 78/2021/TT-BTC)</div>
                                 <div className="text-sm font-mono font-bold text-brand-primary">{selected.invoiceNumber}</div>
-                                <div className="text-xs text-brand-text-muted mt-1">Ngày phát hành: {fmtDate(selected.issuedAt)}</div>
+                                <div className="text-xs text-brand-text-muted mt-1">{t('sinvIssueDate')}: {fmtDate(selected.issuedAt)}</div>
                             </div>
                         </div>
 
@@ -334,26 +336,26 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                             {/* Thông tin hai bên */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-brand-surface-2 rounded-xl p-3">
-                                    <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-1">Đơn vị bán hàng</div>
+                                    <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-1">{t('sinvSeller')}</div>
                                     <div className="text-sm font-medium text-brand-text-primary">{selected.sellerName}</div>
                                     <div className="text-xs text-brand-text-muted mt-0.5">Sàn: ChoTaiNguyen (chotainguyen.com)</div>
                                     <div className="text-[10px] text-brand-text-muted mt-0.5">Nền tảng TMĐT theo NĐ 85/2021/NĐ-CP</div>
                                 </div>
                                 <div className="bg-brand-surface-2 rounded-xl p-3">
-                                    <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-1">Người mua</div>
+                                    <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-1">{t('sinvBuyerLabel')}</div>
                                     <div className="text-sm font-medium text-brand-text-primary">{selected.buyerName}</div>
-                                    <div className="text-xs text-brand-text-muted mt-0.5">Mã đơn: {selected.orderCode}</div>
+                                    <div className="text-xs text-brand-text-muted mt-0.5">{t('sinvOrderCode')}: {selected.orderCode}</div>
                                 </div>
                             </div>
 
                             {/* Chi tiết sản phẩm */}
                             <div className="bg-brand-surface-2 rounded-xl p-3 text-xs">
-                                <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-2 font-semibold">📦 Chi tiết hàng hóa / dịch vụ</div>
+                                <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-2 font-semibold">{t('sinvProductDetail')}</div>
                                 <table className="w-full text-xs">
                                     <thead>
                                         <tr className="border-b border-brand-border/30 text-left">
-                                            <th className="py-1 text-brand-text-muted font-medium">Tên hàng hóa/DV</th>
-                                            <th className="py-1 text-brand-text-muted font-medium text-right">Thành tiền</th>
+                                            <th className="py-1 text-brand-text-muted font-medium">{t('sinvProductName')}</th>
+                                            <th className="py-1 text-brand-text-muted font-medium text-right">{t('sinvSubtotalCol')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -368,7 +370,7 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                             {/* Tổng tiền */}
                             <div className="bg-brand-surface-2 rounded-xl p-4 space-y-2">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-brand-text-muted">Tiền hàng {selected.taxEnabled ? '(chưa thuế)' : ''}</span>
+                                    <span className="text-brand-text-muted">{t('sinvSubtotalLabel')} {selected.taxEnabled ? '(+tax)' : ''}</span>
                                     <span className="font-medium">{fmt(selected.subtotal)}</span>
                                 </div>
                                 {/* CHỈ HIỆN THUẾ KHI ADMIN BẬT */}
@@ -379,11 +381,11 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                                     </div>
                                 )}
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-brand-text-muted">Phí dịch vụ sàn TMĐT</span>
+                                    <span className="text-brand-text-muted">{t('sinvPlatformFee')}</span>
                                     <span className="font-medium text-brand-danger">-{fmt(selected.feeAmount)}</span>
                                 </div>
                                 <div className="border-t border-brand-border pt-2 flex justify-between text-sm">
-                                    <span className="font-semibold">Seller nhận thực tế</span>
+                                    <span className="font-semibold">{t('sinvSellerReceive')}</span>
                                     <span className="font-bold text-brand-success text-lg">{fmt(selected.totalAmount - selected.feeAmount - selected.vatAmount)}</span>
                                 </div>
                             </div>
@@ -442,15 +444,15 @@ Hóa đơn tạo tự động, có giá trị pháp lý không cần đóng dấ
                         <div className="p-4 border-t border-brand-border flex gap-2">
                             <button onClick={exportPDF} disabled={!!exporting}
                                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium bg-brand-danger/10 text-brand-danger hover:bg-brand-danger/20 transition-all disabled:opacity-50">
-                                <File className="w-4 h-4" /> Xuất PDF
+                                <File className="w-4 h-4" /> {t('sinvExportPdf')}
                             </button>
                             <button onClick={exportImage} disabled={!!exporting}
                                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-all disabled:opacity-50">
-                                <ImageIcon className="w-4 h-4" /> Tải ảnh
+                                <ImageIcon className="w-4 h-4" /> {t('sinvDownloadImg')}
                             </button>
                             <button onClick={() => { setSelected(null); exportExcel(); }} disabled={!!exporting}
                                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium bg-brand-success/10 text-brand-success hover:bg-brand-success/20 transition-all disabled:opacity-50">
-                                <FileSpreadsheet className="w-4 h-4" /> Xuất Excel
+                                <FileSpreadsheet className="w-4 h-4" /> {t('sinvExportExcelBtn')}
                             </button>
                         </div>
                     </div>

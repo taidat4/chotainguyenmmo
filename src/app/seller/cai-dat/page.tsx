@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n';
 import { Store, CreditCard, Bell, Save, Upload, CheckCircle2, Loader2 } from 'lucide-react';
 import { VIETNAMESE_BANKS } from '@/lib/banks';
 
 export default function SellerSettingsPage() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const [saving, setSaving] = useState(false);
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState('');
@@ -21,10 +23,10 @@ export default function SellerSettingsPage() {
     const [bankOwner, setBankOwner] = useState('');
     const [bankBranch, setBankBranch] = useState('');
     const [notifications, setNotifications] = useState([
-        { key: 'orders', label: 'Thông báo đơn hàng mới', desc: 'Nhận thông báo khi có đơn hàng mới', on: true },
-        { key: 'complaints', label: 'Thông báo khiếu nại', desc: 'Nhận thông báo khi có khiếu nại từ khách', on: true },
-        { key: 'stock', label: 'Thông báo tồn kho', desc: 'Cảnh báo khi sản phẩm sắp hết hàng', on: true },
-        { key: 'weekly', label: 'Email hàng tuần', desc: 'Báo cáo doanh thu tuần qua email', on: false },
+        { key: 'orders', labelKey: 'ssetNotifOrders' as const, descKey: 'ssetNotifOrdersDesc' as const, on: true },
+        { key: 'complaints', labelKey: 'ssetNotifComplaints' as const, descKey: 'ssetNotifComplaintsDesc' as const, on: true },
+        { key: 'stock', labelKey: 'ssetNotifStock' as const, descKey: 'ssetNotifStockDesc' as const, on: true },
+        { key: 'weekly', labelKey: 'ssetNotifWeekly' as const, descKey: 'ssetNotifWeeklyDesc' as const, on: false },
     ]);
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
@@ -68,9 +70,9 @@ export default function SellerSettingsPage() {
                 }),
             });
             const data = await res.json();
-            if (data.success) showToast('✅ Đã lưu cài đặt thành công');
+            if (data.success) showToast(t('ssetSaved'));
             else showToast(`❌ ${data.message}`);
-        } catch { showToast('❌ Lỗi kết nối'); }
+        } catch { showToast(t('spConnectionError')); }
         setSaving(false);
     };
 
@@ -79,13 +81,13 @@ export default function SellerSettingsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-xl font-bold text-brand-text-primary mb-1">Cài đặt shop</h1>
-                <p className="text-sm text-brand-text-muted">Quản lý thông tin shop, cài đặt thanh toán và thông báo.</p>
+                <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('ssetTitle')}</h1>
+                <p className="text-sm text-brand-text-muted">{t('ssetSubtitle')}</p>
             </div>
 
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
-                    <Store className="w-4 h-4 text-brand-primary" /> Thông tin shop
+                    <Store className="w-4 h-4 text-brand-primary" /> {t('ssetShopInfo')}
                 </h3>
                 <div className="space-y-5">
                     <div className="flex items-center gap-6">
@@ -104,8 +106,7 @@ export default function SellerSettingsPage() {
                                     onChange={async (e) => {
                                         const file = e.target.files?.[0];
                                         if (!file) return;
-                                        if (file.size > 2 * 1024 * 1024) { showToast('❌ Ảnh tối đa 2MB'); return; }
-                                        // Upload to server as file
+                                        if (file.size > 2 * 1024 * 1024) { showToast('❌ Max 2MB'); return; }
                                         const formData = new FormData();
                                         formData.append('file', file);
                                         formData.append('type', 'shop-logo');
@@ -118,41 +119,40 @@ export default function SellerSettingsPage() {
                                             const data = await res.json();
                                             if (data.success && data.url) {
                                                 setLogoUrl(data.url);
-                                                showToast('✅ Đã upload logo. Bấm Lưu để cập nhật.');
+                                                showToast('✅ Logo uploaded');
                                             } else {
-                                                // Fallback: use base64
                                                 const reader = new FileReader();
                                                 reader.onload = () => setLogoUrl(reader.result as string);
                                                 reader.readAsDataURL(file);
-                                                showToast('✅ Đã chọn logo. Bấm Lưu để cập nhật.');
+                                                showToast('✅ Logo selected');
                                             }
                                         } catch {
                                             const reader = new FileReader();
                                             reader.onload = () => setLogoUrl(reader.result as string);
                                             reader.readAsDataURL(file);
-                                            showToast('✅ Đã chọn logo. Bấm Lưu để cập nhật.');
+                                            showToast('✅ Logo selected');
                                         }
                                     }}
                                 />
                             </label>
                         </div>
                         <div className="flex-1">
-                            <label className="block text-sm font-medium text-brand-text-primary mb-2">Tên shop</label>
+                            <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetShopName')}</label>
                             <input type="text" value={shopName} onChange={e => setShopName(e.target.value)} className="input-field" />
-                            <p className="text-[10px] text-brand-text-muted mt-1">Di chuột vào logo → bấm để đổi ảnh (tối đa 2MB)</p>
+                            <p className="text-[10px] text-brand-text-muted mt-1">{t('ssetLogoHint')}</p>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-brand-text-primary mb-2">Mô tả shop</label>
+                        <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetShopDesc')}</label>
                         <textarea rows={3} value={shopDesc} onChange={e => setShopDesc(e.target.value)} className="input-field resize-none" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-brand-text-primary mb-2">Email liên hệ</label>
+                            <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetEmail')}</label>
                             <input type="email" value={email} disabled className="input-field opacity-60" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-brand-text-primary mb-2">Số điện thoại</label>
+                            <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetPhone')}</label>
                             <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="input-field" />
                         </div>
                     </div>
@@ -161,26 +161,26 @@ export default function SellerSettingsPage() {
 
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-brand-primary" /> Thông tin thanh toán
+                    <CreditCard className="w-4 h-4 text-brand-primary" /> {t('ssetPaymentInfo')}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-brand-text-primary mb-2">Ngân hàng</label>
+                        <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetBank')}</label>
                         <select value={bankName} onChange={e => setBankName(e.target.value)} className="input-field">
-                            <option value="">— Chọn ngân hàng —</option>
+                            <option value="">{t('ssetSelectBank')}</option>
                             {VIETNAMESE_BANKS.map(b => (<option key={b.code} value={b.name}>{b.name}</option>))}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-brand-text-primary mb-2">Số tài khoản</label>
+                        <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetAccountNum')}</label>
                         <input type="text" value={bankAccount} onChange={e => setBankAccount(e.target.value)} className="input-field" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-brand-text-primary mb-2">Tên chủ tài khoản</label>
+                        <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetAccountName')}</label>
                         <input type="text" value={bankOwner} onChange={e => setBankOwner(e.target.value)} className="input-field" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-brand-text-primary mb-2">Chi nhánh</label>
+                        <label className="block text-sm font-medium text-brand-text-primary mb-2">{t('ssetBranch')}</label>
                         <input type="text" value={bankBranch} onChange={e => setBankBranch(e.target.value)} className="input-field" />
                     </div>
                 </div>
@@ -188,14 +188,14 @@ export default function SellerSettingsPage() {
 
             <div className="card">
                 <h3 className="text-sm font-semibold text-brand-text-primary mb-5 flex items-center gap-2">
-                    <Bell className="w-4 h-4 text-brand-primary" /> Cài đặt thông báo
+                    <Bell className="w-4 h-4 text-brand-primary" /> {t('ssetNotifications')}
                 </h3>
                 <div className="space-y-4">
                     {notifications.map(item => (
                         <div key={item.key} className="flex items-center justify-between p-3 rounded-xl bg-brand-surface-2/50">
                             <div>
-                                <div className="text-sm font-medium text-brand-text-primary">{item.label}</div>
-                                <div className="text-xs text-brand-text-muted">{item.desc}</div>
+                                <div className="text-sm font-medium text-brand-text-primary">{t(item.labelKey)}</div>
+                                <div className="text-xs text-brand-text-muted">{t(item.descKey)}</div>
                             </div>
                             <button onClick={() => toggleNotification(item.key)} className={`w-11 h-6 rounded-full transition-all ${item.on ? 'bg-brand-primary' : 'bg-brand-surface-3'}`}>
                                 <div className={`w-5 h-5 bg-white rounded-full mt-0.5 transition-all shadow ${item.on ? 'ml-[22px]' : 'ml-0.5'}`} />
@@ -208,7 +208,7 @@ export default function SellerSettingsPage() {
             <div className="flex justify-end">
                 <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center gap-2 disabled:opacity-70">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    {saving ? 'Đang lưu...' : 'Lưu cài đặt'}
+                    {saving ? t('ssetSaving') : t('ssetSaveSettings')}
                 </button>
             </div>
 

@@ -113,6 +113,19 @@ export async function GET(request: NextRequest) {
             _count: { rating: true },
         });
 
+        // If user is authenticated, also return their reviewed orderIds for this product
+        let myReviewedOrderIds: string[] = [];
+        try {
+            const authResult = await requireAuth(request);
+            if (!(authResult instanceof NextResponse)) {
+                const userReviews = await prisma.review.findMany({
+                    where: { productId, userId: authResult.userId },
+                    select: { orderId: true },
+                });
+                myReviewedOrderIds = userReviews.map(r => r.orderId).filter(Boolean) as string[];
+            }
+        } catch {} // Not authenticated — fine, just skip
+
         return NextResponse.json({
             success: true,
             data: {
@@ -126,6 +139,7 @@ export async function GET(request: NextRequest) {
                 })),
                 avgRating: Math.round((avg._avg.rating || 0) * 10) / 10,
                 totalReviews: avg._count.rating || 0,
+                myReviewedOrderIds,
             },
         });
     } catch (error) {

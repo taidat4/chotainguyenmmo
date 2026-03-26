@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/utils';
 import { TrendingUp, DollarSign, ShoppingBag, BarChart3, Loader2, Calendar, ChevronDown } from 'lucide-react';
 
@@ -11,21 +12,22 @@ interface DashData {
     periodLabel: string;
 }
 
-const PERIODS = [
-    { key: 'today', label: 'Hôm nay' },
-    { key: 'month', label: 'Tháng này' },
-    { key: '3months', label: '3 tháng' },
-    { key: '6months', label: '6 tháng' },
-    { key: 'year', label: 'Năm nay' },
-];
-
 export default function RevenuePage() {
+    const { t } = useI18n();
     const [data, setData] = useState<DashData | null>(null);
     const [loading, setLoading] = useState(true);
     const [period, setPeriod] = useState('month');
     const [customMonth, setCustomMonth] = useState('');
     const [showCustom, setShowCustom] = useState(false);
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
+
+    const PERIODS = [
+        { key: 'today', label: t('srevToday') },
+        { key: 'month', label: t('srevMonth') },
+        { key: '3months', label: t('srev3Months') },
+        { key: '6months', label: t('srev6Months') },
+        { key: 'year', label: t('srevYear') },
+    ];
 
     const fetchData = async (p: string) => {
         setLoading(true);
@@ -58,8 +60,8 @@ export default function RevenuePage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">Doanh thu</h1>
-                    <p className="text-sm text-brand-text-muted">Tổng quan doanh thu và hiệu suất bán hàng.</p>
+                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('srevTitle')}</h1>
+                    <p className="text-sm text-brand-text-muted">{t('srevSubtitle')}</p>
                 </div>
             </div>
 
@@ -87,7 +89,7 @@ export default function RevenuePage() {
                                 : 'bg-brand-surface-2 text-brand-text-secondary hover:bg-brand-primary/10'
                         }`}
                     >
-                        <Calendar className="w-3 h-3" /> Chọn tháng <ChevronDown className="w-3 h-3" />
+                        <Calendar className="w-3 h-3" /> {t('srevPickMonth')} <ChevronDown className="w-3 h-3" />
                     </button>
                     {showCustom && (
                         <div className="absolute top-full left-0 mt-1 bg-brand-surface border border-brand-border rounded-xl shadow-card p-3 z-20 flex items-center gap-2">
@@ -97,7 +99,7 @@ export default function RevenuePage() {
                                 onChange={e => setCustomMonth(e.target.value)}
                                 className="input-field !py-1.5 !px-2 text-xs"
                             />
-                            <button onClick={handleCustomMonth} className="btn-primary !py-1.5 !px-3 text-xs">Xem</button>
+                            <button onClick={handleCustomMonth} className="btn-primary !py-1.5 !px-3 text-xs">{t('srevView')}</button>
                         </div>
                     )}
                 </div>
@@ -112,10 +114,10 @@ export default function RevenuePage() {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {[
-                            { label: `Doanh thu ${d.periodLabel || 'kỳ'}`, value: formatCurrency(d.revenuePeriod), icon: DollarSign, bg: 'bg-brand-primary/10', color: 'text-brand-primary' },
-                            { label: `Đơn hàng`, value: String(d.periodOrders), icon: ShoppingBag, bg: 'bg-brand-success/10', color: 'text-brand-success' },
-                            { label: 'Doanh thu hôm nay', value: formatCurrency(d.revenueToday), icon: TrendingUp, bg: 'bg-brand-info/10', color: 'text-brand-info' },
-                            { label: 'Giá trị TB/đơn', value: formatCurrency(avgOrderValue), icon: BarChart3, bg: 'bg-brand-warning/10', color: 'text-brand-warning' },
+                            { label: `${t('srevRevenuePeriod')} ${d.periodLabel || ''}`.trim(), value: formatCurrency(d.revenuePeriod), icon: DollarSign, bg: 'bg-brand-primary/10', color: 'text-brand-primary' },
+                            { label: t('srevOrders'), value: String(d.periodOrders), icon: ShoppingBag, bg: 'bg-brand-success/10', color: 'text-brand-success' },
+                            { label: t('srevRevenueToday'), value: formatCurrency(d.revenueToday), icon: TrendingUp, bg: 'bg-brand-info/10', color: 'text-brand-info' },
+                            { label: t('srevAvgOrder'), value: formatCurrency(avgOrderValue), icon: BarChart3, bg: 'bg-brand-warning/10', color: 'text-brand-warning' },
                         ].map((s, i) => (
                             <div key={i} className="card">
                                 <div className="flex items-center justify-between mb-3">
@@ -130,23 +132,23 @@ export default function RevenuePage() {
                     </div>
 
                     <div className="card">
-                        <h3 className="text-sm font-semibold text-brand-text-primary mb-4">Tổng quan {d.periodLabel}</h3>
+                        <h3 className="text-sm font-semibold text-brand-text-primary mb-4">{t('srevOverview')} {d.periodLabel}</h3>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             <div className="bg-brand-surface-2 rounded-xl p-4 text-center">
                                 <div className="text-2xl font-bold text-brand-primary">{d.periodOrders}</div>
-                                <div className="text-xs text-brand-text-muted mt-1">Tổng đơn hàng</div>
+                                <div className="text-xs text-brand-text-muted mt-1">{t('srevTotalOrders')}</div>
                             </div>
                             <div className="bg-brand-surface-2 rounded-xl p-4 text-center">
                                 <div className="text-2xl font-bold text-brand-success">{d.periodCompletedOrders}</div>
-                                <div className="text-xs text-brand-text-muted mt-1">Đơn hoàn tất</div>
+                                <div className="text-xs text-brand-text-muted mt-1">{t('srevCompletedOrders')}</div>
                             </div>
                             <div className="bg-brand-surface-2 rounded-xl p-4 text-center">
                                 <div className="text-2xl font-bold text-brand-danger">{formatCurrency(d.feesPeriod)}</div>
-                                <div className="text-xs text-brand-text-muted mt-1">Phí sàn</div>
+                                <div className="text-xs text-brand-text-muted mt-1">{t('srevPlatformFee')}</div>
                             </div>
                             <div className="bg-brand-surface-2 rounded-xl p-4 text-center">
                                 <div className="text-2xl font-bold text-brand-info">{d.activeProducts}</div>
-                                <div className="text-xs text-brand-text-muted mt-1">Sản phẩm đang bán</div>
+                                <div className="text-xs text-brand-text-muted mt-1">{t('srevActiveProducts')}</div>
                             </div>
                         </div>
                     </div>

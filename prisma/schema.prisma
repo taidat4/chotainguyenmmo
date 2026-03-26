@@ -19,6 +19,7 @@ model User {
   status             UserStatus     @default(ACTIVE)
   emailVerifiedAt    DateTime?
   lastLoginAt        DateTime?
+  lastSeenAt         DateTime?
   lastLoginIp        String?
   twoFactorEnabled   Boolean        @default(false)
   twoFactorSecret    String?

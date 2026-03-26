@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n';
 import { formatDateTime, getStatusLabel } from '@/lib/utils';
 import { AlertTriangle, Eye, MessageSquare, CheckCircle, Clock, X, Send, CheckCircle2, Loader2 } from 'lucide-react';
 
@@ -12,6 +13,7 @@ interface ComplaintItem {
 
 export default function SellerComplaintsPage() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const [complaints, setComplaints] = useState<ComplaintItem[]>([]);
     const [selected, setSelected] = useState<ComplaintItem | null>(null);
     const [replyTo, setReplyTo] = useState<ComplaintItem | null>(null);
@@ -42,16 +44,16 @@ export default function SellerComplaintsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-xl font-bold text-brand-text-primary mb-1">Khiếu nại từ khách hàng</h1>
-                <p className="text-sm text-brand-text-muted">Xem xét và phản hồi khiếu nại, giữ tỷ lệ giải quyết cao.</p>
+                <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('scTitle')}</h1>
+                <p className="text-sm text-brand-text-muted">{t('scSubtitle')}</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: 'Chờ phản hồi', value: stats.open, icon: Clock, color: 'text-brand-warning', bg: 'bg-brand-warning/10' },
-                    { label: 'Đang xử lý', value: stats.review, icon: MessageSquare, color: 'text-brand-info', bg: 'bg-brand-info/10' },
-                    { label: 'Đã giải quyết', value: stats.resolved, icon: CheckCircle, color: 'text-brand-success', bg: 'bg-brand-success/10' },
-                    { label: 'Tỷ lệ giải quyết', value: `${stats.rate}%`, icon: AlertTriangle, color: 'text-brand-primary', bg: 'bg-brand-primary/10' },
+                    { label: t('scWaitingResponse'), value: stats.open, icon: Clock, color: 'text-brand-warning', bg: 'bg-brand-warning/10' },
+                    { label: t('scProcessing'), value: stats.review, icon: MessageSquare, color: 'text-brand-info', bg: 'bg-brand-info/10' },
+                    { label: t('scResolved'), value: stats.resolved, icon: CheckCircle, color: 'text-brand-success', bg: 'bg-brand-success/10' },
+                    { label: t('scResolutionRate'), value: `${stats.rate}%`, icon: AlertTriangle, color: 'text-brand-primary', bg: 'bg-brand-primary/10' },
                 ].map((s, i) => (
                     <div key={i} className="card !p-4">
                         <div className="flex items-center gap-2 mb-2">
@@ -67,7 +69,7 @@ export default function SellerComplaintsPage() {
                 {complaints.length === 0 ? (
                     <div className="card text-center py-12">
                         <CheckCircle className="w-10 h-10 text-brand-success/30 mx-auto mb-2" />
-                        <p className="text-sm text-brand-text-muted">Không có khiếu nại nào. Tuyệt vời!</p>
+                        <p className="text-sm text-brand-text-muted">{t('scNoComplaints')}</p>
                     </div>
                 ) : complaints.map(c => (
                     <div key={c.id} className="card hover:border-brand-primary/30 transition-all">
@@ -78,10 +80,10 @@ export default function SellerComplaintsPage() {
                                     <span className="text-xs text-brand-text-muted">·</span>
                                     <span className="text-xs text-brand-text-muted">{c.orderCode}</span>
                                     <span className="text-xs text-brand-text-muted">·</span>
-                                    <span className="text-xs text-brand-text-secondary">Khách: {c.buyer}</span>
+                                    <span className="text-xs text-brand-text-secondary">{t('scCustomer')}: {c.buyer}</span>
                                 </div>
                                 <h3 className="text-sm font-semibold text-brand-text-primary">{c.product}</h3>
-                                <p className="text-xs text-brand-text-secondary mt-1">Lý do: {c.reason}</p>
+                                <p className="text-xs text-brand-text-secondary mt-1">{t('scReason')}: {c.reason}</p>
                             </div>
                             <div className="flex items-center gap-3 shrink-0">
                                 <div className="text-right">
@@ -91,7 +93,7 @@ export default function SellerComplaintsPage() {
                                         c.status === 'refunded' ? 'bg-brand-info/10 text-brand-info' :
                                         'bg-brand-danger/10 text-brand-danger'
                                     }`}>
-                                        {c.status === 'open' ? 'Mới tạo' : c.status === 'resolved' ? '✅ Đã xử lý' : c.status === 'refunded' ? '💰 Đã hoàn tiền' : c.status}
+                                        {c.status === 'open' ? t('scNew') : c.status === 'resolved' ? t('scResolvedLabel') : c.status === 'refunded' ? t('scRefunded') : c.status}
                                     </span>
                                     <div className="text-[10px] text-brand-text-muted mt-1">{formatDateTime(c.createdAt)}</div>
                                 </div>
@@ -109,17 +111,17 @@ export default function SellerComplaintsPage() {
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelected(null)} />
                     <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-md w-full p-6 animate-slide-up">
                         <button onClick={() => setSelected(null)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-brand-surface-2"><X className="w-5 h-5 text-brand-text-muted" /></button>
-                        <h2 className="text-lg font-bold text-brand-text-primary mb-4">⚠️ Chi tiết khiếu nại</h2>
+                        <h2 className="text-lg font-bold text-brand-text-primary mb-4">{t('scDetailTitle')}</h2>
                         <div className="space-y-3">
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Mã KN</span><span className="font-semibold text-brand-primary">{selected.id}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Đơn hàng</span><span>{selected.orderCode}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Khách hàng</span><span>{selected.buyer}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('scComplaintId')}</span><span className="font-semibold text-brand-primary">{selected.id}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('scOrder')}</span><span>{selected.orderCode}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('scCustomerLabel')}</span><span>{selected.buyer}</span></div>
                             <div className="border-t border-brand-border pt-3">
-                                <div className="text-xs text-brand-text-muted mb-1">Lý do khiếu nại</div>
+                                <div className="text-xs text-brand-text-muted mb-1">{t('scReasonLabel')}</div>
                                 <p className="text-sm text-brand-text-primary bg-brand-surface-2 rounded-xl p-3">{selected.reason}</p>
                             </div>
                         </div>
-                        <button onClick={() => setSelected(null)} className="btn-secondary w-full !py-3 mt-5">Đóng</button>
+                        <button onClick={() => setSelected(null)} className="btn-secondary w-full !py-3 mt-5">{t('scClose')}</button>
                     </div>
                 </div>
             )}

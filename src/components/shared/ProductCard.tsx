@@ -34,7 +34,7 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
                     <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-20 h-20 object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         onError={() => setImgError(true)}
                     />
                 ) : (

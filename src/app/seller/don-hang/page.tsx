@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n';
 import { formatCurrency, formatDateTime, getStatusLabel } from '@/lib/utils';
 import { Search, Download, Eye, Package, Truck, X, CheckCircle2, Loader2 } from 'lucide-react';
 
@@ -12,6 +13,7 @@ interface OrderItem {
 
 export default function SellerOrdersPage() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const [orders, setOrders] = useState<OrderItem[]>([]);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -48,16 +50,16 @@ export default function SellerOrdersPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-xl font-bold text-brand-text-primary mb-1">Đơn hàng của shop</h1>
-                <p className="text-sm text-brand-text-muted">Quản lý đơn hàng, xác nhận giao hàng và theo dõi trạng thái.</p>
+                <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('soTitle')}</h1>
+                <p className="text-sm text-brand-text-muted">{t('soSubtitle')}</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: 'Chờ xử lý', value: stats.pending, color: 'text-brand-warning' },
-                    { label: 'Đang giao', value: stats.delivering, color: 'text-brand-info' },
-                    { label: 'Hoàn tất', value: stats.completed, color: 'text-brand-success' },
-                    { label: 'Tổng đơn', value: stats.total, color: 'text-brand-primary' },
+                    { label: t('soPending'), value: stats.pending, color: 'text-brand-warning' },
+                    { label: t('soDelivering'), value: stats.delivering, color: 'text-brand-info' },
+                    { label: t('soCompleted'), value: stats.completed, color: 'text-brand-success' },
+                    { label: t('soTotalOrders'), value: stats.total, color: 'text-brand-primary' },
                 ].map((s, i) => (
                     <div key={i} className="card !p-4">
                         <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
@@ -69,13 +71,13 @@ export default function SellerOrdersPage() {
             <div className="card !p-4 flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
                     <Search className="w-4 h-4 text-brand-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm theo mã đơn, sản phẩm..." className="input-field !py-2 !pl-10 text-sm w-full" />
+                    <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={t('soSearchPlaceholder')} className="input-field !py-2 !pl-10 text-sm w-full" />
                 </div>
                 <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input-field !py-2 text-sm min-w-[130px]">
-                    <option value="all">Tất cả</option>
-                    <option value="paid">Chờ xử lý</option>
-                    <option value="delivering">Đang giao</option>
-                    <option value="completed">Hoàn tất</option>
+                    <option value="all">{t('soFilterAll')}</option>
+                    <option value="paid">{t('soFilterPending')}</option>
+                    <option value="delivering">{t('soFilterDelivering')}</option>
+                    <option value="completed">{t('soFilterCompleted')}</option>
                 </select>
             </div>
 
@@ -84,19 +86,19 @@ export default function SellerOrdersPage() {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-brand-surface-2/50">
-                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Mã đơn</th>
-                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Sản phẩm</th>
-                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Khách hàng</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">SL</th>
-                                <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Tổng tiền</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Trạng thái</th>
-                                <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">Thời gian</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
+                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">{t('soOrderCode')}</th>
+                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">{t('soProduct')}</th>
+                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">{t('soCustomer')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('soQty')}</th>
+                                <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">{t('soTotal')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('soStatus')}</th>
+                                <th className="text-right text-xs text-brand-text-muted font-medium py-3 px-4">{t('soTime')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('soAction')}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filtered.length === 0 ? (
-                                <tr><td colSpan={8} className="text-center py-12 text-brand-text-muted text-sm">Chưa có đơn hàng nào.</td></tr>
+                                <tr><td colSpan={8} className="text-center py-12 text-brand-text-muted text-sm">{t('soEmpty')}</td></tr>
                             ) : filtered.map(order => (
                                 <tr key={order.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30 transition-colors">
                                     <td className="py-3 px-4 text-brand-primary font-medium text-xs">{order.orderCode}</td>
@@ -132,17 +134,17 @@ export default function SellerOrdersPage() {
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedOrder(null)} />
                     <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-md w-full p-6 animate-slide-up">
                         <button onClick={() => setSelectedOrder(null)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-brand-surface-2"><X className="w-5 h-5 text-brand-text-muted" /></button>
-                        <h2 className="text-lg font-bold text-brand-text-primary mb-4">📦 Chi tiết đơn hàng</h2>
+                        <h2 className="text-lg font-bold text-brand-text-primary mb-4">{t('soDetailTitle')}</h2>
                         <div className="space-y-3">
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Mã đơn</span><span className="font-mono text-brand-primary font-semibold">{selectedOrder.orderCode}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Sản phẩm</span><span>{selectedOrder.productName}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Khách hàng</span><span>{selectedOrder.buyerName}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Số lượng</span><span>{selectedOrder.quantity}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Tổng tiền</span><span className="text-brand-primary font-bold">{formatCurrency(selectedOrder.totalAmount)}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Trạng thái</span><span className="badge badge-info text-[10px]">{getStatusLabel(selectedOrder.status)}</span></div>
-                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">Ngày đặt</span><span className="text-xs">{formatDateTime(selectedOrder.createdAt)}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailCode')}</span><span className="font-mono text-brand-primary font-semibold">{selectedOrder.orderCode}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailProduct')}</span><span>{selectedOrder.productName}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailCustomer')}</span><span>{selectedOrder.buyerName}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailQty')}</span><span>{selectedOrder.quantity}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailTotal')}</span><span className="text-brand-primary font-bold">{formatCurrency(selectedOrder.totalAmount)}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailStatus')}</span><span className="badge badge-info text-[10px]">{getStatusLabel(selectedOrder.status)}</span></div>
+                            <div className="flex justify-between text-sm"><span className="text-brand-text-muted">{t('soDetailDate')}</span><span className="text-xs">{formatDateTime(selectedOrder.createdAt)}</span></div>
                         </div>
-                        <button onClick={() => setSelectedOrder(null)} className="btn-secondary w-full !py-3 mt-5">Đóng</button>
+                        <button onClick={() => setSelectedOrder(null)} className="btn-secondary w-full !py-3 mt-5">{t('soClose')}</button>
                     </div>
                 </div>
             )}

@@ -53,6 +53,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const [purchasing, setPurchasing] = useState(false);
     const [purchaseResult, setPurchaseResult] = useState<{ success: boolean; message: string; order?: { orderCode: string; deliveredContent?: string; status: string }; newBalance?: number } | null>(null);
     const [copied, setCopied] = useState(false);
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [favLoading, setFavLoading] = useState(false);
+
+    // Review states
+    const [reviews, setReviews] = useState<{ id: string; rating: number; comment: string | null; userName: string; userAvatar: string | null; createdAt: string }[]>([]);
+    const [reviewStats, setReviewStats] = useState<{ avgRating: number; totalReviews: number }>({ avgRating: 0, totalReviews: 0 });
+    const [reviewableOrders, setReviewableOrders] = useState<{ id: string; orderCode: string; createdAt: string }[]>([]);
+    const [reviewForm, setReviewForm] = useState<{ orderId: string; rating: number; comment: string }>({ orderId: '', rating: 5, comment: '' });
+    const [reviewSubmitting, setReviewSubmitting] = useState(false);
+    const [reviewMsg, setReviewMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -62,6 +72,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 if (data.success && data.data) {
                     setProduct(data.data);
                     if (data.data.variants?.length > 0) setSelectedVariant(data.data.variants[0].id);
+                    // Check if favorited
+                    if (user) {
+                        try {
+                            const token = localStorage.getItem('token') || '';
+                            const favRes = await fetch('/api/v1/favorites', {
+                                headers: { Authorization: `Bearer ${token}` },
+                            });
+                            const favData = await favRes.json();
+                            if (favData.success) {
+                                setIsFavorited(favData.data.some((f: any) => f.productId === data.data.id));
+                            }
+                        } catch {}
+                    }
                 } else {
                     setError(data.message || t('pdpNotFound'));
                 }
@@ -71,6 +94,105 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             setLoading(false);
         })();
     }, [slug]);
+
+    const toggleFavorite = async () => {
+        if (!user) { router.push('/dang-nhap'); return; }
+        if (favLoading || !product) return;
+        setFavLoading(true);
+        try {
+            const token = localStorage.getItem('token') || '';
+            const res = await fetch('/api/v1/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ productId: product.id }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setIsFavorited(data.favorited);
+            }
+        } catch {}
+        setFavLoading(false);
+    };
+
+    // Fetch reviews when switching to reviews tab
+    const fetchReviews = async (pid: string) => {
+        try {
+            const res = await fetch(`/api/v1/reviews?productId=${pid}`);
+            const data = await res.json();
+            if (data.success) {
+                setReviews(data.data.reviews);
+                setReviewStats({ avgRating: data.data.avgRating, totalReviews: data.data.totalReviews });
+                return data.data.myReviewedOrderIds || [];
+            }
+        } catch {}
+        return [];
+    };
+
+    // Fetch user's reviewable orders for this product
+    const fetchReviewableOrders = async (pid: string, reviewedIds: string[]) => {
+        if (!user) return;
+        try {
+            const token = localStorage.getItem('token') || '';
+            // Fetch all user orders (completed/paid/delivered)
+            const res = await fetch('/api/v1/orders?limit=50', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success && data.data) {
+                const orders = data.data.orders || [];
+                const reviewedSet = new Set(reviewedIds);
+                // Filter: orders containing this product, completed status, not yet reviewed
+                const eligible = orders.filter((o: any) =>
+                    ['COMPLETED', 'PAID', 'DELIVERED'].includes(o.status) &&
+                    !reviewedSet.has(o.id) &&
+                    o.items?.some((item: any) => item.productId === pid || item.product?.slug === product?.slug)
+                );
+                setReviewableOrders(eligible.map((o: any) => ({ id: o.id, orderCode: o.orderCode, createdAt: o.createdAt })));
+            }
+        } catch {}
+    };
+
+    useEffect(() => {
+        if (activeTab === 'reviews' && product) {
+            (async () => {
+                const reviewedIds = await fetchReviews(product.id);
+                await fetchReviewableOrders(product.id, reviewedIds);
+            })();
+        }
+    }, [activeTab, product]);
+
+    const handleSubmitReview = async () => {
+        if (!reviewForm.orderId || !product) return;
+        setReviewSubmitting(true);
+        setReviewMsg(null);
+        try {
+            const token = localStorage.getItem('token') || '';
+            const res = await fetch('/api/v1/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    orderId: reviewForm.orderId,
+                    productId: product.id,
+                    rating: reviewForm.rating,
+                    comment: reviewForm.comment.trim() || null,
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setReviewMsg({ type: 'success', text: 'Đánh giá thành công! Cảm ơn bạn.' });
+                setReviewForm({ orderId: '', rating: 5, comment: '' });
+                // Remove the reviewed order from reviewable list
+                setReviewableOrders(prev => prev.filter(o => o.id !== reviewForm.orderId));
+                // Refresh reviews
+                fetchReviews(product.id);
+            } else {
+                setReviewMsg({ type: 'error', text: data.message || 'Lỗi khi gửi đánh giá' });
+            }
+        } catch {
+            setReviewMsg({ type: 'error', text: 'Lỗi kết nối' });
+        }
+        setReviewSubmitting(false);
+    };
 
     const handleBuyClick = () => {
         if (!user) { router.push('/dang-nhap'); return; }
@@ -186,12 +308,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     ))}
                                 </div>
                             )}
-                            {/* Trust Badges — under image */}
-                            <div className="flex items-center gap-4 mt-3 text-xs text-brand-text-muted">
-                                <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-brand-info" />{product.deliveryType === 'AUTO' ? t('pdpInstantDelivery') : t('pdpManualProcess')}</span>
-                                {currentWarranty > 0 && <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-brand-success" />{t('pdpWarranty')} {currentWarranty} {t('pdpWarrantyDays')}</span>}
-                                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-brand-warning" />{t('pdpComplaintTime')}</span>
-                            </div>
+
                         </div>
 
                         {/* Product Info */}
@@ -250,10 +367,40 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                 <span className="flex items-center gap-0.5">{product.deliveryType === 'AUTO' ? <><Zap className="w-3 h-3 text-brand-info" /><b className="text-brand-info">{t('pdpAutoDelivery')}</b></> : <b>{t('pdpManualDelivery')}</b>}</span>
                             </div>
 
-                            {/* Description */}
-                            {product.shortDescription && (
-                                <p className="text-xs text-brand-text-secondary leading-relaxed mb-3">{product.shortDescription}</p>
-                            )}
+                            {/* Warranty & Delivery Info Banner */}
+                            <div className="bg-gradient-to-r from-brand-success/5 to-brand-info/5 border border-brand-success/15 rounded-xl p-4 mb-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    {currentWarranty > 0 && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-brand-success/10 flex items-center justify-center shrink-0">
+                                                <Shield className="w-5 h-5 text-brand-success" />
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-semibold text-brand-success">{t('pdpWarranty')} {currentWarranty} {t('pdpWarrantyDays')}</div>
+                                                <div className="text-[11px] text-brand-text-muted">{t('pdpWarrantyDesc').replace('{days}', String(currentWarranty))}</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-brand-info/10 flex items-center justify-center shrink-0">
+                                            <Zap className="w-5 h-5 text-brand-info" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-semibold text-brand-info">{product.deliveryType === 'AUTO' ? t('pdpInstantDelivery') : t('pdpManualProcess')}</div>
+                                            <div className="text-[11px] text-brand-text-muted">{product.deliveryType === 'AUTO' ? 'Nhận hàng ngay sau khi thanh toán' : 'Seller sẽ giao hàng thủ công'}</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-brand-warning/10 flex items-center justify-center shrink-0">
+                                            <Clock className="w-5 h-5 text-brand-warning" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-semibold text-brand-warning">{t('pdpComplaintTime')}</div>
+                                            <div className="text-[11px] text-brand-text-muted">Hỗ trợ khiếu nại trong thời gian bảo hành</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             {/* Quantity & Buy */}
                             <div className="flex items-center gap-3 mb-3">
@@ -291,7 +438,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                 >
                                     <MessageSquare className="w-4 h-4" />
                                 </button>
-                                <button className="btn-secondary !px-3"><Heart className="w-4 h-4" /></button>
+                                <button onClick={toggleFavorite} disabled={favLoading} className={`btn-secondary !px-3 transition-all ${isFavorited ? '!bg-red-50 !border-red-200 !text-red-500 hover:!bg-red-100' : ''}`} title={isFavorited ? 'Bỏ yêu thích' : 'Thêm yêu thích'}>
+                                    <Heart className={`w-4 h-4 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -315,7 +464,123 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             )}
 
                             {activeTab === 'reviews' && (
-                                <p className="text-sm text-brand-text-muted text-center py-8">{t('pdpNoReviews')}</p>
+                                <div className="space-y-6">
+                                    {/* Review Stats */}
+                                    <div className="flex items-center gap-6 pb-5 border-b border-brand-border">
+                                        <div className="text-center">
+                                            <div className="text-4xl font-bold text-brand-primary">{reviewStats.avgRating || 0}</div>
+                                            <div className="flex items-center gap-0.5 mt-1 justify-center">
+                                                {[1, 2, 3, 4, 5].map(s => (
+                                                    <Star key={s} className={`w-4 h-4 ${s <= Math.round(reviewStats.avgRating) ? 'text-brand-warning fill-brand-warning' : 'text-brand-border'}`} />
+                                                ))}
+                                            </div>
+                                            <div className="text-xs text-brand-text-muted mt-1">{reviewStats.totalReviews} đánh giá</div>
+                                        </div>
+                                        <div className="flex-1">
+                                            {[5, 4, 3, 2, 1].map(star => {
+                                                const count = reviews.filter(r => r.rating === star).length;
+                                                const pct = reviewStats.totalReviews > 0 ? (count / reviewStats.totalReviews) * 100 : 0;
+                                                return (
+                                                    <div key={star} className="flex items-center gap-2 text-xs">
+                                                        <span className="w-8 text-right text-brand-text-muted">{star} ⭐</span>
+                                                        <div className="flex-1 h-2 bg-brand-surface-2 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-brand-warning rounded-full transition-all" style={{ width: `${pct}%` }} />
+                                                        </div>
+                                                        <span className="w-8 text-brand-text-muted">{count}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* Review Form — only if user has reviewable orders */}
+                                    {user && reviewableOrders.length > 0 && (
+                                        <div className="bg-brand-surface-2 rounded-xl p-4 border border-brand-border">
+                                            <h4 className="text-sm font-semibold text-brand-text-primary mb-3">✍️ Viết đánh giá</h4>
+                                            
+                                            <div className="mb-3">
+                                                <label className="text-xs text-brand-text-muted block mb-1">Chọn đơn hàng</label>
+                                                <select
+                                                    value={reviewForm.orderId}
+                                                    onChange={e => setReviewForm(f => ({ ...f, orderId: e.target.value }))}
+                                                    className="w-full bg-brand-surface border border-brand-border rounded-lg px-3 py-2 text-sm text-brand-text-primary"
+                                                >
+                                                    <option value="">-- Chọn đơn hàng --</option>
+                                                    {reviewableOrders.map(o => (
+                                                        <option key={o.id} value={o.id}>
+                                                            #{o.orderCode} — {new Date(o.createdAt).toLocaleDateString('vi-VN')}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label className="text-xs text-brand-text-muted block mb-1">Đánh giá sao</label>
+                                                <div className="flex items-center gap-1">
+                                                    {[1, 2, 3, 4, 5].map(s => (
+                                                        <button key={s} onClick={() => setReviewForm(f => ({ ...f, rating: s }))} className="p-1 transition-transform hover:scale-110">
+                                                            <Star className={`w-7 h-7 ${s <= reviewForm.rating ? 'text-brand-warning fill-brand-warning' : 'text-brand-border hover:text-brand-warning/50'}`} />
+                                                        </button>
+                                                    ))}
+                                                    <span className="ml-2 text-sm font-medium text-brand-text-secondary">{reviewForm.rating}/5</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label className="text-xs text-brand-text-muted block mb-1">Nhận xét (tùy chọn)</label>
+                                                <textarea
+                                                    value={reviewForm.comment}
+                                                    onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))}
+                                                    placeholder="Chia sẻ trải nghiệm của bạn..."
+                                                    className="w-full bg-brand-surface border border-brand-border rounded-lg px-3 py-2 text-sm text-brand-text-primary placeholder:text-brand-text-muted resize-none h-20"
+                                                />
+                                            </div>
+
+                                            {reviewMsg && (
+                                                <div className={`text-sm px-3 py-2 rounded-lg mb-3 ${reviewMsg.type === 'success' ? 'bg-brand-success/10 text-brand-success' : 'bg-brand-danger/10 text-brand-danger'}`}>
+                                                    {reviewMsg.text}
+                                                </div>
+                                            )}
+
+                                            <button
+                                                onClick={handleSubmitReview}
+                                                disabled={!reviewForm.orderId || reviewSubmitting}
+                                                className="btn-primary !py-2 !px-6 text-sm disabled:opacity-50"
+                                            >
+                                                {reviewSubmitting ? 'Đang gửi...' : 'Gửi đánh giá'}
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Review List */}
+                                    {reviews.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {reviews.map(r => (
+                                                <div key={r.id} className="flex gap-3 pb-4 border-b border-brand-border/50 last:border-0">
+                                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center shrink-0">
+                                                        <span className="text-white text-xs font-bold">{r.userName?.charAt(0) || '?'}</span>
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className="text-sm font-medium text-brand-text-primary">{r.userName}</span>
+                                                            <span className="text-[10px] text-brand-text-muted">{new Date(r.createdAt).toLocaleDateString('vi-VN')}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-0.5 mb-1.5">
+                                                            {[1, 2, 3, 4, 5].map(s => (
+                                                                <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'text-brand-warning fill-brand-warning' : 'text-brand-border'}`} />
+                                                            ))}
+                                                        </div>
+                                                        {r.comment && (
+                                                            <p className="text-sm text-brand-text-secondary leading-relaxed">{r.comment}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-brand-text-muted text-center py-6">Chưa có đánh giá nào cho sản phẩm này.</p>
+                                    )}
+                                </div>
                             )}
                             {activeTab === 'policy' && (
                                 <div className="space-y-4 text-sm text-brand-text-secondary">

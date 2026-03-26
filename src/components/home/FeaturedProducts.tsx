@@ -111,7 +111,7 @@ export default function FeaturedProducts() {
                                 <div key={p.id} className="group bg-brand-surface border border-brand-border rounded-2xl overflow-hidden hover:border-brand-primary/30 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
                                     <div className="relative h-40 bg-gradient-to-br from-brand-surface-2 to-brand-surface-3 flex items-center justify-center overflow-hidden">
                                         {p.images?.[0]?.url ? (
-                                            <img src={p.images[0].url} alt={p.name} className="w-20 h-20 object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300" />
+                                            <img src={p.images[0].url} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                                         ) : (
                                             <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 flex items-center justify-center">
                                                 <ShoppingCart className="w-8 h-8 text-brand-primary/60" />

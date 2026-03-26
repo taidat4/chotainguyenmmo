@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useI18n } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/utils';
 import { Plus, Search, Edit, Trash2, Eye, Package, X, Save, Loader2, CheckCircle2, Shield, Upload, ImagePlus, Link, Database } from 'lucide-react';
 
@@ -40,6 +41,7 @@ type ModalType = 'view' | 'edit' | 'add' | null;
 
 export default function SellerProductsPage() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const [products, setProducts] = useState<SellerProduct[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [search, setSearch] = useState('');
@@ -130,8 +132,8 @@ export default function SellerProductsPage() {
     };
 
     const handleSave = async () => {
-        if (!formData.name.trim()) { showToast('⚠️ Vui lòng nhập tên sản phẩm'); return; }
-        if (!formData.categoryId) { showToast('⚠️ Vui lòng chọn danh mục'); return; }
+        if (!formData.name.trim()) { showToast(t('spNameRequired')); return; }
+        if (!formData.categoryId) { showToast(t('spCategoryRequired')); return; }
 
         setSaving(true);
         try {
@@ -163,7 +165,7 @@ export default function SellerProductsPage() {
             } else {
                 showToast(`❌ ${data.message}`);
             }
-        } catch { showToast('❌ Lỗi kết nối'); }
+        } catch { showToast(t('spConnectionError')); }
         setSaving(false);
     };
 
@@ -175,7 +177,7 @@ export default function SellerProductsPage() {
             });
             const data = await res.json();
             if (data.success) {
-                showToast('✅ Đã xóa sản phẩm');
+                showToast(t('spDeleted'));
                 loadProducts();
             } else {
                 showToast(`❌ ${data.message}`);
@@ -196,21 +198,21 @@ export default function SellerProductsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">Sản phẩm</h1>
-                    <p className="text-sm text-brand-text-muted">Quản lý sản phẩm của shop bạn.</p>
+                    <h1 className="text-xl font-bold text-brand-text-primary mb-1">{t('spTitle')}</h1>
+                    <p className="text-sm text-brand-text-muted">{t('spSubtitle')}</p>
                 </div>
                 <button onClick={openAdd} className="btn-primary flex items-center gap-2 !py-2 text-sm">
-                    <Plus className="w-4 h-4" /> Thêm sản phẩm
+                    <Plus className="w-4 h-4" /> {t('spAddProduct')}
                 </button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: 'Tổng sản phẩm', value: stats.total, color: 'text-brand-primary' },
-                    { label: 'Đang hoạt động', value: stats.active, color: 'text-brand-success' },
-                    { label: 'Hết hàng', value: stats.outOfStock, color: 'text-brand-warning' },
-                    { label: 'Nháp', value: stats.draft, color: 'text-brand-text-muted' },
+                    { label: t('spTotalProducts'), value: stats.total, color: 'text-brand-primary' },
+                    { label: t('spActive'), value: stats.active, color: 'text-brand-success' },
+                    { label: t('spOutOfStock'), value: stats.outOfStock, color: 'text-brand-warning' },
+                    { label: t('spDraft'), value: stats.draft, color: 'text-brand-text-muted' },
                 ].map((s, i) => (
                     <div key={i} className="card !p-4">
                         <div className="text-xs text-brand-text-muted mb-1">{s.label}</div>
@@ -223,12 +225,12 @@ export default function SellerProductsPage() {
             <div className="flex gap-3">
                 <div className="relative flex-1">
                     <Search className="w-4 h-4 text-brand-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm sản phẩm..." className="input-field !pl-9 w-full text-sm" />
+                    <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={t('spSearchPlaceholder')} className="input-field !pl-9 w-full text-sm" />
                 </div>
                 <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input-field text-sm w-auto">
-                    <option value="all">Tất cả</option>
-                    <option value="active">Đang bán</option>
-                    <option value="out">Hết hàng</option>
+                    <option value="all">{t('spFilterAll')}</option>
+                    <option value="active">{t('spFilterActive')}</option>
+                    <option value="out">{t('spFilterOut')}</option>
                 </select>
             </div>
 
@@ -238,25 +240,25 @@ export default function SellerProductsPage() {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-brand-surface-2/50">
-                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">Sản phẩm</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Giá</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Tồn kho</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Đã bán</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Trạng thái</th>
-                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
+                                <th className="text-left text-xs text-brand-text-muted font-medium py-3 px-4">{t('spProduct')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('spPrice')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('spStock')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('spSold')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('spStatus')}</th>
+                                <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">{t('spActions')}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filtered.length === 0 ? (
                                 <tr><td colSpan={6} className="text-center py-12 text-brand-text-muted">
                                     <Package className="w-10 h-10 mx-auto mb-2 opacity-30" />
-                                    <p className="text-sm">Chưa có sản phẩm nào. Bấm "Thêm sản phẩm" để bắt đầu.</p>
+                                    <p className="text-sm">{t('spEmptyState')}</p>
                                 </td></tr>
                             ) : filtered.map(p => (
                                 <tr key={p.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30 transition-colors">
                                     <td className="py-3 px-4">
                                         <div className="text-sm font-medium text-brand-text-primary">{p.name}</div>
-                                        <div className="text-[10px] text-brand-text-muted">{p.categoryName} · {p.deliveryType === 'AUTO' ? '⚡ Tự động' : '👤 Thủ công'}</div>
+                                        <div className="text-[10px] text-brand-text-muted">{p.categoryName} · {p.deliveryType === 'AUTO' ? t('spAutoDelivery') : t('spManualDelivery')}</div>
                                     </td>
                                     <td className="py-3 px-4 text-center font-semibold text-brand-primary">{formatCurrency(p.price)}</td>
                                     <td className="py-3 px-4 text-center">
@@ -265,7 +267,7 @@ export default function SellerProductsPage() {
                                     <td className="py-3 px-4 text-center text-brand-text-muted">{p.soldCount}</td>
                                     <td className="py-3 px-4 text-center">
                                         <span className={`badge text-[10px] ${p.status === 'ACTIVE' ? 'badge-success' : p.status === 'DRAFT' ? 'badge-default' : 'badge-warning'}`}>
-                                            {p.status === 'ACTIVE' ? 'Đang bán' : p.status === 'DRAFT' ? 'Nháp' : p.status}
+                                            {p.status === 'ACTIVE' ? t('spActive2') : p.status === 'DRAFT' ? t('spDraft2') : p.status}
                                         </span>
                                     </td>
                                     <td className="py-3 px-4">
@@ -289,15 +291,15 @@ export default function SellerProductsPage() {
                     <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-lg w-full p-6 animate-slide-up max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setModal(null)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-brand-surface-2"><X className="w-5 h-5 text-brand-text-muted" /></button>
                         <h2 className="text-lg font-bold text-brand-text-primary mb-4">
-                            {modal === 'add' ? '➕ Thêm sản phẩm mới' : '✏️ Sửa sản phẩm'}
+                            {modal === 'add' ? t('spAddNew') : t('spEditProduct')}
                         </h2>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-brand-text-primary mb-1.5">Tên sản phẩm *</label>
+                                <label className="block text-sm font-medium text-brand-text-primary mb-1.5">{t('spProductName')}</label>
                                 <input value={formData.name} onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))} className="input-field w-full" placeholder="VD: ChatGPT Plus - Premium" />
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-brand-text-primary mb-1">🖼️ Ảnh sản phẩm</label>
+                                <label className="block text-xs font-medium text-brand-text-primary mb-1">{t('spProductImage')}</label>
                                 <div className="flex items-center gap-2">
                                     {imageTab === 'upload' ? (
                                         <label
@@ -314,9 +316,9 @@ export default function SellerProductsPage() {
                                                 try {
                                                     const res = await fetch('/api/v1/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
                                                     const data = await res.json();
-                                                    if (data.success) { setFormData(prev => ({ ...prev, imageUrl: data.url })); showToast('✅ Upload thành công'); }
+                                                    if (data.success) { setFormData(prev => ({ ...prev, imageUrl: data.url })); showToast(t('spUploadSuccess')); }
                                                     else showToast(`❌ ${data.message}`);
-                                                } catch { showToast('❌ Lỗi upload'); }
+                                                } catch { showToast(t('spUploadError')); }
                                                 setUploading(false);
                                             }}
                                         >
@@ -328,23 +330,23 @@ export default function SellerProductsPage() {
                                                 try {
                                                     const res = await fetch('/api/v1/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
                                                     const data = await res.json();
-                                                    if (data.success) { setFormData(prev => ({ ...prev, imageUrl: data.url })); showToast('✅ Upload thành công'); }
+                                                    if (data.success) { setFormData(prev => ({ ...prev, imageUrl: data.url })); showToast(t('spUploadSuccess')); }
                                                     else showToast(`❌ ${data.message}`);
-                                                } catch { showToast('❌ Lỗi upload'); }
+                                                } catch { showToast(t('spUploadError')); }
                                                 setUploading(false);
                                                 e.target.value = '';
                                             }} />
                                             {uploading ? (
                                                 <><Loader2 className="w-4 h-4 text-brand-primary animate-spin" /><span className="text-brand-text-muted">Uploading...</span></>
                                             ) : (
-                                                <><Upload className="w-4 h-4 text-brand-text-muted" /><span className="text-brand-text-muted"><span className="text-brand-primary font-medium">Upload</span> hoặc kéo thả</span></>
+                                                <><Upload className="w-4 h-4 text-brand-text-muted" /><span className="text-brand-text-muted"><span className="text-brand-primary font-medium">{t('spUploadBtn')}</span> {t('spUploadOrDrag')}</span></>
                                             )}
                                         </label>
                                     ) : (
                                         <input value={formData.imageUrl} onChange={e => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))} className="input-field flex-1 !py-2 text-xs" placeholder="https://example.com/image.jpg" />
                                     )}
                                     <button type="button" onClick={() => setImageTab(imageTab === 'upload' ? 'url' : 'upload')} className="text-[10px] text-brand-primary hover:underline shrink-0">
-                                        {imageTab === 'upload' ? '🔗 Dán URL' : '📤 Upload'}
+                                        {imageTab === 'upload' ? t('spPasteUrl') : t('spUploadBtn')}
                                     </button>
                                 </div>
                                 {formData.imageUrl && (
@@ -353,49 +355,49 @@ export default function SellerProductsPage() {
                                             <img src={formData.imageUrl} alt="" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = 'none')} />
                                         </div>
                                         <p className="text-[10px] text-brand-text-muted truncate flex-1">{formData.imageUrl}</p>
-                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))} className="text-[10px] text-brand-danger hover:underline">Xóa</button>
+                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))} className="text-[10px] text-brand-danger hover:underline">{t('spRemove')}</button>
                                     </div>
                                 )}
                             </div>
                             <div className="grid grid-cols-3 gap-2">
                                 <div>
-                                    <label className="text-[10px] text-brand-text-muted">Danh mục *</label>
+                                    <label className="text-[10px] text-brand-text-muted">{t('spCategory')}</label>
                                     <select value={formData.categoryId} onChange={e => setFormData(prev => ({ ...prev, categoryId: e.target.value }))} className="input-field w-full !py-1.5 text-sm">
-                                        <option value="">— Chọn —</option>
+                                        <option value="">{t('spSelectCategory')}</option>
                                         {categories.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] text-brand-text-muted">Giao hàng</label>
+                                    <label className="text-[10px] text-brand-text-muted">{t('spDelivery')}</label>
                                     <select value={formData.deliveryType} onChange={e => setFormData(prev => ({ ...prev, deliveryType: e.target.value as 'auto' | 'manual' }))} className="input-field w-full !py-1.5 text-sm">
-                                        <option value="auto">⚡ Tự động</option>
-                                        <option value="manual">👤 Thủ công</option>
+                                        <option value="auto">{t('spAutoDelivery')}</option>
+                                        <option value="manual">{t('spManualDelivery')}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] text-brand-text-muted">Mô tả ngắn</label>
-                                    <textarea value={formData.shortDescription} onChange={e => setFormData(prev => ({ ...prev, shortDescription: e.target.value }))} className="input-field w-full resize-none !py-1.5 text-sm" rows={2} placeholder="Mô tả..." />
+                                    <label className="text-[10px] text-brand-text-muted">{t('spShortDesc')}</label>
+                                    <textarea value={formData.shortDescription} onChange={e => setFormData(prev => ({ ...prev, shortDescription: e.target.value }))} className="input-field w-full resize-none !py-1.5 text-sm" rows={2} placeholder={t('spDescPlaceholder')} />
                                 </div>
                             </div>
                             <div>
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="text-sm font-medium text-brand-text-primary flex items-center gap-1.5">
-                                        <Shield className="w-4 h-4 text-brand-primary" /> Gói sản phẩm & Bảo hành
+                                        <Shield className="w-4 h-4 text-brand-primary" /> {t('spVariantsTitle')}
                                     </label>
-                                    <button onClick={addVariant} className="text-xs text-brand-primary hover:underline">+ Thêm gói</button>
+                                    <button onClick={addVariant} className="text-xs text-brand-primary hover:underline">{t('spAddVariant')}</button>
                                 </div>
-                                <p className="text-[10px] text-brand-text-muted mb-3">Mỗi gói có thể có giá và số ngày bảo hành riêng. Khách sẽ chọn gói khi mua.</p>
+                                <p className="text-[10px] text-brand-text-muted mb-3">{t('spVariantDesc')}</p>
                                 {formData.variants.map((v, i) => (
                                     <div key={v.id} className="border border-brand-border rounded-xl p-3 mb-2">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-xs font-semibold text-brand-text-secondary">Gói {i + 1}</span>
+                                            <span className="text-xs font-semibold text-brand-text-secondary">{t('spVariant')} {i + 1}</span>
                                             {formData.variants.length > 1 && (
-                                                <button onClick={() => removeVariant(v.id)} className="text-[10px] text-brand-danger hover:underline">Xóa</button>
+                                                <button onClick={() => removeVariant(v.id)} className="text-[10px] text-brand-danger hover:underline">{t('spRemove')}</button>
                                             )}
                                         </div>
                                         <div className="grid grid-cols-3 gap-2 mb-2">
                                             <div>
-                                                <label className="text-[10px] text-brand-text-muted">Tên gói *</label>
+                                                <label className="text-[10px] text-brand-text-muted">{t('spVariantName')}</label>
                                                 <input value={v.name} onChange={e => {
                                                     const variants = [...formData.variants];
                                                     variants[i] = { ...variants[i], name: e.target.value };
@@ -403,7 +405,7 @@ export default function SellerProductsPage() {
                                                 }} className="input-field w-full !py-1.5 text-sm" />
                                             </div>
                                             <div>
-                                                <label className="text-[10px] text-brand-text-muted">Giá (VNĐ) *</label>
+                                                <label className="text-[10px] text-brand-text-muted">{t('spVariantPrice')}</label>
                                                 <input type="number" value={v.price} onChange={e => {
                                                     const variants = [...formData.variants];
                                                     variants[i] = { ...variants[i], price: e.target.value };
@@ -411,7 +413,7 @@ export default function SellerProductsPage() {
                                                 }} className="input-field w-full !py-1.5 text-sm" />
                                             </div>
                                             <div>
-                                                <label className="text-[10px] text-brand-text-muted">Bảo hành (ngày)</label>
+                                                <label className="text-[10px] text-brand-text-muted">{t('spWarrantyDays')}</label>
                                                 <input type="number" value={v.warrantyDays} onChange={e => {
                                                     const variants = [...formData.variants];
                                                     variants[i] = { ...variants[i], warrantyDays: e.target.value };
@@ -425,14 +427,14 @@ export default function SellerProductsPage() {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-[10px] text-brand-text-muted flex items-center gap-1"><Database className="w-3 h-3" /> Kho hàng — mỗi dòng = 1 sản phẩm</label>
+                                            <label className="text-[10px] text-brand-text-muted flex items-center gap-1"><Database className="w-3 h-3" /> {t('spStockLabel')}</label>
                                             <textarea value={v.stockItems} onChange={e => {
                                                 const variants = [...formData.variants];
                                                 variants[i] = { ...variants[i], stockItems: e.target.value };
                                                 setFormData(prev => ({ ...prev, variants }));
                                             }} className="input-field w-full resize-none !py-1.5 text-xs font-mono" rows={3} placeholder={'VD:\nuser1@gmail.com|pass123\nuser2@gmail.com|pass456'} />
                                             {v.stockItems.trim() && (
-                                                <p className="text-[10px] text-brand-info mt-0.5">📦 {v.stockItems.trim().split('\n').filter(Boolean).length} sản phẩm trong kho</p>
+                                                <p className="text-[10px] text-brand-info mt-0.5">📦 {v.stockItems.trim().split('\n').filter(Boolean).length} {t('spStockCount')}</p>
                                             )}
                                         </div>
                                     </div>
@@ -440,10 +442,10 @@ export default function SellerProductsPage() {
                             </div>
                         </div>
                         <div className="flex gap-3 mt-5">
-                            <button onClick={() => setModal(null)} className="btn-secondary flex-1 !py-3">Hủy</button>
+                            <button onClick={() => setModal(null)} className="btn-secondary flex-1 !py-3">{t('spCancel')}</button>
                             <button onClick={handleSave} disabled={saving} className="btn-primary flex-1 !py-3 flex items-center justify-center gap-2 disabled:opacity-50">
                                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                {modal === 'add' ? 'Thêm sản phẩm' : 'Lưu thay đổi'}
+                                {modal === 'add' ? t('spAddProduct') : t('spSaveChanges')}
                             </button>
                         </div>
                     </div>
@@ -458,14 +460,14 @@ export default function SellerProductsPage() {
                         <button onClick={() => setModal(null)} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-brand-surface-2"><X className="w-5 h-5 text-brand-text-muted" /></button>
                         <h2 className="text-lg font-bold text-brand-text-primary mb-4">{selectedProduct.name}</h2>
                         <div className="space-y-3 text-sm">
-                            <div className="flex justify-between"><span className="text-brand-text-muted">Danh mục</span><span>{selectedProduct.categoryName}</span></div>
-                            <div className="flex justify-between"><span className="text-brand-text-muted">Giá</span><span className="font-semibold text-brand-primary">{formatCurrency(selectedProduct.price)}</span></div>
-                            <div className="flex justify-between"><span className="text-brand-text-muted">Tồn kho</span><span className="font-semibold">{selectedProduct.stockCount}</span></div>
-                            <div className="flex justify-between"><span className="text-brand-text-muted">Đã bán</span><span>{selectedProduct.soldCount}</span></div>
-                            <div className="flex justify-between"><span className="text-brand-text-muted">Giao hàng</span><span>{selectedProduct.deliveryType === 'AUTO' ? '⚡ Tự động' : '👤 Thủ công'}</span></div>
+                            <div className="flex justify-between"><span className="text-brand-text-muted">{t('spViewCategory')}</span><span>{selectedProduct.categoryName}</span></div>
+                            <div className="flex justify-between"><span className="text-brand-text-muted">{t('spViewPrice')}</span><span className="font-semibold text-brand-primary">{formatCurrency(selectedProduct.price)}</span></div>
+                            <div className="flex justify-between"><span className="text-brand-text-muted">{t('spViewStock')}</span><span className="font-semibold">{selectedProduct.stockCount}</span></div>
+                            <div className="flex justify-between"><span className="text-brand-text-muted">{t('spViewSold')}</span><span>{selectedProduct.soldCount}</span></div>
+                            <div className="flex justify-between"><span className="text-brand-text-muted">{t('spViewDelivery')}</span><span>{selectedProduct.deliveryType === 'AUTO' ? t('spAutoDelivery') : t('spManualDelivery')}</span></div>
                             {selectedProduct.variants.length > 0 && (
                                 <div className="border-t border-brand-border pt-3">
-                                    <div className="text-xs font-semibold text-brand-text-muted mb-2">Gói sản phẩm</div>
+                                    <div className="text-xs font-semibold text-brand-text-muted mb-2">{t('spViewVariants')}</div>
                                     {selectedProduct.variants.map(v => (
                                         <div key={v.id} className="flex justify-between text-xs py-1">
                                             <span>{v.name}</span>
@@ -485,11 +487,11 @@ export default function SellerProductsPage() {
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteTarget(null)} />
                     <div className="relative bg-brand-surface border border-brand-border rounded-2xl shadow-card-hover max-w-sm w-full p-6 animate-slide-up text-center">
                         <Trash2 className="w-12 h-12 text-brand-danger mx-auto mb-3" />
-                        <h3 className="text-lg font-bold text-brand-text-primary mb-2">Xóa sản phẩm?</h3>
-                        <p className="text-sm text-brand-text-muted mb-5">Sản phẩm sẽ bị ẩn khỏi cửa hàng.</p>
+                        <h3 className="text-lg font-bold text-brand-text-primary mb-2">{t('spDeleteTitle')}</h3>
+                        <p className="text-sm text-brand-text-muted mb-5">{t('spDeleteDesc')}</p>
                         <div className="flex gap-3">
-                            <button onClick={() => setDeleteTarget(null)} className="btn-secondary flex-1 !py-3">Hủy</button>
-                            <button onClick={() => handleDelete(deleteTarget)} className="flex-1 !py-3 bg-brand-danger text-white rounded-xl font-medium hover:bg-brand-danger/90 transition-all">Xóa</button>
+                            <button onClick={() => setDeleteTarget(null)} className="btn-secondary flex-1 !py-3">{t('spCancel')}</button>
+                            <button onClick={() => handleDelete(deleteTarget)} className="flex-1 !py-3 bg-brand-danger text-white rounded-xl font-medium hover:bg-brand-danger/90 transition-all">{t('spDeleteBtn')}</button>
                         </div>
                     </div>
                 </div>

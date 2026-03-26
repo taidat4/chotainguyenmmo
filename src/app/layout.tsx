@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     description: 'ChoTaiNguyen là nền tảng giao dịch tài nguyên số với trải nghiệm hiện đại, rõ ràng và thuận tiện cho cả người mua lẫn người bán.',
     keywords: 'tài nguyên số, marketplace, mua bán tài khoản, phần mềm, AI tools, proxy',
     icons: {
-        icon: '/logokhongnen.png',
-        apple: '/logokhongnen.png',
+        icon: '/logo_ngoaiweb.png',
+        apple: '/logo_ngoaiweb.png',
     },
     openGraph: {
         title: 'ChoTaiNguyen - Chợ tài nguyên số',
