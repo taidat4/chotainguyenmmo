@@ -104,7 +104,10 @@ export default function SellerProductsPage() {
         setModal('add');
     };
 
-    const openEdit = (p: SellerProduct) => {
+    const openEdit = async (p: SellerProduct) => {
+        setSelectedProduct(p);
+        setModal('edit');
+        // Initialize form first
         setFormData({
             name: p.name, price: String(p.price), categoryId: p.categoryId,
             shortDescription: p.shortDescription || '', deliveryType: p.deliveryType === 'MANUAL' ? 'manual' : 'auto',
@@ -113,8 +116,18 @@ export default function SellerProductsPage() {
                 ? p.variants.map(v => ({ id: v.id, name: v.name, price: String(v.price), warrantyDays: String(v.warrantyDays), stockItems: '' }))
                 : [{ id: '1', name: 'Gói cơ bản', price: String(p.price), warrantyDays: '3', stockItems: '' }],
         });
-        setSelectedProduct(p);
-        setModal('edit');
+        // Fetch existing stock items for this product
+        try {
+            const res = await fetch(`/api/v1/seller/inventory/items?productId=${p.id}`, { headers: { Authorization: `Bearer ${token}` } });
+            const data = await res.json();
+            if (data.success && data.data?.length > 0) {
+                const stockText = data.data.map((item: any) => item.rawContent).join('\n');
+                setFormData(prev => ({
+                    ...prev,
+                    variants: prev.variants.map((v, i) => i === 0 ? { ...v, stockItems: stockText } : v),
+                }));
+            }
+        } catch { }
     };
 
     const openView = (p: SellerProduct) => { setSelectedProduct(p); setModal('view'); };
@@ -434,7 +447,7 @@ export default function SellerProductsPage() {
                                                 setFormData(prev => ({ ...prev, variants }));
                                             }} className="input-field w-full resize-none !py-1.5 text-xs font-mono" rows={3} placeholder={'VD:\nuser1@gmail.com|pass123\nuser2@gmail.com|pass456'} />
                                             {v.stockItems.trim() && (
-                                                <p className="text-[10px] text-brand-info mt-0.5">📦 {v.stockItems.trim().split('\n').filter(Boolean).length} {t('spStockCount')}</p>
+                                                <p className="text-[10px] text-brand-info mt-0.5">📦 {v.stockItems.trim().split('\n').filter(Boolean).length} {modal === 'edit' ? 'mục trong kho (trùng sẽ tự loại)' : t('spStockCount')}</p>
                                             )}
                                         </div>
                                     </div>
