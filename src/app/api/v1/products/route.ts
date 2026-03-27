@@ -90,6 +90,9 @@ export async function GET(request: NextRequest) {
                     category: { select: { name: true, slug: true } },
                     shop: { select: { name: true, slug: true, verified: true, logoUrl: true } },
                     images: { take: 1, orderBy: { sortOrder: 'asc' } },
+                    _count: {
+                        select: { stockItems: { where: { status: 'AVAILABLE' } } },
+                    },
                 },
             }),
             prisma.product.count({ where }),
@@ -98,7 +101,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             success: true,
             data: {
-                products,
+                products: products.map(p => ({
+                    ...p,
+                    stockCountCached: p._count.stockItems || p.stockCountCached,
+                })),
                 pagination: {
                     page,
                     limit,

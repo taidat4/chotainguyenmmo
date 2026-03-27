@@ -33,35 +33,38 @@ function SearchResults() {
             .then(d => {
                 if (d.success && d.data?.products) {
                     // Map API products to ProductCard's Product interface
-                    const mapped: Product[] = d.data.products.map((p: any) => ({
-                        id: p.id,
-                        name: p.name,
-                        slug: p.slug,
-                        shortDescription: p.shortDescription || '',
-                        description: p.description || '',
-                        price: p.price,
-                        compareAtPrice: p.originalPrice || undefined,
-                        categoryId: p.categoryId || '',
-                        categoryName: p.category?.name || '',
-                        shopId: p.shopId || '',
-                        shopName: p.shop?.name || '',
-                        shopVerified: p.shop?.verified || false,
-                        images: p.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
-                        status: p.status || 'ACTIVE',
-                        deliveryType: p.autoDelivery ? 'auto' : 'manual',
-                        stockCount: p.stock ?? 0,
-                        soldCount: p.soldCount || 0,
-                        ratingAverage: p.ratingAverage || 0,
-                        ratingCount: p.ratingCount || 0,
-                        isFeatured: p.isFeatured || false,
-                        isHot: p.isHot || false,
-                        badges: p.autoDelivery ? ['Tự động'] : [],
-                        complaintWindowHours: p.complaintWindowHours || 72,
-                        warrantyPolicy: p.warrantyPolicy || '',
-                        supportPolicy: p.supportPolicy || '',
-                        createdAt: p.createdAt || '',
-                        updatedAt: p.updatedAt || '',
-                    }));
+                    const mapped: Product[] = d.data.products.map((p: any) => {
+                        const isAuto = p.deliveryType === 'AUTO' || p.deliveryType === 'auto' || p.isAutoDelivery;
+                        return {
+                            id: p.id,
+                            name: p.name,
+                            slug: p.slug,
+                            shortDescription: p.shortDescription || '',
+                            description: p.description || '',
+                            price: p.price,
+                            compareAtPrice: p.compareAtPrice || undefined,
+                            categoryId: p.categoryId || '',
+                            categoryName: p.category?.name || '',
+                            shopId: p.shopId || '',
+                            shopName: p.shop?.name || '',
+                            shopVerified: p.shop?.verified || false,
+                            images: p.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
+                            status: p.status || 'ACTIVE',
+                            deliveryType: isAuto ? 'auto' : 'manual',
+                            stockCount: p.stockCountCached ?? p.stockCount ?? p.stock ?? 0,
+                            soldCount: p.soldCount || 0,
+                            ratingAverage: p.ratingAverage || 0,
+                            ratingCount: p.ratingCount || 0,
+                            isFeatured: p.isFeatured || false,
+                            isHot: p.isHot || false,
+                            badges: isAuto ? ['Tự động'] : [],
+                            complaintWindowHours: p.complaintWindowHours || 72,
+                            warrantyPolicy: p.warrantyPolicy || '',
+                            supportPolicy: p.supportPolicy || '',
+                            createdAt: p.createdAt || '',
+                            updatedAt: p.updatedAt || '',
+                        };
+                    });
                     setProducts(mapped);
                     setTotal(d.data.pagination?.total || mapped.length);
                 } else {

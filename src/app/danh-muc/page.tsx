@@ -37,18 +37,21 @@ export default function AllCategoriesPage() {
             .then(r => r.json())
             .then(d => {
                 if (d.success) {
-                    const mapped = (d.data?.products || []).map((p: any) => ({
-                        ...p,
-                        categoryName: p.category?.name || '',
-                        shopName: p.shop?.name || '',
-                        shopVerified: p.shop?.verified || false,
-                        images: (p.images || []).map((img: any) => typeof img === 'string' ? img : img.url),
-                        badges: p.badges || [],
-                        ratingAverage: p.ratingAverage || 0,
-                        soldCount: p.soldCount || 0,
-                        stockCount: p.stockCount || 0,
-                        deliveryType: p.deliveryType || 'auto',
-                    }));
+                    const mapped = (d.data?.products || []).map((p: any) => {
+                        const isAuto = p.deliveryType === 'AUTO' || p.deliveryType === 'auto' || p.isAutoDelivery;
+                        return {
+                            ...p,
+                            categoryName: p.category?.name || '',
+                            shopName: p.shop?.name || '',
+                            shopVerified: p.shop?.verified || false,
+                            images: (p.images || []).map((img: any) => typeof img === 'string' ? img : img.url),
+                            badges: isAuto ? ['Tự động'] : [],
+                            ratingAverage: p.ratingAverage || 0,
+                            soldCount: p.soldCount || 0,
+                            stockCount: p.stockCountCached ?? p.stockCount ?? 0,
+                            deliveryType: isAuto ? 'auto' : 'manual',
+                        };
+                    });
                     setProducts(mapped);
                 }
             })
