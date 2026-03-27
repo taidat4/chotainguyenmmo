@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateApiKey } from '@/lib/api-keys';
-import { products } from '@/lib/mock-data';
+import prisma from '@/lib/prisma';
 
 /**
  * Public API — Products
@@ -11,7 +11,6 @@ import { products } from '@/lib/mock-data';
  * GET /api/v1/public/products?id=...   — Get single product
  */
 export async function GET(req: NextRequest) {
-    // Validate API key
     const apiKey = req.headers.get('x-api-key') || new URL(req.url).searchParams.get('api_key');
     if (!apiKey) {
         return NextResponse.json({
@@ -37,72 +36,82 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
 
-    // Single product
-    if (id) {
-        const product = products.find(p => p.id === id);
-        if (!product) {
-            return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
+    try {
+        // Single product
+        if (id) {
+            const product = await prisma.product.findUnique({
+                where: { id },
+                include: {
+                    shop: { select: { name: true } },
+                    category: { select: { name: true } },
+                    images: { take: 1, orderBy: { sortOrder: 'asc' } },
+                },
+            });
+            if (!product) {
+                return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
+            }
+            const stockCount = await prisma.stockItem.count({ where: { productId: id, status: 'AVAILABLE' } });
+            return NextResponse.json({
+                success: true,
+                data: {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    originalPrice: product.compareAtPrice,
+                    description: product.description,
+                    category: product.category?.name,
+                    shop: product.shop?.name,
+                    rating: product.ratingAverage,
+                    sold: product.soldCount,
+                    inStock: stockCount > 0,
+                    stock: stockCount,
+                    image: (product as any).images?.[0]?.url,
+                },
+            });
         }
+
+        // Build where clause
+        const where: any = { status: 'ACTIVE' };
+        if (q) {
+            where.OR = [
+                { name: { contains: q, mode: 'insensitive' } },
+                { description: { contains: q, mode: 'insensitive' } },
+            ];
+        }
+        if (category) {
+            where.category = { name: { equals: category, mode: 'insensitive' } };
+        }
+
+        const [total, products] = await Promise.all([
+            prisma.product.count({ where }),
+            prisma.product.findMany({
+                where,
+                include: { shop: { select: { name: true } }, category: { select: { name: true } } },
+                orderBy: { createdAt: 'desc' },
+                skip: (page - 1) * limit,
+                take: limit,
+            }),
+        ]);
+
         return NextResponse.json({
             success: true,
-            data: {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                originalPrice: product.compareAtPrice,
-                description: product.description,
-                category: product.categoryName,
-                shop: product.shopName,
-                rating: product.ratingAverage,
-                sold: product.soldCount,
-                inStock: product.stockCount > 0,
-                stock: product.stockCount,
-                image: product.images?.[0],
-            },
+            data: products.map(p => ({
+                id: p.id,
+                name: p.name,
+                price: p.price,
+                originalPrice: p.compareAtPrice,
+                category: p.category?.name,
+                shop: p.shop?.name,
+                rating: p.ratingAverage,
+                sold: p.soldCount,
+                inStock: true,
+                stock: 0,
+            })),
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+            meta: { apiKeyId: keyData.id, rateLimit: keyData.rateLimit },
         });
+    } catch (error) {
+        console.error('[Public Products] Error:', error);
+        return NextResponse.json({ success: false, message: 'Internal error' }, { status: 500 });
     }
-
-    // List/search products
-    let filtered = [...products];
-    if (q) {
-        const lower = q.toLowerCase();
-        filtered = filtered.filter(p =>
-            p.name.toLowerCase().includes(lower) ||
-            p.description.toLowerCase().includes(lower) ||
-            p.categoryName.toLowerCase().includes(lower)
-        );
-    }
-    if (category) {
-        filtered = filtered.filter(p => p.categoryName.toLowerCase() === category.toLowerCase());
-    }
-
-    const total = filtered.length;
-    const start = (page - 1) * limit;
-    const paginated = filtered.slice(start, start + limit);
-
-    return NextResponse.json({
-        success: true,
-        data: paginated.map(p => ({
-            id: p.id,
-            name: p.name,
-            price: p.price,
-            originalPrice: p.compareAtPrice,
-            category: p.categoryName,
-            shop: p.shopName,
-            rating: p.ratingAverage,
-            sold: p.soldCount,
-            inStock: p.stockCount > 0,
-            stock: p.stockCount,
-        })),
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages: Math.ceil(total / limit),
-        },
-        meta: {
-            apiKeyId: keyData.id,
-            rateLimit: keyData.rateLimit,
-        },
-    });
 }

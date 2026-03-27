@@ -1,41 +1,92 @@
 'use client';
 
-import { useState } from 'react';
-import { products, type Product } from '@/lib/mock-data';
+import { useState, useEffect } from 'react';
 import { formatCurrency } from '@/lib/utils';
-import { Search, Eye, Package, X, Star, Store, ShoppingCart, AlertTriangle, ShieldOff, ShieldCheck } from 'lucide-react';
+import { Search, Eye, Package, X, Star, Store, ShoppingCart, AlertTriangle, ShieldOff, ShieldCheck, Loader2 } from 'lucide-react';
 
-type ProductStatus = 'active' | 'pending' | 'banned';
-type ExtProduct = Product & { adminStatus: ProductStatus };
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    price: number;
+    compareAtPrice: number | null;
+    shopName: string;
+    shopId: string;
+    categoryName: string;
+    ratingAverage: number;
+    soldCount: number;
+    stockCount: number;
+    status: string;
+    images: string[];
+}
 
 export default function AdminProductsPage() {
-    const [productList, setProductList] = useState<ExtProduct[]>(products.slice(0, 10).map(p => ({ ...p, adminStatus: 'active' as ProductStatus })));
-    const [selected, setSelected] = useState<ExtProduct | null>(null);
-    const [banModal, setBanModal] = useState<ExtProduct | null>(null);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [selected, setSelected] = useState<Product | null>(null);
+    const [banModal, setBanModal] = useState<Product | null>(null);
     const [banReason, setBanReason] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState('');
 
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
-    const filtered = productList.filter(p => {
-        const matchSearch = !searchTerm || p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.shopName.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchStatus = statusFilter === 'all' || p.adminStatus === statusFilter;
+    useEffect(() => { fetchProducts(); }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const res = await fetch('/api/v1/products');
+            const data = await res.json();
+            if (data.success) {
+                setProducts(data.data || []);
+            }
+        } catch (e) {
+            console.error('[Admin Products] Fetch error:', e);
+        }
+        setLoading(false);
+    };
+
+    const filtered = products.filter(p => {
+        const matchSearch = !searchTerm || p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.shopName?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchStatus = statusFilter === 'all' || p.status?.toLowerCase() === statusFilter;
         return matchSearch && matchStatus;
     });
 
-    const handleBan = (id: string) => {
-        setProductList(prev => prev.map(p => p.id === id ? { ...p, adminStatus: 'banned' as ProductStatus } : p));
-        setBanModal(null);
-        setBanReason('');
-        showToast('🚫 Sản phẩm đã bị cấm bán');
+    const handleBan = async (id: string) => {
+        try {
+            const token = localStorage.getItem('token') || '';
+            await fetch(`/api/v1/products/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ status: 'BANNED', banReason }),
+            });
+            setProducts(prev => prev.map(p => p.id === id ? { ...p, status: 'BANNED' } : p));
+            setBanModal(null);
+            setBanReason('');
+            showToast('🚫 Sản phẩm đã bị cấm bán');
+        } catch {
+            showToast('❌ Lỗi cập nhật');
+        }
     };
 
-    const handleUnban = (id: string) => {
-        setProductList(prev => prev.map(p => p.id === id ? { ...p, adminStatus: 'active' as ProductStatus } : p));
-        showToast('✅ Sản phẩm đã được mở bán lại');
+    const handleUnban = async (id: string) => {
+        try {
+            const token = localStorage.getItem('token') || '';
+            await fetch(`/api/v1/products/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ status: 'ACTIVE' }),
+            });
+            setProducts(prev => prev.map(p => p.id === id ? { ...p, status: 'ACTIVE' } : p));
+            showToast('✅ Sản phẩm đã được mở bán lại');
+        } catch {
+            showToast('❌ Lỗi cập nhật');
+        }
     };
+
+    if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-brand-primary" /></div>;
 
     return (
         <div className="space-y-6">
@@ -45,10 +96,10 @@ export default function AdminProductsPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: 'Tổng sản phẩm', value: productList.length, color: 'text-brand-primary' },
-                    { label: 'Đang bán', value: productList.filter(p => p.adminStatus === 'active').length, color: 'text-brand-success' },
-                    { label: 'Chờ duyệt', value: productList.filter(p => p.adminStatus === 'pending').length, color: 'text-brand-warning' },
-                    { label: 'Vi phạm', value: productList.filter(p => p.adminStatus === 'banned').length, color: 'text-brand-danger' },
+                    { label: 'Tổng sản phẩm', value: products.length, color: 'text-brand-primary' },
+                    { label: 'Đang bán', value: products.filter(p => p.status?.toLowerCase() === 'active').length, color: 'text-brand-success' },
+                    { label: 'Chờ duyệt', value: products.filter(p => p.status?.toLowerCase() === 'pending').length, color: 'text-brand-warning' },
+                    { label: 'Vi phạm', value: products.filter(p => p.status?.toLowerCase() === 'banned').length, color: 'text-brand-danger' },
                 ].map((s, i) => (
                     <div key={i} className="card !p-4">
                         <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
@@ -79,22 +130,24 @@ export default function AdminProductsPage() {
                         <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
                     </tr></thead>
                     <tbody>
-                        {filtered.map(p => (
+                        {filtered.length === 0 ? (
+                            <tr><td colSpan={6} className="text-center py-12 text-brand-text-muted text-sm">Chưa có sản phẩm nào</td></tr>
+                        ) : filtered.map(p => (
                             <tr key={p.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30">
                                 <td className="py-3 px-4"><div className="flex items-center gap-2"><Package className="w-4 h-4 text-brand-primary shrink-0" /><span className="text-sm text-brand-text-primary truncate max-w-[200px]">{p.name}</span></div></td>
                                 <td className="py-3 px-4 text-xs text-brand-text-secondary">{p.shopName}</td>
                                 <td className="py-3 px-4 text-right font-medium text-brand-text-primary">{formatCurrency(p.price)}</td>
                                 <td className="py-3 px-4 text-center text-brand-text-secondary">{p.soldCount}</td>
                                 <td className="py-3 px-4 text-center">
-                                    <span className={`badge text-[10px] ${p.adminStatus === 'active' ? 'badge-success' : p.adminStatus === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
-                                        {p.adminStatus === 'active' ? 'Đang bán' : p.adminStatus === 'pending' ? 'Chờ duyệt' : 'Vi phạm'}
+                                    <span className={`badge text-[10px] ${p.status?.toLowerCase() === 'active' ? 'badge-success' : p.status?.toLowerCase() === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
+                                        {p.status?.toLowerCase() === 'active' ? 'Đang bán' : p.status?.toLowerCase() === 'pending' ? 'Chờ duyệt' : 'Vi phạm'}
                                     </span>
                                 </td>
                                 <td className="py-3 px-4"><div className="flex items-center justify-center gap-1">
                                     <button onClick={() => setSelected(p)} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-primary hover:bg-brand-surface-2 transition-colors"><Eye className="w-3.5 h-3.5" /></button>
-                                    {p.adminStatus === 'active' ? (
+                                    {p.status?.toLowerCase() === 'active' ? (
                                         <button onClick={() => { setBanModal(p); setBanReason(''); }} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-danger hover:bg-brand-surface-2 transition-colors" title="Cấm bán"><ShieldOff className="w-3.5 h-3.5" /></button>
-                                    ) : p.adminStatus === 'banned' && (
+                                    ) : p.status?.toLowerCase() === 'banned' && (
                                         <button onClick={() => handleUnban(p.id)} className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-success hover:bg-brand-surface-2 transition-colors" title="Mở bán lại"><ShieldCheck className="w-3.5 h-3.5" /></button>
                                     )}
                                 </div></td>
@@ -132,7 +185,7 @@ export default function AdminProductsPage() {
                                     <div className="text-[10px] text-brand-text-muted mt-0.5">Đã bán</div>
                                 </div>
                                 <div className="bg-brand-surface-2 rounded-xl p-3 text-center">
-                                    <div className="text-sm font-bold text-brand-warning flex items-center justify-center gap-1"><Star className="w-3 h-3 fill-brand-warning" />{selected.ratingAverage}</div>
+                                    <div className="text-sm font-bold text-brand-warning flex items-center justify-center gap-1"><Star className="w-3 h-3 fill-brand-warning" />{selected.ratingAverage || 0}</div>
                                     <div className="text-[10px] text-brand-text-muted mt-0.5">Đánh giá</div>
                                 </div>
                             </div>

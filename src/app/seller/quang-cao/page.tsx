@@ -39,7 +39,10 @@ export default function SellerAdsPage() {
             const adsData = await adsRes.json();
             const prodsData = await prodsRes.json();
             if (adsData.success) setCampaigns(adsData.data);
-            if (prodsData.success) setProducts(prodsData.data.filter((p: any) => p.status === 'ACTIVE'));
+            if (prodsData.success) {
+                const prodsList = prodsData.data?.products || prodsData.data || [];
+                setProducts(prodsList.filter((p: any) => p.status === 'ACTIVE'));
+            }
         } catch { }
         setLoading(false);
     };

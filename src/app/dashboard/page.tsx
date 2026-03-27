@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Wallet, ShoppingBag, AlertTriangle, ArrowRight, TrendingUp, Clock, Package, Loader2, Bell } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/utils';
-import { sampleOrders, sampleTransactions, sampleNotifications } from '@/lib/mock-data';
+
 
 interface Order {
     id: string;
@@ -34,27 +34,29 @@ export default function UserDashboard() {
     const { t } = useI18n();
     const [orders, setOrders] = useState<Order[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [notifications, setNotifications] = useState<{id:string;title:string;message:string;isRead:boolean}[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
+            const token = localStorage.getItem('token') || '';
+            const headers = { Authorization: `Bearer ${token}` };
             try {
-                const [ordersRes, txnRes] = await Promise.all([
-                    fetch('/api/v1/user/data?type=orders'),
-                    fetch('/api/v1/user/data?type=transactions'),
+                const [ordersRes, txnRes, notiRes] = await Promise.all([
+                    fetch('/api/v1/user/data?type=orders', { headers }),
+                    fetch('/api/v1/user/data?type=transactions', { headers }),
+                    fetch('/api/v1/notifications', { headers }),
                 ]);
                 const ordersData = await ordersRes.json();
                 const txnData = await txnRes.json();
+                const notiData = await notiRes.json();
 
-                // Merge API orders with sample orders for display
-                const apiOrders = ordersData.success ? ordersData.data : [];
-                const apiTxns = txnData.success ? txnData.data : [];
-
-                setOrders(apiOrders.length > 0 ? apiOrders : sampleOrders);
-                setTransactions(apiTxns.length > 0 ? apiTxns : sampleTransactions);
+                setOrders(ordersData.success ? ordersData.data : []);
+                setTransactions(txnData.success ? txnData.data : []);
+                setNotifications(notiData.success ? (notiData.data || []) : []);
             } catch {
-                setOrders(sampleOrders);
-                setTransactions(sampleTransactions);
+                setOrders([]);
+                setTransactions([]);
             }
             setLoading(false);
         }
@@ -148,9 +150,9 @@ export default function UserDashboard() {
                             {t('udAllNotifs')}
                         </Link>
                     </div>
-                    {sampleNotifications.length > 0 ? (
+                    {notifications.length > 0 ? (
                         <div className="space-y-3">
-                            {sampleNotifications.slice(0, 4).map(notif => (
+                            {notifications.slice(0, 4).map(notif => (
                                 <div key={notif.id} className={`p-3 rounded-xl text-sm ${notif.isRead ? 'bg-brand-surface-2' : 'bg-brand-primary/5 border border-brand-primary/10'}`}>
                                     <div className="font-medium text-brand-text-primary text-xs mb-1">{notif.title}</div>
                                     <div className="text-xs text-brand-text-muted line-clamp-2">{notif.message}</div>
@@ -185,7 +187,7 @@ export default function UserDashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {(transactions.length > 0 ? transactions : sampleTransactions).slice(0, 5).map(txn => (
+                            {transactions.slice(0, 5).map(txn => (
                                 <tr key={txn.id} className="border-b border-brand-border/50 last:border-0">
                                     <td className="py-3 pr-4">
                                         <span className={`badge text-[10px] ${txn.type === 'deposit' ? 'badge-success' : 'badge-warning'}`}>

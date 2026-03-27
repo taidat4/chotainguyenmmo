@@ -8,6 +8,9 @@ export interface AdminPlatformSettings {
     commissionRate: number;      // % phí sàn  
     withdrawalFee: number;       // Phí rút tiền cố định (VNĐ)
     minWithdraw: number;         // Rút tối thiểu
+    maxWithdraw?: number;        // Rút tối đa/lần
+    withdrawDailyLimit?: number; // Số lần rút/ngày
+    withdrawCooldownMinutes?: number; // Cooldown giữa 2 lần rút
     minDeposit: number;          // Nạp tối thiểu
     bankName: string;            // Ngân hàng nhận nạp
     bankAccount: string;         // STK nhận nạp
@@ -15,6 +18,8 @@ export interface AdminPlatformSettings {
     platformTotalEarnings: number;
     taxEnabled?: boolean;        // Bật/tắt thuế GTGT
     vatRate?: number;            // % thuế GTGT
+    withdrawTelegramChatIds?: string[]; // Telegram Chat IDs nhận thông báo rút tiền
+    [key: string]: any;          // Allow extra fields
 }
 
 const DEFAULT_SETTINGS: AdminPlatformSettings = {

@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateApiKey } from '@/lib/api-keys';
-import { getAllMockUsers } from '@/lib/mock-auth';
-import { getOrdersByUserId } from '@/lib/api-order-store';
+import prisma from '@/lib/prisma';
 
 /**
  * Public API — Orders & Balance
  * Auth: API Key via x-api-key header
- * 
- * GET /api/v1/public/orders             — List orders
- * GET /api/v1/public/orders?type=balance — Check wallet balance
  */
 export async function GET(req: NextRequest) {
     const apiKey = req.headers.get('x-api-key') || new URL(req.url).searchParams.get('api_key');
@@ -24,52 +20,65 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type');
 
-    // Balance check
-    if (type === 'balance') {
-        if (!keyData.permissions.includes('balance:read')) {
-            return NextResponse.json({ success: false, message: 'Permission denied: balance:read' }, { status: 403 });
+    try {
+        // Balance check
+        if (type === 'balance') {
+            if (!keyData.permissions.includes('balance:read')) {
+                return NextResponse.json({ success: false, message: 'Permission denied: balance:read' }, { status: 403 });
+            }
+            const wallet = await prisma.wallet.findUnique({ where: { userId: keyData.userId } });
+            return NextResponse.json({
+                success: true,
+                data: {
+                    balance: wallet?.availableBalance || 0,
+                    currency: 'VND',
+                    username: keyData.username,
+                },
+            });
         }
-        const allUsers = getAllMockUsers();
-        const user = allUsers.find(u => u.id === keyData.userId);
+
+        // Orders
+        if (!keyData.permissions.includes('orders:read')) {
+            return NextResponse.json({ success: false, message: 'Permission denied: orders:read' }, { status: 403 });
+        }
+
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
+
+        const [total, orders] = await Promise.all([
+            prisma.order.count({ where: { buyerId: keyData.userId } }),
+            prisma.order.findMany({
+                where: { buyerId: keyData.userId },
+                include: {
+                    items: {
+                        include: { product: { select: { name: true } } },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+                skip: (page - 1) * limit,
+                take: limit,
+            }),
+        ]);
+
         return NextResponse.json({
             success: true,
-            data: {
-                balance: user?.walletBalance || 0,
-                currency: 'VND',
-                username: keyData.username,
-            },
+            data: orders.map(o => ({
+                orderId: o.id,
+                orderCode: o.orderCode,
+                products: o.items.map(item => ({
+                    name: item.product.name,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    total: item.total,
+                })),
+                totalAmount: o.totalAmount,
+                status: o.status,
+                createdAt: o.createdAt.toISOString(),
+            })),
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
         });
+    } catch (error) {
+        console.error('[Public Orders] Error:', error);
+        return NextResponse.json({ success: false, message: 'Internal error' }, { status: 500 });
     }
-
-    // Orders
-    if (!keyData.permissions.includes('orders:read')) {
-        return NextResponse.json({ success: false, message: 'Permission denied: orders:read' }, { status: 403 });
-    }
-
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
-
-    const allOrders = getOrdersByUserId(keyData.userId);
-    const sorted = allOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    const start = (page - 1) * limit;
-    const paginated = sorted.slice(start, start + limit);
-
-    return NextResponse.json({
-        success: true,
-        data: paginated.map(o => ({
-            orderId: o.id,
-            product: o.productName,
-            quantity: o.quantity,
-            totalPrice: o.totalPrice,
-            items: o.items,
-            status: o.status,
-            createdAt: o.createdAt,
-        })),
-        pagination: {
-            page,
-            limit,
-            total: allOrders.length,
-            totalPages: Math.ceil(allOrders.length / limit),
-        },
-    });
 }

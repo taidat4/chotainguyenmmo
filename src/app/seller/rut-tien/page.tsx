@@ -27,6 +27,7 @@ export default function SellerWithdrawPage() {
     const [bankName, setBankName] = useState('');
     const [bankAccount, setBankAccount] = useState('');
     const [bankOwner, setBankOwner] = useState('');
+    const [withdrawConfig, setWithdrawConfig] = useState({ fee: 15000, min: 50000, max: 10000000, dailyLimit: 3, cooldownMinutes: 30 });
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
@@ -40,6 +41,7 @@ export default function SellerWithdrawPage() {
                 setBalance(data.data.balance);
                 setPendingAmount(data.data.pendingAmount);
                 setTotalWithdrawn(data.data.totalWithdrawn);
+                if (data.data.config) setWithdrawConfig(data.data.config);
             }
         } catch { }
         setLoading(false);
@@ -49,7 +51,8 @@ export default function SellerWithdrawPage() {
 
     const handleCreate = async () => {
         const num = Number(amount);
-        if (num < 50000) { showToast(t('swMinError')); return; }
+        if (num < withdrawConfig.min) { showToast(`Số tiền rút tối thiểu ${withdrawConfig.min.toLocaleString('vi-VN')}đ`); return; }
+        if (num > withdrawConfig.max) { showToast(`Số tiền rút tối đa ${withdrawConfig.max.toLocaleString('vi-VN')}đ/lần`); return; }
         if (num > balance) { showToast(t('swInsufficientBalance')); return; }
         if (!bankName || !bankAccount || !bankOwner) { showToast(t('swFillAll')); return; }
         setCreating(true);
@@ -103,7 +106,7 @@ export default function SellerWithdrawPage() {
 
             <div className="bg-brand-info/5 border border-brand-info/20 rounded-xl p-3 text-xs text-brand-text-secondary flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-brand-info shrink-0 mt-0.5" />
-                <p>{t('swNote')}</p>
+                <p>• Xử lý trong 1-3 ngày làm việc. Rút tối thiểu {formatCurrency(withdrawConfig.min)}.{withdrawConfig.fee > 0 ? ` Phí: ${formatCurrency(withdrawConfig.fee)}/lần.` : ' Miễn phí rút tiền.'} Tối đa {formatCurrency(withdrawConfig.max)}/lần, {withdrawConfig.dailyLimit} lần/ngày.</p>
             </div>
 
             <div className="card">
@@ -150,7 +153,7 @@ export default function SellerWithdrawPage() {
                             <div className="text-sm text-brand-text-muted">{t('swBalance')}: <span className="text-brand-success font-bold">{formatCurrency(balance)}</span></div>
                             <div>
                                 <label className="text-xs font-semibold text-brand-text-secondary mb-1 block">{t('swAmountLabel')}</label>
-                                <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="input-field w-full" placeholder={t('swMinAmount')} min={50000} />
+                                <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="input-field w-full" placeholder={`Tối thiểu ${withdrawConfig.min.toLocaleString('vi-VN')}đ`} min={withdrawConfig.min} />
                             </div>
                             <div>
                                 <label className="text-xs font-semibold text-brand-text-secondary mb-1 block">{t('swBankLabel')}</label>

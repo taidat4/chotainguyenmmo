@@ -1,35 +1,86 @@
 'use client';
 
-import { useState } from 'react';
-import { categories as initialCategories, type Category } from '@/lib/mock-data';
-import { Edit, Trash2, Plus, FolderTree, X, Save, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Edit, Trash2, Plus, FolderTree, X, Save, AlertTriangle, Loader2 } from 'lucide-react';
+
+interface Category {
+    id: string;
+    name: string;
+    slug: string;
+    productCount: number;
+}
 
 export default function AdminCategoriesPage() {
-    const [cats, setCats] = useState<Category[]>(initialCategories);
+    const [cats, setCats] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
     const [editModal, setEditModal] = useState<{ id?: string; name: string; slug: string } | null>(null);
     const [deleteModal, setDeleteModal] = useState<Category | null>(null);
     const [toast, setToast] = useState('');
 
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '';
 
-    const handleSave = () => {
+    useEffect(() => { fetchCategories(); }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch('/api/v1/categories');
+            const data = await res.json();
+            if (data.success) {
+                setCats(data.data || []);
+            }
+        } catch (e) {
+            console.error('[Admin Categories] Fetch error:', e);
+        }
+        setLoading(false);
+    };
+
+    const handleSave = async () => {
         if (!editModal || !editModal.name.trim()) return;
-        if (editModal.id) {
-            setCats(prev => prev.map(c => c.id === editModal.id ? { ...c, name: editModal.name, slug: editModal.slug } : c));
-            showToast('✅ Đã cập nhật danh mục');
-        } else {
-            const newCat: Category = { id: String(Date.now()), name: editModal.name, slug: editModal.slug || editModal.name.toLowerCase().replace(/\s+/g, '-'), productCount: 0, icon: '📦', description: '', subcategories: [] };
-            setCats(prev => [...prev, newCat]);
-            showToast('✅ Đã thêm danh mục mới');
+        try {
+            const res = await fetch('/api/v1/categories', {
+                method: editModal.id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    id: editModal.id,
+                    name: editModal.name,
+                    slug: editModal.slug || editModal.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(editModal.id ? '✅ Đã cập nhật danh mục' : '✅ Đã thêm danh mục mới');
+                fetchCategories();
+            } else {
+                showToast('❌ ' + (data.message || 'Lỗi'));
+            }
+        } catch {
+            showToast('❌ Lỗi kết nối');
         }
         setEditModal(null);
     };
 
-    const handleDelete = (id: string) => {
-        setCats(prev => prev.filter(c => c.id !== id));
+    const handleDelete = async (id: string) => {
+        try {
+            const res = await fetch('/api/v1/categories', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ id }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('🗑️ Đã xóa danh mục');
+                fetchCategories();
+            } else {
+                showToast('❌ ' + (data.message || 'Lỗi'));
+            }
+        } catch {
+            showToast('❌ Lỗi kết nối');
+        }
         setDeleteModal(null);
-        showToast('🗑️ Đã xóa danh mục');
     };
+
+    if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-brand-primary" /></div>;
 
     return (
         <div className="space-y-6">
@@ -49,7 +100,9 @@ export default function AdminCategoriesPage() {
                         <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
                     </tr></thead>
                     <tbody>
-                        {cats.map(cat => (
+                        {cats.length === 0 ? (
+                            <tr><td colSpan={4} className="text-center py-12 text-brand-text-muted text-sm">Chưa có danh mục nào</td></tr>
+                        ) : cats.map(cat => (
                             <tr key={cat.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30">
                                 <td className="py-3 px-4"><div className="flex items-center gap-3"><div className="w-9 h-9 rounded-lg bg-brand-primary/10 flex items-center justify-center"><FolderTree className="w-4 h-4 text-brand-primary" /></div><span className="text-sm font-medium text-brand-text-primary">{cat.name}</span></div></td>
                                 <td className="py-3 px-4 text-xs text-brand-text-muted font-mono">{cat.slug}</td>

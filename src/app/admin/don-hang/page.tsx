@@ -1,23 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { sampleOrders } from '@/lib/mock-data';
+import { useState, useEffect } from 'react';
 import { formatCurrency, formatDateTime, getStatusLabel } from '@/lib/utils';
-import { Search, Eye, Package, X, User, CreditCard, Clock, Store, Copy, CheckCircle2 } from 'lucide-react';
+import { Search, Eye, Package, X, User, CreditCard, Clock, Store, Copy, CheckCircle2, Loader2 } from 'lucide-react';
+
+interface Order {
+    id: string;
+    orderCode: string;
+    productName: string;
+    shopName: string;
+    buyerName: string;
+    quantity: number;
+    totalAmount: number;
+    feeAmount: number;
+    status: string;
+    createdAt: string;
+}
 
 export default function AdminOrdersPage() {
-    const [selected, setSelected] = useState<typeof sampleOrders[0] | null>(null);
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [selected, setSelected] = useState<Order | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState('');
 
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 2000); };
 
-    const filtered = sampleOrders.filter(o => {
-        const matchSearch = !searchTerm || o.orderCode.toLowerCase().includes(searchTerm.toLowerCase()) || o.productName.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchStatus = statusFilter === 'all' || o.status === statusFilter;
+    useEffect(() => {
+        fetchOrders();
+    }, []);
+
+    const fetchOrders = async () => {
+        try {
+            const token = localStorage.getItem('token') || '';
+            const res = await fetch('/api/v1/orders', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success) {
+                setOrders(data.data || []);
+            }
+        } catch (e) {
+            console.error('[Admin Orders] Fetch error:', e);
+        }
+        setLoading(false);
+    };
+
+    const filtered = orders.filter(o => {
+        const matchSearch = !searchTerm || o.orderCode?.toLowerCase().includes(searchTerm.toLowerCase()) || o.productName?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchStatus = statusFilter === 'all' || o.status?.toLowerCase() === statusFilter;
         return matchSearch && matchStatus;
     });
+
+    if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-brand-primary" /></div>;
 
     return (
         <div className="space-y-6">
@@ -27,10 +63,10 @@ export default function AdminOrdersPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: 'Tổng đơn hàng', value: sampleOrders.length.toLocaleString(), color: 'text-brand-primary' },
-                    { label: 'Hoàn tất', value: sampleOrders.filter(o => o.status === 'completed').length, color: 'text-brand-success' },
-                    { label: 'Đang giao', value: sampleOrders.filter(o => o.status === 'delivering').length, color: 'text-brand-warning' },
-                    { label: 'Đã thanh toán', value: sampleOrders.filter(o => o.status === 'paid').length, color: 'text-brand-info' },
+                    { label: 'Tổng đơn hàng', value: orders.length.toLocaleString(), color: 'text-brand-primary' },
+                    { label: 'Hoàn tất', value: orders.filter(o => o.status?.toLowerCase() === 'completed').length, color: 'text-brand-success' },
+                    { label: 'Đang xử lý', value: orders.filter(o => o.status?.toLowerCase() === 'processing' || o.status?.toLowerCase() === 'delivering').length, color: 'text-brand-warning' },
+                    { label: 'Đã thanh toán', value: orders.filter(o => o.status?.toLowerCase() === 'paid').length, color: 'text-brand-info' },
                 ].map((s, i) => (
                     <div key={i} className="card !p-4">
                         <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
@@ -46,7 +82,7 @@ export default function AdminOrdersPage() {
                 <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input-field !py-2 text-sm min-w-[130px]">
                     <option value="all">Tất cả</option>
                     <option value="completed">Hoàn tất</option>
-                    <option value="delivering">Đang giao</option>
+                    <option value="processing">Đang xử lý</option>
                     <option value="paid">Đã thanh toán</option>
                     <option value="dispute">Tranh chấp</option>
                 </select>
@@ -63,13 +99,15 @@ export default function AdminOrdersPage() {
                         <th className="text-center text-xs text-brand-text-muted font-medium py-3 px-4">Thao tác</th>
                     </tr></thead>
                     <tbody>
-                        {filtered.map(o => (
+                        {filtered.length === 0 ? (
+                            <tr><td colSpan={7} className="text-center py-12 text-brand-text-muted text-sm">Chưa có đơn hàng nào</td></tr>
+                        ) : filtered.map(o => (
                             <tr key={o.id} className="border-t border-brand-border/50 hover:bg-brand-surface-2/30 cursor-pointer" onClick={() => setSelected(o)}>
                                 <td className="py-3 px-4 text-brand-primary font-medium text-xs">{o.orderCode}</td>
                                 <td className="py-3 px-4"><div className="flex items-center gap-2"><Package className="w-4 h-4 text-brand-primary shrink-0" /><span className="text-xs truncate max-w-[150px]">{o.productName}</span></div></td>
                                 <td className="py-3 px-4 text-xs text-brand-text-secondary">{o.shopName}</td>
                                 <td className="py-3 px-4 text-right font-semibold">{formatCurrency(o.totalAmount)}</td>
-                                <td className="py-3 px-4 text-center"><span className={`badge text-[10px] ${o.status === 'completed' ? 'badge-success' : o.status === 'delivering' ? 'badge-warning' : o.status === 'paid' ? 'badge-info' : 'badge-neutral'}`}>{getStatusLabel(o.status)}</span></td>
+                                <td className="py-3 px-4 text-center"><span className={`badge text-[10px] ${o.status?.toLowerCase() === 'completed' ? 'badge-success' : o.status?.toLowerCase() === 'processing' || o.status?.toLowerCase() === 'delivering' ? 'badge-warning' : o.status?.toLowerCase() === 'paid' ? 'badge-info' : 'badge-neutral'}`}>{getStatusLabel(o.status)}</span></td>
                                 <td className="py-3 px-4 text-right text-xs text-brand-text-muted">{formatDateTime(o.createdAt)}</td>
                                 <td className="py-3 px-4 text-center"><button className="p-1.5 rounded-lg text-brand-text-muted hover:text-brand-primary hover:bg-brand-surface-2"><Eye className="w-3.5 h-3.5" /></button></td>
                             </tr>
@@ -92,7 +130,7 @@ export default function AdminOrdersPage() {
                                     <span className="text-brand-primary font-mono font-semibold text-sm">{selected.orderCode}</span>
                                     <button onClick={() => { navigator.clipboard.writeText(selected.orderCode); showToast('📋 Đã copy mã đơn'); }} className="p-1 rounded hover:bg-brand-surface-2"><Copy className="w-3.5 h-3.5 text-brand-text-muted" /></button>
                                 </div>
-                                <span className={`badge text-[10px] ${selected.status === 'completed' ? 'badge-success' : selected.status === 'delivering' ? 'badge-warning' : 'badge-info'}`}>{getStatusLabel(selected.status)}</span>
+                                <span className={`badge text-[10px] ${selected.status?.toLowerCase() === 'completed' ? 'badge-success' : selected.status?.toLowerCase() === 'processing' ? 'badge-warning' : 'badge-info'}`}>{getStatusLabel(selected.status)}</span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-brand-surface-2 rounded-xl p-3">
@@ -105,7 +143,7 @@ export default function AdminOrdersPage() {
                                 </div>
                                 <div className="bg-brand-surface-2 rounded-xl p-3">
                                     <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-1">Người mua</div>
-                                    <div className="text-sm font-medium text-brand-text-primary flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-brand-success" /> Khách hàng</div>
+                                    <div className="text-sm font-medium text-brand-text-primary flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-brand-success" /> {selected.buyerName || 'Khách hàng'}</div>
                                 </div>
                                 <div className="bg-brand-surface-2 rounded-xl p-3">
                                     <div className="text-[10px] uppercase text-brand-text-muted tracking-wider mb-1">Tổng tiền</div>

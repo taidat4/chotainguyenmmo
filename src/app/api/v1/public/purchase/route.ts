@@ -1,27 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateApiKey } from '@/lib/api-keys';
-import { products } from '@/lib/mock-data';
-import { getAllMockUsers } from '@/lib/mock-auth';
-import { stockItems, addApiOrder } from '@/lib/api-order-store';
+import prisma from '@/lib/prisma';
 
 /**
  * Public API — Purchase
  * Auth: API Key via x-api-key header
- * 
  * POST /api/v1/public/purchase
  * Body: { productId, quantity? }
- * 
- * Deducts from wallet, returns purchased items (keys/accounts)
  */
-
 export async function POST(req: NextRequest) {
-    // Validate API key
     const apiKey = req.headers.get('x-api-key');
     if (!apiKey) {
         return NextResponse.json({
             success: false,
             message: 'API Key required via x-api-key header',
-            example: 'curl -H "x-api-key: YOUR_KEY" -X POST ...',
         }, { status: 401 });
     }
 
@@ -40,73 +32,132 @@ export async function POST(req: NextRequest) {
     if (!productId) {
         return NextResponse.json({ success: false, message: 'productId is required' }, { status: 400 });
     }
-
     if (quantity < 1 || quantity > 10) {
         return NextResponse.json({ success: false, message: 'quantity must be between 1 and 10' }, { status: 400 });
     }
 
-    // Find product
-    const product = products.find(p => p.id === productId);
-    if (!product) {
-        return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
-    }
+    try {
+        // Find product from DB
+        const product = await prisma.product.findUnique({
+            where: { id: productId },
+            include: { shop: { select: { id: true, ownerId: true } } },
+        });
+        if (!product) {
+            return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
+        }
 
-    // Check stock
-    const stock = stockItems[productId] || [];
-    if (stock.length < quantity) {
+        // Check stock
+        const availableStock = await prisma.stockItem.findMany({
+            where: { productId, status: 'AVAILABLE' },
+            take: quantity,
+        });
+        if (availableStock.length < quantity) {
+            return NextResponse.json({
+                success: false,
+                message: `Không đủ hàng. Còn lại: ${availableStock.length}`,
+                available: availableStock.length,
+            }, { status: 400 });
+        }
+
+        // Check balance
+        const totalPrice = product.price * quantity;
+        const wallet = await prisma.wallet.findUnique({ where: { userId: keyData.userId } });
+        if (!wallet || wallet.availableBalance < totalPrice) {
+            return NextResponse.json({
+                success: false,
+                message: `Số dư không đủ. Cần ${totalPrice.toLocaleString('vi-VN')}đ`,
+                required: totalPrice,
+                balance: wallet?.availableBalance || 0,
+            }, { status: 400 });
+        }
+
+        // Process purchase in transaction
+        const result = await prisma.$transaction(async (tx) => {
+            // Reserve stock items
+            const stockIds = availableStock.map(s => s.id);
+            await tx.stockItem.updateMany({
+                where: { id: { in: stockIds } },
+                data: { status: 'SOLD' },
+            });
+
+            // Deduct from buyer wallet
+            await tx.wallet.update({
+                where: { userId: keyData.userId },
+                data: { availableBalance: { decrement: totalPrice } },
+            });
+
+            // Generate order code
+            const orderCode = `ORD-${Date.now().toString(36).toUpperCase()}`;
+
+            // Create order
+            const order = await tx.order.create({
+                data: {
+                    orderCode,
+                    buyerId: keyData.userId,
+                    shopId: product.shop!.id,
+                    subtotal: totalPrice,
+                    totalAmount: totalPrice,
+                    status: 'COMPLETED',
+                    paymentStatus: 'PAID',
+                    deliveryStatus: 'DELIVERED',
+                    paidAt: new Date(),
+                    completedAt: new Date(),
+                    deliveredAt: new Date(),
+                    items: {
+                        create: {
+                            productId,
+                            quantity,
+                            unitPrice: product.price,
+                            total: totalPrice,
+                        },
+                    },
+                },
+            });
+
+            // Create wallet transaction
+            const updatedWallet = await tx.wallet.findUnique({ where: { userId: keyData.userId } });
+            await tx.walletTransaction.create({
+                data: {
+                    walletId: wallet.id,
+                    type: 'PURCHASE',
+                    direction: 'DEBIT',
+                    amount: totalPrice,
+                    balanceAfter: updatedWallet?.availableBalance || 0,
+                    description: `Mua ${quantity}x ${product.name} (API)`,
+                    referenceType: 'order',
+                    referenceId: order.id,
+                },
+            });
+
+            // Update product sold count
+            await tx.product.update({
+                where: { id: productId },
+                data: { soldCount: { increment: quantity } },
+            });
+
+            return {
+                orderId: order.id,
+                orderCode: order.orderCode,
+                items: availableStock.map(s => s.rawContent),
+                balanceAfter: updatedWallet?.availableBalance || 0,
+            };
+        });
+
         return NextResponse.json({
-            success: false,
-            message: `Không đủ hàng. Còn lại: ${stock.length}`,
-            available: stock.length,
-        }, { status: 400 });
+            success: true,
+            message: `Mua thành công ${quantity}x ${product.name}`,
+            data: {
+                orderId: result.orderId,
+                orderCode: result.orderCode,
+                product: product.name,
+                quantity,
+                totalPrice,
+                items: result.items,
+                balanceAfter: result.balanceAfter,
+            },
+        });
+    } catch (error) {
+        console.error('[Public Purchase] Error:', error);
+        return NextResponse.json({ success: false, message: 'Internal error' }, { status: 500 });
     }
-
-    // Check balance
-    const totalPrice = product.price * quantity;
-    const allUsers = getAllMockUsers();
-    const user = allUsers.find(u => u.id === keyData.userId);
-    if (!user) {
-        return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
-    }
-
-    if ((user.walletBalance || 0) < totalPrice) {
-        return NextResponse.json({
-            success: false,
-            message: `Số dư không đủ. Cần ${totalPrice.toLocaleString('vi-VN')}đ, hiện có ${(user.walletBalance || 0).toLocaleString('vi-VN')}đ`,
-            required: totalPrice,
-            balance: user.walletBalance || 0,
-        }, { status: 400 });
-    }
-
-    // Process purchase
-    const purchasedItems = stock.splice(0, quantity);
-    user.walletBalance = (user.walletBalance || 0) - totalPrice;
-
-    // Create order
-    const order = {
-        id: `ORD-${Date.now().toString(36).toUpperCase()}`,
-        userId: keyData.userId,
-        productId,
-        productName: product.name,
-        quantity,
-        totalPrice,
-        items: purchasedItems,
-        status: 'COMPLETED',
-        createdAt: new Date().toISOString(),
-        apiKeyId: keyData.id,
-    };
-    addApiOrder(order);
-
-    return NextResponse.json({
-        success: true,
-        message: `Mua thành công ${quantity}x ${product.name}`,
-        data: {
-            orderId: order.id,
-            product: product.name,
-            quantity,
-            totalPrice,
-            items: purchasedItems,
-            balanceAfter: user.walletBalance,
-        },
-    });
 }

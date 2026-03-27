@@ -16,11 +16,11 @@ async function getWithdrawSettings() {
         if (record) {
             const s = JSON.parse(record.value);
             return {
-                fee: Number(s.withdrawalFee) || 15000,
-                min: Number(s.minWithdraw) || 50000,
-                max: Number(s.maxWithdraw) || 10000000,
-                dailyLimit: Number(s.withdrawDailyLimit) || 3,
-                cooldownMinutes: Number(s.withdrawCooldownMinutes) || 30,
+                fee: s.withdrawalFee != null ? Number(s.withdrawalFee) : 15000,
+                min: s.minWithdraw != null ? Number(s.minWithdraw) : 50000,
+                max: s.maxWithdraw != null ? Number(s.maxWithdraw) : 10000000,
+                dailyLimit: s.withdrawDailyLimit != null ? Number(s.withdrawDailyLimit) : 3,
+                cooldownMinutes: s.withdrawCooldownMinutes != null ? Number(s.withdrawCooldownMinutes) : 30,
             };
         }
     } catch (e) {
@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
 
     try {
+        const config = await getWithdrawSettings();
         const [withdrawals, wallet] = await Promise.all([
             prisma.withdrawal.findMany({
                 where: { userId: authResult.userId },
@@ -68,6 +69,13 @@ export async function GET(request: NextRequest) {
                 balance: wallet?.availableBalance || 0,
                 pendingAmount,
                 totalWithdrawn,
+                config: {
+                    fee: config.fee,
+                    min: config.min,
+                    max: config.max,
+                    dailyLimit: config.dailyLimit,
+                    cooldownMinutes: config.cooldownMinutes,
+                },
             },
         });
     } catch (error) {
