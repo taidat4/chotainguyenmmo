@@ -264,10 +264,16 @@ export default function InventoryPage() {
                         <h2 className="text-lg font-bold text-brand-text-primary mb-2">📦 Thêm tồn kho</h2>
                         <p className="text-sm text-brand-text-muted mb-4">{uploadProductName}</p>
                         <textarea rows={8} value={uploadText} onChange={e => setUploadText(e.target.value)}
-                            className="input-field resize-none mb-4 font-mono text-xs w-full"
+                            className="input-field resize-none mb-3 font-mono text-xs w-full"
                             placeholder="Mỗi dòng 1 mục tồn kho:&#10;account1@mail.com|password123&#10;account2@mail.com|password456&#10;KEY-XXXXX-XXXXX-001" />
+                        <div className="bg-brand-warning/5 border border-brand-warning/20 rounded-lg px-3 py-2 mb-4 flex items-start gap-2">
+                            <AlertCircle className="w-3.5 h-3.5 text-brand-warning shrink-0 mt-0.5" />
+                            <p className="text-[11px] text-brand-text-secondary">
+                                Hệ thống tự động kiểm tra hàng trùng lặp. Các mục đã tồn tại hoặc đã bán trước đó sẽ bị loại bỏ tự động.
+                            </p>
+                        </div>
                         <p className="text-xs text-brand-text-muted mb-4">
-                            💡 {uploadText.trim() ? `${uploadText.trim().split('\n').filter(l => l.trim()).length} mục sẽ được thêm` : 'Nhập hoặc paste dữ liệu vào đây'}
+                            💡 {uploadText.trim() ? `${uploadText.trim().split('\n').filter(l => l.trim()).length} mục sẽ được kiểm tra và thêm` : 'Nhập hoặc paste dữ liệu vào đây'}
                         </p>
                         <div className="flex gap-3">
                             <button onClick={() => setUploadModal(null)} className="btn-secondary flex-1 !py-3">Hủy</button>
